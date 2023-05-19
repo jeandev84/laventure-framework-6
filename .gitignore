@@ -1,5 +1,3 @@
 ### Laventure Framework ###
 .idea
 vendor
-node_modules
-public/uploads/*
