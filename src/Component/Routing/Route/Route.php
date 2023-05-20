@@ -565,22 +565,6 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 
 
 
-    /**
-     * Return prefixed param
-     *
-     * @param string $name
-     *
-     * @param $default
-     *
-     * @return mixed|string|null
-    */
-    public function prefixed(string $name, $default = null): mixed
-    {
-        return $this->prefixes[$name] ?? $default;
-    }
-
-
-
 
 
 
@@ -854,26 +838,6 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
         return '/'. trim($pattern, '\\/');
     }
 
-
-
-
-    /**
-     * @param string $path
-     *
-     * @return string
-    */
-    private function resolvePath(string $path): string
-    {
-        if ($path === '') { return '/'; }
-
-        $path = ltrim($path, '/');
-
-        if($prefix = $this->prefixed('path')) {
-            $path = sprintf('%s/%s', $prefix, $path);
-        }
-
-        return $path;
-    }
 
 
 
