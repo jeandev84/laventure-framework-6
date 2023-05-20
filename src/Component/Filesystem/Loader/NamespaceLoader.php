@@ -1,9 +1,8 @@
 <?php
 namespace Laventure\Component\Filesystem\Loader;
 
-
-use Laventure\Component\Filesystem\Loader\ClassLoader;
 use Laventure\Component\Filesystem\Loader\Contract\NamespaceLoaderInterface;
+use Laventure\Component\Filesystem\Locator\FileLocator;
 
 
 /**
@@ -15,6 +14,20 @@ class NamespaceLoader extends ClassLoader implements NamespaceLoaderInterface
       * @var array
      */
      protected array $prefixes = [];
+
+
+
+
+     /**
+      * @param FileLocator $locator
+      * @param array $prefixes
+     */
+     public function __construct(FileLocator $locator, array $prefixes = [])
+     {
+           parent::__construct($locator);
+           $this->addNamespaces($prefixes);
+     }
+
 
 
      /**

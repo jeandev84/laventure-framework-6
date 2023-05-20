@@ -17,4 +17,18 @@ class ClassLoader extends FileLoader implements ClassLoaderInterface
     {
         return $this->loadFile("$class.php");
     }
+
+
+
+    /**
+     * @param array $classes
+     *
+     * @return void
+    */
+    public function loadClasses(array $classes): void
+    {
+         foreach ($classes as $class) {
+              $this->loadClass($class);
+         }
+    }
 }
