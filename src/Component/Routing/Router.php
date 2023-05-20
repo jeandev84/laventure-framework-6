@@ -172,7 +172,7 @@ class Router implements RouterInterface
           $route->domain($this->domain)
                 ->wheres($this->patterns);
 
-          return $this->resolveRoute($route);
+          return $route;
     }
 
 
@@ -332,42 +332,5 @@ class Router implements RouterInterface
     public function generate(string $name, array $parameters = [])
     {
 
-    }
-
-
-
-
-    /**
-     * @param string $path
-     *
-     * @return string
-    */
-    protected function resolvePath(string $path): string
-    {
-         return $path;
-    }
-
-
-
-
-    /**
-     * @param Route $route
-     *
-     * @return Route
-    */
-    public function resolveRoute(Route $route): Route
-    {
-        $callback = $route->getCallback();
-
-        if (is_array($callback) && count($callback) === 2) {
-            list($controller, $action) = array_values($callback);
-            $route->controller($controller, $action);
-        } elseif (is_string($callback)) {
-            if (class_exists($callback)) {
-                $route->controller($callback);
-            }
-        }
-
-        return $route;
     }
 }

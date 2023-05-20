@@ -268,7 +268,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function callback($callback): static
     {
-         $this->callback = $callback;
+         $this->callback = $this->resolveCallback($callback);
 
          return $this;
     }
@@ -445,8 +445,6 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     public function controller(string $class, string $action = '__invoke'): static
     {
           $this->controller = compact('class', 'action');
-
-          $this->callback([$class, $action]);
 
           return $this;
     }
@@ -895,6 +893,29 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 
 
 
+
+    /**
+     * @param $callback
+     *
+     * @return mixed
+    */
+    private function resolveCallback($callback): mixed
+    {
+        if (is_array($callback) && count($callback) === 2) {
+            list($controller, $action) = array_values($callback);
+            $this->controller($controller, $action);
+            return [$controller, $action];
+        } elseif (is_string($callback)) {
+            if (class_exists($callback)) {
+                $this->controller($callback);
+            }
+        }
+
+        return $callback;
+    }
+
+
+
     /**
      * @param string $name
      *
@@ -980,7 +1001,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 
     /**
      * @inheritDoc
-     */
+    */
     public function offsetUnset(mixed $offset)
     {
         if ($this->offsetExists($offset)) {
