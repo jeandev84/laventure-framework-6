@@ -154,6 +154,8 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     protected $options = [];
 
 
+
+
     /**
      * @param $methods
      *
@@ -165,10 +167,10 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function __construct($methods, $path, $action, array $prefixes = [])
     {
+         $this->prefixes($prefixes);
          $this->methods($methods);
          $this->path($path);
          $this->callback($action);
-         $this->prefixes($prefixes);
     }
 
 
@@ -181,10 +183,28 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function prefixes(array $prefixes): static
     {
-        $this->prefixes = array_merge($this->prefixes, $prefixes);
+        $this->prefixes = array_merge($this->prefixes, $this->resolvePrefixes($prefixes));
 
         return $this;
     }
+
+
+
+
+    /**
+     * Set namespace
+     *
+     * @param string $namespace
+     *
+     * @return $this
+    */
+    public function namespace(string $namespace): static
+    {
+         $this->options(compact('namespace'));
+
+         return $this;
+    }
+
 
 
 
@@ -446,6 +466,8 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function controller(string $class, string $action): static
     {
+          $class = $this->resolveController($class);
+
           $this->controller = compact('class', 'action');
 
           return $this;
@@ -770,9 +792,22 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     /**
      * @return array
     */
-    public function getParamsValues(): array
+    public function getValuesOfParams(): array
     {
          return array_values($this->getParams());
+    }
+
+
+
+
+    /**
+     * @param string $controller
+     *
+     * @return string
+    */
+    public function resolveController(string $controller): string
+    {
+        return $controller;
     }
 
 
@@ -958,12 +993,28 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 
 
     /**
+     * @param array $prefixes
+     *
+     * @return array
+    */
+    private function resolvePrefixes(array $prefixes): array
+    {
+        if (isset($prefixes['middlewares'])) {
+            $this->middleware($prefixes['middlewares']);
+            unset($prefixes['middlewares']);
+        }
+
+        return $prefixes;
+    }
+
+
+    /**
      * @param array $params
      * @return array
     */
     private function getDependencies(array $params): array
     {
-        return array_merge([$this->getParamsValues(), array_values($params)]);
+        return array_merge([$this->getValuesOfParams(), array_values($params)]);
     }
 
 

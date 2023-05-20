@@ -8,6 +8,7 @@ use Laventure\Component\Routing\Route\Collection\RouteCollection;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcher;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcherInterface;
 use Laventure\Component\Routing\Route\Exception\RouteNotFoundException;
+use Laventure\Component\Routing\Route\Group\RouteGroup;
 use Laventure\Component\Routing\Route\Route;
 use Laventure\Component\Routing\Route\RouteFactory;
 
@@ -44,12 +45,34 @@ class Router implements RouterInterface
 
 
 
+
+    /**
+     * Route Group
+     *
+     * @var RouteGroup
+    */
+    protected $group;
+
+
+
+
+
     /**
      * Route domain
      *
      * @var string
     */
     protected $domain;
+
+
+
+
+
+    /**
+     * @var string
+    */
+    protected $namespace;
+
 
 
 
@@ -64,18 +87,15 @@ class Router implements RouterInterface
 
 
 
+
+
     /**
+     * Route middlewares
+     *
      * @var array
     */
-    protected $prefixes = [];
+    protected $middlewares = [];
 
-
-
-
-    /**
-     * @var
-    */
-    protected $cacheRoutes;
 
 
 
@@ -88,8 +108,30 @@ class Router implements RouterInterface
     public function __construct(RouteDispatcherInterface $dispatcher = null)
     {
          $this->collection = new RouteCollection();
+         $this->group      = RouteFactory::createRouteGroup();
          $this->dispatcher = $dispatcher ?: new RouteDispatcher();
     }
+
+
+
+
+
+    /**
+     * Add route middlewares
+     *
+     * @param array $middlewares
+     *
+     * @return $this
+    */
+    public function middlewares(array $middlewares): static
+    {
+         foreach ($middlewares as $name => $middleware) {
+             $this->adMiddleware($name, $middleware);
+         }
+
+         return $this;
+    }
+
 
 
 
@@ -105,6 +147,81 @@ class Router implements RouterInterface
 
         return $this;
     }
+
+
+
+
+
+
+    /**
+     * @param string $namespace
+     *
+     * @return $this
+    */
+    public function namespace(string $namespace): static
+    {
+         $this->namespace = trim($namespace, '\\');
+
+         return $this;
+    }
+
+
+
+
+    /**
+     * @param string $path
+     * @return $this
+    */
+    public function path(string $path): static
+    {
+         $this->group->path($path);
+
+         return $this;
+    }
+
+
+
+    /**
+     * @param string $module
+     *
+     * @return $this
+    */
+    public function module(string $module): static
+    {
+        $this->group->module($module);
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @return $this
+    */
+    public function name(string $name): static
+    {
+         $this->group->name($name);
+
+         return $this;
+    }
+
+
+
+
+    /**
+     * @param $middleware
+     * @return $this
+    */
+    public function middleware($middleware): static
+    {
+          $this->group->middlewares($middleware);
+
+          return $this;
+    }
+
 
 
 
@@ -177,8 +294,9 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-          $route = RouteFactory::createRoute($methods, $path, $action);
-          $route->domain($this->domain)
+          $route = RouteFactory::createRoute($methods, $path, $action, $this->group->getPrefixes());
+          $route->namespace($this->getNamespace())
+                ->domain($this->domain)
                 ->wheres($this->patterns);
 
           return $route;
@@ -345,5 +463,29 @@ class Router implements RouterInterface
         }
 
         return $route->uri($parameters);
+    }
+
+
+
+    public function getNamespace()
+    {
+         return $this->namespace;
+    }
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param string $middleware
+     *
+     * @return $this
+    */
+    private function adMiddleware(string $name, string $middleware): static
+    {
+         $this->middlewares[$name] = $middleware;
+
+         return $this;
     }
 }
