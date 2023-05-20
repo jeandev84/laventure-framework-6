@@ -3,6 +3,7 @@ namespace Laventure\Component\Routing\Route;
 
 
 use ArrayAccess;
+use Closure;
 use Laventure\Component\Routing\Route\Contract\MatchedRouteInterface;
 use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
 
@@ -37,6 +38,21 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      * @var array
      */
     protected $methods = [];
+
+
+
+
+    /**
+     * Route params prefixes
+     *
+     * @var array
+    */
+    protected $prefixes = [
+        'path'   => '',
+        'module' => '',
+        'name'   => ''
+    ];
+
 
 
 
@@ -138,23 +154,37 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     protected $options = [];
 
 
-
-
-
     /**
      * @param $methods
      *
      * @param $path
      *
      * @param $action
+     *
+     * @param array $prefixes
     */
-    public function __construct($methods, $path, $action)
+    public function __construct($methods, $path, $action, array $prefixes = [])
     {
          $this->methods($methods);
          $this->path($path);
-         $this->action($action);
+         $this->callback($action);
+         $this->prefixes($prefixes);
     }
 
+
+
+
+    /**
+     * @param array $prefixes
+     *
+     * @return $this
+    */
+    public function prefixes(array $prefixes): static
+    {
+        $this->prefixes = array_merge($this->prefixes, $prefixes);
+
+        return $this;
+    }
 
 
 
@@ -179,12 +209,13 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     /**
      * Set route methods
      *
-     * @param array $methods
+     * @param array|string $methods
+     *
      * @return $this
     */
-    public function methods(array $methods): static
+    public function methods(array|string $methods): static
     {
-        $this->methods = $methods;
+        $this->methods = $this->resolveMethods($methods);
 
         return $this;
     }
@@ -202,12 +233,13 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function path(string $path): static
     {
-        $this->path = $path ?: '/';
+        $this->path = $this->resolvePath($path);
 
         $this->pattern($this->path);
 
         return $this;
     }
+
 
 
 
@@ -229,23 +261,16 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 
 
 
-
     /**
-     * Set route action
-     *
-     * @param mixed $action
+     * @param callable $callback
      *
      * @return $this
     */
-    public function action($action): static
+    public function callback($callback): static
     {
-        if (is_array($action) and count($action) === 2) {
-            $this->controller($action[0], $action[1]);
-        }
+         $this->callback = $callback;
 
-        $this->callback = $action;
-
-        return $this;
+         return $this;
     }
 
 
@@ -373,11 +398,31 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function options(array $options): static
     {
-        $this->options = array_merge($this->options, $options);
+        foreach ($options as $name => $value) {
+             $this->option($name, $value);
+        }
 
         return $this;
     }
 
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param $value
+     *
+     * @return $this
+    */
+    public function option(string $name, $value): static
+    {
+        $this->options[$name] = $value;
+
+        return $this;
+    }
 
 
 
@@ -392,9 +437,11 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      *
      * @return $this
     */
-    public function controller(string $class, string $action): static
+    public function controller(string $class, string $action = '__invoke'): static
     {
           $this->controller = compact('class', 'action');
+
+          $this->callback([$class, $action]);
 
           return $this;
     }
@@ -436,7 +483,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function getMethodsAsString(string $separator = '|'): string
     {
-         return join("|", $this->methods);
+         return join($separator, $this->methods);
     }
 
 
@@ -526,6 +573,39 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     {
         return $this->options;
     }
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param $default
+     *
+     * @return mixed|null
+    */
+    public function getOption(string $name, $default = null): mixed
+    {
+         return $this->options[$name] ?? $default;
+    }
+
+
+
+    /**
+     * Return prefixed param
+     *
+     * @param string $name
+     *
+     * @param $default
+     *
+     * @return mixed|string|null
+    */
+    public function prefixed(string $name, $default = null): mixed
+    {
+        return $this->prefixes[$name] ?? $default;
+    }
+
+
 
 
 
@@ -804,7 +884,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     private function replacePlaceholders(string $name, string $pattern): string
     {
-         $pattern  = $this->resolvePattern($pattern);
+         $pattern = $this->resolvePattern($pattern);
          $search  = $this->getNamePlaceholders($name);
          $replace = $this->getReplacedPatterns(sprintf('(?P<%s>%s)', $name, $pattern));
 
@@ -822,5 +902,53 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     private function normalizePattern(string $pattern): string
     {
         return '/'. trim($pattern, '\\/');
+    }
+
+
+
+
+    /**
+     * @param string $path
+     *
+     * @return string
+    */
+    private function resolvePath(string $path): string
+    {
+        if ($path === '') { return '/'; }
+
+        if($prefix = $this->prefixed('path')) {
+            $path = sprintf('%s/%s', $prefix, ltrim($path, '/'));
+        }
+
+        return $path;
+    }
+
+
+
+    /**
+     * @param string $name
+     *
+     * @return string
+    */
+    private function resolveName(string $name): string
+    {
+        return $this->prefixed('name') . $name;
+    }
+
+
+
+
+
+    /**
+     * @param $methods
+     * @return array
+    */
+    private function resolveMethods($methods): array
+    {
+        if (is_string($methods)) {
+            $methods = explode('|', $methods);
+        }
+
+        return $methods;
     }
 }

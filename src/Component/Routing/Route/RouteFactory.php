@@ -15,15 +15,15 @@ namespace Laventure\Component\Routing\Route;
 class RouteFactory
 {
      /**
-      * @param array $methods
+      * @param array|string $methods
       *
       * @param string $path
       *
-      * @param $action
+      * @param mixed $action
       *
       * @return Route
      */
-     public static function createRoute(array $methods, string $path, $action): Route
+     public static function createRoute($methods, $path, $action): Route
      {
           return new Route($methods, $path, $action);
      }

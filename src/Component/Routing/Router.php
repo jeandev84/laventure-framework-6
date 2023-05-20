@@ -168,14 +168,11 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-          $methods = $this->resolveMethods($methods);
-
           $route = RouteFactory::createRoute($methods, $path, $action);
-
           $route->domain($this->domain)
                 ->wheres($this->patterns);
 
-          return $route;
+          return $this->resolveRoute($route);
     }
 
 
@@ -340,17 +337,37 @@ class Router implements RouterInterface
 
 
 
+    /**
+     * @param string $path
+     *
+     * @return string
+    */
+    protected function resolvePath(string $path): string
+    {
+         return $path;
+    }
+
+
 
 
     /**
-     * Resolve methods
+     * @param Route $route
      *
-     * @param string $methods
-     *
-     * @return string[]
+     * @return Route
     */
-    protected function resolveMethods($methods): array
+    public function resolveRoute(Route $route): Route
     {
-         return explode("|", $methods);
+        $callback = $route->getCallback();
+
+        if (is_array($callback) && count($callback) === 2) {
+            list($controller, $action) = array_values($callback);
+            $route->controller($controller, $action);
+        } elseif (is_string($callback)) {
+            if (class_exists($callback)) {
+                $route->controller($callback);
+            }
+        }
+
+        return $route;
     }
 }
