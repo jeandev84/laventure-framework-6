@@ -743,22 +743,14 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
 
-    private function resolveMiddlewares(array $middlewares)
+
+    /**
+     * @param array $middlewares
+     *
+     * @return array
+    */
+    private function resolveMiddlewares(array $middlewares): array
     {
-        /*
-        $filtered = [];
-
-        foreach ($middlewares as $middleware) {
-            if (array_key_exists($middleware, Middleware::MAP)) {
-                $filtered[] = Middleware::MAP[$middleware];
-            } else {
-                $filtered[] = $middleware;
-            }
-        }
-
-        return $filtered;
-        */
-
         return array_map(function ($middleware) {
             if (array_key_exists($middleware, Middleware::$stack)) {
                 return Middleware::$stack[$middleware];
