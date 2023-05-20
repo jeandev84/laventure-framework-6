@@ -1,0 +1,12 @@
+### Laventure Framework ###
+.idea
+vendor
+public
+app
+bootstrap
+templates
+demo
+cache
+config
+.env
+.gitignore
