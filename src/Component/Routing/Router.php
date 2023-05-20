@@ -126,7 +126,7 @@ class Router implements RouterInterface
     public function middlewares(array $middlewares): static
     {
          foreach ($middlewares as $name => $middleware) {
-             $this->adMiddleware($name, $middleware);
+             $this->addMiddleware($name, $middleware);
          }
 
          return $this;
@@ -294,12 +294,11 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-          $route = RouteFactory::route($methods, $path, $action, $this->group->getPrefixes());
-          $route->namespace($this->getNamespace())
-                ->domain($this->domain)
-                ->wheres($this->patterns);
-
-          return $route;
+          return RouteFactory::route($methods, $this->resolvePath($path), $this->resolveAction($action))
+                            ->domain($this->domain)
+                            ->wheres($this->patterns)
+                            ->name($this->group->getName())
+                            ->middleware($this->group->getMiddlewares());
     }
 
 
@@ -419,7 +418,7 @@ class Router implements RouterInterface
     */
     public function group(array $prefixes, Closure $routes): static
     {
-         $this->group = RouteFactory::group($this->group->getPrefixes(), $routes);
+         $this->group = RouteFactory::group([], $routes);
          $this->group->prefixes($prefixes);
          $this->collection->addGroup($this->group->map($this));
 
@@ -481,15 +480,6 @@ class Router implements RouterInterface
     }
 
 
-
-    public function getNamespace()
-    {
-         return $this->namespace;
-    }
-
-
-
-
     /**
      * @param string $name
      *
@@ -497,10 +487,85 @@ class Router implements RouterInterface
      *
      * @return $this
     */
-    private function adMiddleware(string $name, string $middleware): static
+    private function addMiddleware(string $name, string $middleware): static
     {
          $this->middlewares[$name] = $middleware;
 
          return $this;
+    }
+
+
+
+
+    /**
+     * @return string
+     */
+    public function getNamespace(): string
+    {
+        if (! $this->namespace) {
+            return '';
+        }
+
+        if ($module = $this->group->getModule()) {
+            $this->namespace .= sprintf('\\%s', $module);
+        }
+
+        return $this->namespace;
+    }
+
+
+
+
+
+    /**
+     * @param string $path
+     * @return string
+    */
+    protected function resolvePath(string $path): string
+    {
+        if ($prefix = $this->group->getPath()) {
+            $path = sprintf('%s/%s', $prefix, ltrim($path, '/'));
+        }
+
+        return $path;
+    }
+
+
+
+
+    /**
+     * @param $callback
+     *
+     * @return mixed
+    */
+    protected function resolveAction($callback)
+    {
+         if (is_array($callback)) {
+
+             if (empty($callback[0])) {
+                 return $callback;
+             }
+
+             $controller = $this->resolveController($callback[0]);
+             return [$controller, (string)$callback[1] ?? '__invoke'];
+         }
+
+         return $callback;
+    }
+
+
+
+
+    /**
+     * @param string $controller
+     *
+     * @return string
+    */
+    private function resolveController(string $controller): string
+    {
+        $position   = strripos($controller, '\\');
+        $controller = substr($controller, $position + 1);
+
+        return sprintf('%s\\%s', $this->getNamespace(), $controller);
     }
 }

@@ -140,7 +140,7 @@ class RouteGroup implements RouteGroupInterface
      */
     public function getPath(): string
     {
-        return join('/', $this->path);
+        return trim(join('/', $this->path), '\\/');
     }
 
 
@@ -154,7 +154,7 @@ class RouteGroup implements RouteGroupInterface
      */
     public function module(string $module): self
     {
-        $this->module[] = trim($module, '\\');
+        $this->module[] = rtrim($module, '\\');
 
         return $this;
     }
@@ -167,7 +167,9 @@ class RouteGroup implements RouteGroupInterface
     */
     public function getModule(): string
     {
-        return join('\\', $this->module);
+        $module = join('\\', $this->module);
+
+        return  ltrim($module, "\\");
     }
 
 

@@ -24,14 +24,14 @@ class RouteFactory
        *
        * @param mixed $action
        *
-       * @param array $prefixes
-       *
        * @return Route
      */
-     public static function route($methods, $path, $action, array $prefixes = []): Route
+     public static function route($methods, $path, $action): Route
      {
-          return new Route($methods, $path, $action, $prefixes);
+          return new Route($methods, $path, $action);
      }
+
+
 
 
     /**
