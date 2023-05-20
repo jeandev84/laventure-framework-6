@@ -172,7 +172,7 @@ class Router implements RouterInterface
      * @param string $path
      * @return $this
     */
-    public function path(string $path): static
+    public function prefix(string $path): static
     {
          $this->group->path($path);
 
