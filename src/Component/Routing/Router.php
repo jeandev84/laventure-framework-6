@@ -8,9 +8,9 @@ use Laventure\Component\Routing\Route\Collection\RouteCollection;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcher;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcherInterface;
 use Laventure\Component\Routing\Route\Exception\RouteNotFoundException;
-use Laventure\Component\Routing\Route\Group\RouteGroup;
 use Laventure\Component\Routing\Route\Route;
 use Laventure\Component\Routing\Route\RouteFactory;
+use Laventure\Component\Routing\Route\RouteGroup;
 
 
 /**
@@ -108,7 +108,7 @@ class Router implements RouterInterface
     public function __construct(RouteDispatcherInterface $dispatcher = null)
     {
          $this->collection = new RouteCollection();
-         $this->group      = RouteFactory::group();
+         $this->group      = new RouteGroup();
          $this->dispatcher = $dispatcher ?: new RouteDispatcher();
     }
 
@@ -418,12 +418,14 @@ class Router implements RouterInterface
     */
     public function group(array $prefixes, Closure $routes): static
     {
-         $this->group = RouteFactory::group([], $routes);
-         $this->group->prefixes($prefixes);
-         $this->collection->addGroup($this->group->map($this));
+         $group    = RouteFactory::group($this->group->toArray(), $routes);
+         $group->prefixes($prefixes);
+         $this->group = $group;
+         $this->group->map($this);
 
          return $this;
     }
+
 
 
 
@@ -503,7 +505,7 @@ class Router implements RouterInterface
     public function getNamespace(): string
     {
         if (! $this->namespace) {
-            return '';
+             throw new \InvalidArgumentException("Unable namespace: ". __FILE__);
         }
 
         if ($module = $this->group->getModule()) {
@@ -540,14 +542,9 @@ class Router implements RouterInterface
     */
     protected function resolveAction($callback)
     {
-         if (is_array($callback)) {
-
-             if (empty($callback[0])) {
-                 return $callback;
-             }
-
-             $controller = $this->resolveController($callback[0]);
-             return [$controller, (string)$callback[1] ?? '__invoke'];
+         if (is_string($callback) && stripos($callback, '@') === false) {
+              [$controller, $action] = explode('@', $callback, 2);
+              return [$this->resolveController($controller), $action];
          }
 
          return $callback;
@@ -563,9 +560,6 @@ class Router implements RouterInterface
     */
     private function resolveController(string $controller): string
     {
-        $position   = strripos($controller, '\\');
-        $controller = substr($controller, $position + 1);
-
         return sprintf('%s\\%s', $this->getNamespace(), $controller);
     }
 }

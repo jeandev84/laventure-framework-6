@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing\Route\Group;
+namespace Laventure\Component\Routing\Route;
 
 
 use Closure;
@@ -14,7 +14,7 @@ use Laventure\Component\Routing\Router;
  *
  * @package Laventure\Component\Routing\Route\Group
 */
-class RouteGroup implements RouteGroupInterface
+class RouteGroup
 {
 
 
@@ -57,13 +57,14 @@ class RouteGroup implements RouteGroupInterface
     protected $routes;
 
 
+
+
     /**
-     * RouteGroup constructor
+     * @param array $prefixes
      *
-     * @param $prefixes
-     * @param $routes
+     * @param Closure|null $routes
     */
-    public function __construct($prefixes = [], $routes = null)
+    public function __construct(array $prefixes = [], Closure $routes = null)
     {
          $this->prefixes($prefixes);
          $this->routes($routes);
@@ -109,11 +110,13 @@ class RouteGroup implements RouteGroupInterface
      /**
       * @param Router $router
       *
-      * @return static
+      * @return $this
     */
     public function map(Router $router): static
     {
          call_user_func($this->routes, $router);
+
+         $this->rewind();
 
          return $this;
     }

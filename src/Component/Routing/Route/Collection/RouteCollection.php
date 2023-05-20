@@ -1,9 +1,6 @@
 <?php
 namespace Laventure\Component\Routing\Route\Collection;
 
-use Laventure\Component\Routing\Route\Collector;
-use Laventure\Component\Routing\Route\Group\RouteGroup;
-use Laventure\Component\Routing\Route\NamedRouteCollector;
 use Laventure\Component\Routing\Route\Route;
 
 /**
@@ -48,14 +45,6 @@ class RouteCollection implements RouteCollectionInterface
 
 
       /**
-       * @var RouteGroup[]
-      */
-      protected $groups = [];
-
-
-
-
-      /**
        * @var Route[]
       */
       public static $namedRoutes = [];
@@ -85,23 +74,6 @@ class RouteCollection implements RouteCollectionInterface
 
 
       /**
-       * @param RouteGroup $group
-       *
-       * @return RouteGroup
-      */
-      public function addGroup(RouteGroup $group): RouteGroup
-      {
-          $this->groups[] = $group;
-
-          $group->rewind();
-
-          return $group;
-      }
-
-
-
-
-      /**
        * Returns all routes
        *
        * @return Route[]
@@ -111,16 +83,6 @@ class RouteCollection implements RouteCollectionInterface
           return $this->routes;
       }
 
-
-
-
-     /**
-      * @return RouteGroup[]
-     */
-     public function getGroups(): array
-     {
-          return $this->groups;
-     }
 
 
 

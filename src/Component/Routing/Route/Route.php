@@ -4,7 +4,6 @@ namespace Laventure\Component\Routing\Route;
 
 use ArrayAccess;
 use Laventure\Component\Routing\Route\Collection\RouteCollection;
-use Laventure\Component\Routing\Route\Contract\MatchedRouteInterface;
 use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
 
 
@@ -17,7 +16,7 @@ use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
  *
  * @package Laventure\Component\Routing\Route
 */
-class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
+class Route implements NamedRouteInterface, ArrayAccess
 {
 
 

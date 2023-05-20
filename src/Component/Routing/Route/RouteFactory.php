@@ -4,7 +4,7 @@ namespace Laventure\Component\Routing\Route;
 
 
 use Closure;
-use Laventure\Component\Routing\Route\Group\RouteGroup;
+use Laventure\Component\Routing\Route\Collection\RouteCollection;
 
 /**
  * @RouteFactory
@@ -34,10 +34,11 @@ class RouteFactory
 
 
 
-    /**
-     * @param array $prefixes
-     * @param Closure|null $routes
-     * @return RouteGroup
+
+     /**
+      * @param array $prefixes
+      * @param Closure|null $routes
+      * @return RouteGroup
      */
      public static function group(array $prefixes = [], Closure $routes = null): RouteGroup
      {

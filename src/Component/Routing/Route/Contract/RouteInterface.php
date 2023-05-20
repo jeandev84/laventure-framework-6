@@ -96,4 +96,20 @@ interface RouteInterface
       * @return array
      */
      public function getOptions(): array;
+
+
+
+
+
+     /**
+      * Determine if the current request matches route
+      *
+      *
+      * @param string $requestMethod
+      *
+      * @param string $requestPath
+      *
+      * @return bool
+     */
+     public function match(string $requestMethod, string $requestPath): bool;
 }
