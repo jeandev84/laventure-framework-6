@@ -523,7 +523,7 @@ class Router implements RouterInterface
      * @param string $path
      * @return string
     */
-    protected function resolvePath(string $path): string
+    private function resolvePath(string $path): string
     {
         if ($prefix = $this->group->getPath()) {
             $path = sprintf('%s/%s', $prefix, ltrim($path, '/'));
@@ -540,7 +540,7 @@ class Router implements RouterInterface
      *
      * @return mixed
     */
-    protected function resolveAction($callback)
+    private function resolveAction($callback)
     {
          if (is_string($callback) && stripos($callback, '@') === false) {
               [$controller, $action] = explode('@', $callback, 2);
