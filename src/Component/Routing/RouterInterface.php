@@ -1,6 +1,17 @@
 <?php
 namespace Laventure\Component\Routing;
 
+
+
+/**
+ * @RouterInterface
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Routing
+*/
 interface RouterInterface
 {
 
@@ -22,11 +33,11 @@ interface RouterInterface
       *
       * @param string $requestMethod
       *
-      * @param string $requestUri
+      * @param string $requestPath
       *
-      * @return bool
+      * @return mixed
      */
-     public function match(string $requestMethod, string $requestUri): bool;
+     public function match(string $requestMethod, string $requestPath);
 
 
 

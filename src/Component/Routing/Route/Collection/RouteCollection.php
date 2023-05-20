@@ -1,11 +1,17 @@
 <?php
-namespace Laventure\Component\Routing\Collection;
+namespace Laventure\Component\Routing\Route\Collection;
 
-use Laventure\Component\Routing\Collection\Contract\RouteCollectionInterface;
 use Laventure\Component\Routing\Route\Route;
-use Laventure\Component\Routing\Route\RouteFactory;
 
-
+/**
+ * @RouteCollection
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Routing\Route\Collection
+*/
 class RouteCollection implements RouteCollectionInterface
 {
 
@@ -109,22 +115,9 @@ class RouteCollection implements RouteCollectionInterface
 
 
 
-      /**
-       * Returns only named routes
-       *
-       * @return Route[]
-      */
-      public function getNamedRoutes(): array
-      {
-          return $this->namedRoutes;
-      }
-
-
-
-
 
       /**
-       * Returns routes by name
+       * Returns routes by name [ named routes ]
        *
        * @return Route[]
       */
@@ -132,7 +125,7 @@ class RouteCollection implements RouteCollectionInterface
       {
            foreach ($this->getRoutes() as $route) {
                $name = $route->getName();
-               if ($route->hasName() && ! isset($this->namedRoutes[$name])) {
+               if ($route->hasName() && $this->isNotAlreadyNamed($name)) {
                    $this->namedRoutes[$name] = $route;
                }
            }
@@ -149,7 +142,19 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function hasRouteNamed(string $name): string
       {
-           return isset($this->getNamedRoutes()[$name]);
+           return isset($this->getRoutesByName()[$name]);
+      }
+
+
+
+      /**
+       * @param string $name
+       *
+       * @return bool
+      */
+      private function isNotAlreadyNamed(string $name): bool
+      {
+           return ! isset($this->namedRoutes);
       }
 }
 

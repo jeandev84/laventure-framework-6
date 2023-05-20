@@ -4,7 +4,6 @@ namespace Laventure\Component\Routing\Route;
 
 use Laventure\Component\Routing\Route\Contract\MatchedRouteInterface;
 use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
-use Laventure\Component\Routing\Route\Contract\RouteInterface;
 
 
 /**
@@ -233,17 +232,17 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
     /**
      * Set route action
      *
-     * @param callable $handler
+     * @param mixed $action
      *
      * @return $this
     */
-    public function action($handler): static
+    public function action($action): static
     {
-        if (is_array($handler) and count($handler) === 2) {
-            $this->controller($handler[0], $handler[1]);
+        if (is_array($action) and count($action) === 2) {
+            $this->controller($action[0], $action[1]);
         }
 
-        $this->handler = $handler;
+        $this->handler = $action;
 
         return $this;
     }
@@ -286,13 +285,27 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
 
 
 
+    /**
+     * @param array $patterns
+     *
+     * @return $this
+    */
+    public function wheres(array $patterns): static
+    {
+        foreach ($patterns as $name => $pattern) {
+             $this->where($name, $pattern);
+        }
+
+        return $this;
+    }
+
 
 
 
     /**
-     * Set controller and action
+     * Set controller class and action
      *
-     * @param string $controller
+     * @param string $class
      *
      * @param string $action
      *
@@ -418,12 +431,51 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
 
 
 
+
+    /**
+     * Determine if the given request method match route
+     *
+     * @param string $requestMethod
+     *
+     * @return bool
+    */
+    public function matchRequestMethod(string $requestMethod): bool
+    {
+         return in_array($requestMethod, $this->methods);
+    }
+
+
+
+
+    /**
+     * @param string $requestPath
+     *
+     * @return bool
+    */
+    public function matchRequestPath(string $requestPath): bool
+    {
+          $pattern = "/^$this->pattern$/i";
+
+          if (preg_match($pattern, $requestPath, $matches)) {
+
+              $this->params = $matches;
+
+              return true;
+          }
+
+          return false;
+    }
+
+
+
+
+
     /**
      * @inheritDoc
     */
-    public function match(string $requestMethod, string $requestUri): bool
+    public function match(string $requestMethod, string $requestPath): bool
     {
-
+          return $this->matchRequestMethod($requestMethod) && $this->matchRequestPath($requestPath);
     }
 
 
@@ -448,6 +500,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
     {
          return ! empty($this->controller['class']);
     }
+
 
 
 

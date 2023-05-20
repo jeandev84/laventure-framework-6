@@ -21,9 +21,9 @@ interface MatchedRouteInterface
      *
      * @param string $requestMethod
      *
-     * @param string $requestUri
+     * @param string $requestPath
      *
      * @return bool
     */
-    public function match(string $requestMethod, string $requestUri): bool;
+    public function match(string $requestMethod, string $requestPath): bool;
 }
