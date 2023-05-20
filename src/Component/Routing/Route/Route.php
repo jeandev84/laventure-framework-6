@@ -442,7 +442,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      *
      * @return $this
     */
-    public function controller(string $class, string $action = '__invoke'): static
+    public function controller(string $class, string $action): static
     {
           $this->controller = compact('class', 'action');
 
@@ -739,13 +739,13 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     /**
      * Generate route from given params
      *
-     * @param array $params
+     * @param array $parameters
      *
      * @return string
     */
-    public function generatePath(array $params = []): string
+    public function generateURI(array $parameters = []): string
     {
-
+         return $this->getPath();
     }
 
 

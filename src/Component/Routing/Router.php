@@ -65,6 +65,14 @@ class Router implements RouterInterface
 
 
     /**
+     * @var array
+    */
+    protected $prefixes = [];
+
+
+
+
+    /**
      * @var
     */
     protected $cacheRoutes;
@@ -82,6 +90,7 @@ class Router implements RouterInterface
          $this->collection = new RouteCollection();
          $this->dispatcher = $dispatcher ?: new RouteDispatcher();
     }
+
 
 
 
@@ -329,8 +338,12 @@ class Router implements RouterInterface
     /**
      * @inheritDoc
     */
-    public function generate(string $name, array $parameters = [])
+    public function generate(string $name, array $parameters = []): ?string
     {
+        if (! $route = $this->collection->getNamedRoute($name)) {
+             return null;
+        }
 
+        return $route->generateURI($parameters);
     }
 }

@@ -133,10 +133,26 @@ class RouteCollection implements RouteCollectionInterface
        * @param string $name
        * @return string
       */
-      public function hasRouteNamed(string $name): string
+      public function hasNamedRoute(string $name): string
       {
            return isset($this->getRoutesByName()[$name]);
       }
+
+
+
+
+
+      /**
+       * @param string $name
+       *
+       * @return Route|null
+      */
+      public function getNamedRoute(string $name): ?Route
+      {
+            return $this->getRoutesByName()[$name] ?? null;
+      }
+
+
 
 
 
