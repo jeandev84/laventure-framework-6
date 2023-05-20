@@ -89,18 +89,6 @@ class Router implements RouterInterface
 
 
 
-
-    /**
-     * Route middlewares
-     *
-     * @var array
-    */
-    protected $middlewares = [];
-
-
-
-
-
     /**
      * Router construct
      *
@@ -129,10 +117,9 @@ class Router implements RouterInterface
          foreach ($middlewares as $name => $middleware) {
              $this->addMiddleware($name, $middleware);
          }
+
          return $this;
     }
-
-
 
 
 
@@ -494,8 +481,6 @@ class Router implements RouterInterface
     */
     private function addMiddleware(string $name, string $middleware): static
     {
-         $this->middlewares[$name] = $middleware;
-
          Middleware::$stack[$name] = $middleware;
 
          return $this;
