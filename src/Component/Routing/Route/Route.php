@@ -198,7 +198,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function domain(string $domain): static
     {
-        $this->domain = $domain;
+        $this->domain = rtrim($domain, '\\/');
 
         return $this;
     }
@@ -275,6 +275,9 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 
 
 
+
+
+
     /**
      * @param string $name
      *
@@ -282,6 +285,8 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function name(string $name): static
     {
+         $name = $this->resolveName($name);
+
          $this->name .= $name;
 
          return $this;
@@ -638,11 +643,16 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     public function matchRequestPath(string $requestPath): bool
     {
           $pattern =  $this->getPatternExpression();
-          $path    =  $this->resolveURL($requestPath);
+          $path    =  $this->resolveRequestPath($requestPath);
 
           if (preg_match($pattern, $path, $matches)) {
               $this->params = $this->resolveParams($matches);
-              $this->options(compact('requestPath', 'matches'));
+              $this->options([
+                  'url'         => sprintf('%s%s', $this->domain, $requestPath),
+                  'requestPath' => $requestPath,
+                  'matches'     => $matches,
+              ]);
+
               return true;
           }
 
@@ -722,9 +732,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
             return false;
         }
 
-        $params = array_merge([array_values($this->params), array_values($params)]);
-
-        return call_user_func_array($this->getCallback(), $params);
+        return call_user_func_array($this->getCallback(), $this->getDependencies($params));
     }
 
 
@@ -744,53 +752,15 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 
 
 
-    /**
-     * @inheritDoc
-     */
-    public function offsetExists(mixed $offset)
-    {
-        return property_exists($this, $offset);
-    }
-
-
 
     /**
-     * @inheritDoc
-     */
-    public function offsetGet(mixed $offset)
-    {
-        if (! $this->offsetExists($offset)) {
-            return false;
-        }
-
-        return $this->{$offset};
-    }
-
-
-
-
-    /**
-     * @inheritDoc
+     * @return array
     */
-    public function offsetSet(mixed $offset, mixed $value)
+    public function getParamsValues(): array
     {
-        if ($this->offsetExists($offset)) {
-            $this->{$offset} = $value;
-        }
+         return array_values($this->getParams());
     }
 
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function offsetUnset(mixed $offset)
-    {
-        if ($this->offsetExists($offset)) {
-            unset($this->{$offset});
-        }
-    }
 
 
 
@@ -811,7 +781,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      *
      * @return string
     */
-    private function resolveURL(string $path): string
+    private function resolveRequestPath(string $path): string
     {
         return '/'. parse_url(trim($path, '\\/'), PHP_URL_PATH);
     }
@@ -826,9 +796,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     private function resolveParams(array $matches): array
     {
         return array_filter($matches, function ($key) {
-
             return ! is_numeric($key);
-
         }, ARRAY_FILTER_USE_KEY);
     }
 
@@ -916,8 +884,10 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     {
         if ($path === '') { return '/'; }
 
+        $path = ltrim($path, '/');
+
         if($prefix = $this->prefixed('path')) {
-            $path = sprintf('%s/%s', $prefix, ltrim($path, '/'));
+            $path = sprintf('%s/%s', $prefix, $path);
         }
 
         return $path;
@@ -940,15 +910,81 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 
 
     /**
-     * @param $methods
+     * @param array|string $methods
+     *
      * @return array
     */
-    private function resolveMethods($methods): array
+    private function resolveMethods(array|string $methods): array
     {
         if (is_string($methods)) {
             $methods = explode('|', $methods);
         }
 
         return $methods;
+    }
+
+
+
+
+    /**
+     * @param array $params
+     * @return array
+    */
+    private function getDependencies(array $params): array
+    {
+        return array_merge([$this->getParamsValues(), array_values($params)]);
+    }
+
+
+
+
+
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetExists(mixed $offset)
+    {
+        return property_exists($this, $offset);
+    }
+
+
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetGet(mixed $offset)
+    {
+        if (! $this->offsetExists($offset)) {
+            return false;
+        }
+
+        return $this->{$offset};
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetSet(mixed $offset, mixed $value)
+    {
+        if ($this->offsetExists($offset)) {
+            $this->{$offset} = $value;
+        }
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetUnset(mixed $offset)
+    {
+        if ($this->offsetExists($offset)) {
+            unset($this->{$offset});
+        }
     }
 }
