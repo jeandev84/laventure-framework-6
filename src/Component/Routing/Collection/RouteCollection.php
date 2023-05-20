@@ -149,7 +149,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function hasRouteNamed(string $name): string
       {
-           return ! empty($this->getNamedRoutes()[$name]);
+           return isset($this->getNamedRoutes()[$name]);
       }
 }
 
