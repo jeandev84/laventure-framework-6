@@ -184,7 +184,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function methods(array $methods): static
     {
-        $this->methods[] = $methods;
+        $this->methods = $methods;
 
         return $this;
     }
@@ -436,7 +436,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function getMethodsAsString(string $separator = '|'): string
     {
-         return join($separator, $this->methods);
+         return join("|", $this->methods);
     }
 
 

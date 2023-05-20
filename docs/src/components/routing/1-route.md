@@ -3,7 +3,6 @@
 
 1. Example 
 ```php 
-
 # add closure action
 $route1 = (new \Laventure\Component\Routing\Route\Route(['GET'], '/', function () {
     return "Welcome to my home page";
