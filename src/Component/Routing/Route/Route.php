@@ -183,7 +183,9 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function prefixes(array $prefixes): static
     {
-        $this->prefixes = array_merge($this->prefixes, $this->resolvePrefixes($prefixes));
+        $prefixes = $this->resolvePrefixes($prefixes);
+
+        $this->prefixes = array_merge($this->prefixes, $prefixes);
 
         return $this;
     }
