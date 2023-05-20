@@ -179,7 +179,7 @@ class RouteCollection implements RouteCollectionInterface
        *
        * @return Route|null
       */
-      public function getRouteNamed(string $name): ?Route
+      public function getRouteByName(string $name): ?Route
       {
             return static::$namedRoutes[$name] ?? null;
       }

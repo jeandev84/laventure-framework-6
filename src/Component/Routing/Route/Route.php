@@ -745,7 +745,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      *
      * @return string
     */
-    public function generateURI(array $parameters = []): string
+    public function uri(array $parameters = []): string
     {
         return $this->getPath();
 

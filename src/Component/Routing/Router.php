@@ -340,10 +340,10 @@ class Router implements RouterInterface
     */
     public function generate(string $name, array $parameters = []): ?string
     {
-        if (! $route = $this->collection->getRouteNamed($name)) {
+        if (! $route = $this->collection->getRouteByName($name)) {
              return null;
         }
 
-        return $route->generateURI($parameters);
+        return $route->uri($parameters);
     }
 }
