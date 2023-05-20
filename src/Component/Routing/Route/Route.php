@@ -3,7 +3,6 @@ namespace Laventure\Component\Routing\Route;
 
 
 use ArrayAccess;
-use Laventure\Component\Routing\Route\Collection\RouteCollection;
 use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
 
 
