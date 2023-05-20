@@ -904,7 +904,6 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
         if (is_array($callback) && count($callback) === 2) {
             list($controller, $action) = array_values($callback);
             $this->controller($controller, $action);
-            return $callback;
         } elseif (is_string($callback) && class_exists($callback)) {
             $this->controller($callback);
         }
