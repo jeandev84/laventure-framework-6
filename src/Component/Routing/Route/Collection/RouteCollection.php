@@ -1,7 +1,9 @@
 <?php
 namespace Laventure\Component\Routing\Route\Collection;
 
+use Laventure\Component\Routing\Route\Collector;
 use Laventure\Component\Routing\Route\Group\RouteGroup;
+use Laventure\Component\Routing\Route\NamedRouteCollector;
 use Laventure\Component\Routing\Route\Route;
 
 /**
@@ -46,19 +48,17 @@ class RouteCollection implements RouteCollectionInterface
 
 
       /**
-       * store route by name
-       *
-       * @var Route[]
+       * @var RouteGroup[]
       */
-      protected $namedRoutes = [];
+      protected $groups = [];
 
 
 
 
       /**
-       * @var RouteGroup[]
+       * @var Route[]
       */
-      protected $groups = [];
+      public static $namedRoutes = [];
 
 
 
@@ -75,8 +75,6 @@ class RouteCollection implements RouteCollectionInterface
           if ($route->hasController()) {
               $this->controllers[$route->getController()][] = $route;
           }
-
-          $this->addName($route);
 
           $this->routes[] = $route;
 
@@ -157,11 +155,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function getRoutesByName(): array
       {
-           foreach ($this->getRoutes() as $route) {
-               $this->addName($route);
-           }
-
-           return $this->namedRoutes;
+           return static::$namedRoutes;
       }
 
 
@@ -173,7 +167,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function hasRouteNamed(string $name): string
       {
-           return isset($this->getRoutesByName()[$name]);
+           return isset(static::$namedRoutes[$name]);
       }
 
 
@@ -187,36 +181,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function getRouteNamed(string $name): ?Route
       {
-            return $this->getRoutesByName()[$name] ?? null;
+            return static::$namedRoutes[$name] ?? null;
       }
-
-
-
-
-
-      /**
-       * @param string $name
-       *
-       * @return bool
-      */
-      private function isNotAlreadyNamed(string $name): bool
-      {
-           return ! isset($this->namedRoutes[$name]);
-      }
-
-    /**
-     * @param Route $route
-     * @return $this
-     */
-    private function addName(Route $route): static
-    {
-        $name = $route->getName();
-
-        if ($route->hasName() && $this->isNotAlreadyNamed($name)) {
-            $this->namedRoutes[$name] = $route;
-        }
-
-        return $this;
-    }
 }
 
