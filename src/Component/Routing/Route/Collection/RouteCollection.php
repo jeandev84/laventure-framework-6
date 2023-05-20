@@ -1,6 +1,7 @@
 <?php
 namespace Laventure\Component\Routing\Route\Collection;
 
+use Laventure\Component\Routing\Route\Group\RouteGroup;
 use Laventure\Component\Routing\Route\Route;
 
 /**
@@ -54,6 +55,13 @@ class RouteCollection implements RouteCollectionInterface
 
 
 
+      /**
+       * @var RouteGroup[]
+      */
+      protected $groups = [];
+
+
+
 
       /**
        * @param Route $route
@@ -62,14 +70,34 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function addRoute(Route $route): Route
       {
-          $this->addMethods($route);
-          $this->addController($route);
+          $this->methods[$route->getMethodsAsString()][] = $route;
+
+          if ($route->hasController()) {
+              $this->controllers[$route->getController()][] = $route;
+          }
+
           $this->addName($route);
 
           $this->routes[] = $route;
 
           return $route;
       }
+
+
+
+
+      /**
+       * @param RouteGroup $group
+       *
+       * @return RouteGroup
+      */
+      public function addGroup(RouteGroup $group): RouteGroup
+      {
+          $this->groups[] = $group;
+
+          return $group;
+      }
+
 
 
 
@@ -83,6 +111,16 @@ class RouteCollection implements RouteCollectionInterface
           return $this->routes;
       }
 
+
+
+
+     /**
+      * @return RouteGroup[]
+     */
+     public function getGroups(): array
+     {
+          return $this->groups;
+     }
 
 
 
@@ -133,7 +171,7 @@ class RouteCollection implements RouteCollectionInterface
        * @param string $name
        * @return string
       */
-      public function hasNamedRoute(string $name): string
+      public function hasRouteNamed(string $name): string
       {
            return isset($this->getRoutesByName()[$name]);
       }
@@ -147,7 +185,7 @@ class RouteCollection implements RouteCollectionInterface
        *
        * @return Route|null
       */
-      public function getNamedRoute(string $name): ?Route
+      public function getRouteNamed(string $name): ?Route
       {
             return $this->getRoutesByName()[$name] ?? null;
       }
@@ -165,34 +203,6 @@ class RouteCollection implements RouteCollectionInterface
       {
            return ! isset($this->namedRoutes[$name]);
       }
-
-
-
-
-     /**
-      * @param Route $route
-      * @return $this
-     */
-     private function addMethods(Route $route): static
-     {
-         $methods = $route->getMethodsAsString();
-
-         $this->methods[$methods][] = $route;
-
-        return $this;
-    }
-
-
-
-    private function addController(Route $route): static
-    {
-        if ($route->hasController()) {
-            $this->controllers[$route->getController()][] = $route;
-        }
-
-        return $this;
-    }
-
 
     /**
      * @param Route $route

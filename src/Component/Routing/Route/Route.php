@@ -3,7 +3,6 @@ namespace Laventure\Component\Routing\Route;
 
 
 use ArrayAccess;
-use Closure;
 use Laventure\Component\Routing\Route\Contract\MatchedRouteInterface;
 use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
 
@@ -745,7 +744,21 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     public function generateURI(array $parameters = []): string
     {
-         return $this->getPath();
+        return $this->getPath();
+
+        /*
+        $path = $this->getPath();
+
+        $path = '/admin/{id}/{name}';
+        $r    = '/admin/1/something';
+
+        foreach ($parameters as $name => $value) {
+            $path = preg_replace($this->searchedPlaceholders($name), [$value, $value], $path);
+        }
+
+        # {id|name}, {value1, value2}
+        return $path;
+        */
     }
 
 
@@ -820,7 +833,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      *
      * @return string[]
     */
-    private function getNamePlaceholders(string $name): array
+    private function searchedPlaceholders(string $name): array
     {
          return ["#{{$name}}#", "#{{$name}.?}#"];
     }
@@ -833,7 +846,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      * @param string $pattern
      * @return string[]
     */
-    private function getReplacedPatterns(string $pattern): array
+    private function replacedPatterns(string $pattern): array
     {
         return [$pattern, '?'. $pattern .'?'];
     }
@@ -851,8 +864,8 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     private function replacePlaceholders(string $name, string $pattern): string
     {
          $pattern = $this->resolvePattern($pattern);
-         $search  = $this->getNamePlaceholders($name);
-         $replace = $this->getReplacedPatterns(sprintf('(?P<%s>%s)', $name, $pattern));
+         $search  = $this->searchedPlaceholders($name);
+         $replace = $this->replacedPatterns(sprintf('(?P<%s>%s)', $name, $pattern));
 
          return preg_replace($search, $replace, $this->pattern);
     }
