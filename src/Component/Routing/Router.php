@@ -418,7 +418,7 @@ class Router implements RouterInterface
     */
     public function group(array $prefixes, Closure $routes): static
     {
-         $group    = RouteFactory::group($this->group->toArray(), $routes);
+         $group = RouteFactory::group($this->group->toArray(), $routes);
          $group->prefixes($prefixes);
          $this->group = $group;
          $this->group->map($this);
