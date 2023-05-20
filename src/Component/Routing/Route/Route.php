@@ -257,7 +257,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     {
          $this->name .= $name;
 
-         RouteCollection::$namedRoutes[$this->name] = $this;
+         Mix::$namedRoutes[$this->name] = $this;
 
          return $this;
     }
@@ -752,8 +752,8 @@ class Route implements NamedRouteInterface, ArrayAccess
     private function resolveMiddlewares(array $middlewares): array
     {
         return array_map(function ($middleware) {
-            if (array_key_exists($middleware, Middleware::$stack)) {
-                return Middleware::$stack[$middleware];
+            if (array_key_exists($middleware, Mix::$middlewares)) {
+                return Mix::$middlewares[$middleware];
             } else {
                return $middleware;
             }

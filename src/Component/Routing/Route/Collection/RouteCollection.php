@@ -1,6 +1,7 @@
 <?php
 namespace Laventure\Component\Routing\Route\Collection;
 
+use Laventure\Component\Routing\Route\Mix;
 use Laventure\Component\Routing\Route\Route;
 
 /**
@@ -40,15 +41,6 @@ class RouteCollection implements RouteCollectionInterface
        * @var Route[]
       */
       protected $controllers = [];
-
-
-
-
-      /**
-       * @var Route[]
-      */
-      public static $namedRoutes = [];
-
 
 
 
@@ -119,7 +111,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function getRoutesByName(): array
       {
-           return static::$namedRoutes;
+           return Mix::$namedRoutes;
       }
 
 
@@ -131,7 +123,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function hasRouteNamed(string $name): string
       {
-           return isset(static::$namedRoutes[$name]);
+           return isset(Mix::$namedRoutes[$name]);
       }
 
 
@@ -145,7 +137,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function getRouteByName(string $name): ?Route
       {
-            return static::$namedRoutes[$name] ?? null;
+            return Mix::$namedRoutes[$name] ?? null;
       }
 }
 
