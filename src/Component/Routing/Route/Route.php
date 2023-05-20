@@ -901,11 +901,8 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     private function resolveCallback($callback): mixed
     {
-        if (is_array($callback) && count($callback) === 2) {
-            list($controller, $action) = array_values($callback);
-            $this->controller($controller, $action);
-        } elseif (is_string($callback) && class_exists($callback)) {
-            $this->controller($callback);
+        if (is_array($callback)) {
+            $this->controller((string)$callback[0] ?? '', (string)$callback[1] ?? '');
         }
 
         return $callback;
