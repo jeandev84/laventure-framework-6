@@ -2,6 +2,7 @@
 namespace Laventure\Component\Routing\Route;
 
 
+use ArrayAccess;
 use Laventure\Component\Routing\Route\Contract\MatchedRouteInterface;
 use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
 
@@ -15,7 +16,7 @@ use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
  *
  * @package Laventure\Component\Routing\Route
 */
-class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
+class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
 {
 
 
@@ -220,7 +221,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
     */
     public function pattern(string $pattern): static
     {
-        $this->pattern = $pattern;
+        $this->pattern = $this->normalizePattern($pattern);
 
         return $this;
     }
@@ -284,6 +285,66 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
 
 
 
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function whereNumber(string $name): self
+    {
+        return $this->where($name, '\d+');
+    }
+
+
+
+
+    /**
+     * @param string $name
+     * @return $this
+    */
+    public function whereText(string $name): self
+    {
+        return $this->where($name, '\w+');
+    }
+
+
+
+
+    /**
+     * @param string $name
+     * @return $this
+    */
+    public function whereAlphaNumeric(string $name): self
+    {
+        return $this->where($name, '[^a-z_\-0-9]');
+    }
+
+
+
+
+
+    /**
+     * @param string $name
+     * @return $this
+    */
+    public function whereSlug(string $name): self
+    {
+        return $this->where($name, '[a-z\-0-9]+');
+    }
+
+
+
+
+    /**
+     * @param string $name
+     * @return $this
+    */
+    public function anything(string $name): self
+    {
+        return $this->where($name, '.*');
+    }
+
+
+
 
     /**
      * @param array $patterns
@@ -302,6 +363,26 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
 
 
 
+
+    /**
+     * Route options
+     *
+     * @param array $options
+     *
+     * @return $this
+    */
+    public function options(array $options): static
+    {
+        $this->options = array_merge($this->options, $options);
+
+        return $this;
+    }
+
+
+
+
+
+
     /**
      * Set controller class and action
      *
@@ -316,6 +397,23 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
           $this->controller = compact('class', 'action');
 
           return $this;
+    }
+
+
+
+
+    /**
+     * Add middlewares
+     *
+     * @param $middlewares
+     *
+     * @return $this
+    */
+    public function middleware($middlewares): static
+    {
+        $this->middlewares = array_merge($this->middlewares, (array) $middlewares);
+
+        return $this;
     }
 
 
@@ -441,7 +539,12 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
     */
     public function matchRequestMethod(string $requestMethod): bool
     {
-         return in_array($requestMethod, $this->methods);
+         if(in_array($requestMethod, $this->methods)) {
+              $this->options(compact('requestMethod'));
+              return true;
+         }
+
+         return false;
     }
 
 
@@ -454,12 +557,12 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
     */
     public function matchRequestPath(string $requestPath): bool
     {
-          $pattern = "/^$this->pattern$/i";
+          $pattern =  $this->getPatternExpression();
+          $path    =  $this->resolveURL($requestPath);
 
-          if (preg_match($pattern, $requestPath, $matches)) {
-
-              $this->params = $matches;
-
+          if (preg_match($pattern, $path, $matches)) {
+              $this->params = $this->resolveParams($matches);
+              $this->options(compact('requestPath', 'matches'));
               return true;
           }
 
@@ -543,6 +646,19 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
 
 
 
+    /**
+     * Generate route from given params
+     *
+     * @param array $params
+     *
+     * @return string
+    */
+    public function generatePath(array $params = []): string
+    {
+
+    }
+
+
 
     /**
      * @inheritDoc
@@ -591,6 +707,47 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
             unset($this->{$offset});
         }
     }
+
+
+
+
+    /**
+     * @return string
+    */
+    private function getPatternExpression(): string
+    {
+        return "#^{$this->getPattern()}$#i";
+    }
+
+
+
+
+    /**
+     * @param string $path
+     *
+     * @return string
+    */
+    private function resolveURL(string $path): string
+    {
+        return '/'. parse_url(trim($path, '\\/'), PHP_URL_PATH);
+    }
+
+
+
+
+    /**
+     * @param array $matches
+     * @return array
+    */
+    private function resolveParams(array $matches): array
+    {
+        return array_filter($matches, function ($key) {
+
+            return ! is_numeric($key);
+
+        }, ARRAY_FILTER_USE_KEY);
+    }
+
 
 
 
@@ -648,5 +805,18 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, \ArrayAccess
          $replace = $this->getReplacedPatterns(sprintf('(?P<%s>%s)', $name, $pattern));
 
          return preg_replace($search, $replace, $this->pattern);
+    }
+
+
+
+
+    /**
+     * @param string $pattern
+     *
+     * @return string
+    */
+    private function normalizePattern(string $pattern): string
+    {
+        return '/'. trim($pattern, '\\/');
     }
 }
