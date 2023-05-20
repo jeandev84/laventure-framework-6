@@ -108,7 +108,7 @@ class Router implements RouterInterface
     public function __construct(RouteDispatcherInterface $dispatcher = null)
     {
          $this->collection = new RouteCollection();
-         $this->group      = RouteFactory::createRouteGroup();
+         $this->group      = RouteFactory::group();
          $this->dispatcher = $dispatcher ?: new RouteDispatcher();
     }
 
@@ -294,7 +294,7 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-          $route = RouteFactory::createRoute($methods, $path, $action, $this->group->getPrefixes());
+          $route = RouteFactory::route($methods, $path, $action, $this->group->getPrefixes());
           $route->namespace($this->getNamespace())
                 ->domain($this->domain)
                 ->wheres($this->patterns);
@@ -410,6 +410,21 @@ class Router implements RouterInterface
     }
 
 
+    /**
+     * @param array $prefixes
+     *
+     * @param Closure $routes
+     *
+     * @return $this
+    */
+    public function group(array $prefixes, Closure $routes): static
+    {
+         $this->group = RouteFactory::group($this->group->getPrefixes(), $routes);
+         $this->group->prefixes($prefixes);
+         $this->collection->addGroup($this->group->map($this));
+
+         return $this;
+    }
 
 
 

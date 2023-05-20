@@ -93,6 +93,8 @@ class RouteCollection implements RouteCollectionInterface
       {
           $this->groups[] = $group;
 
+          $group->rewind();
+
           return $group;
       }
 

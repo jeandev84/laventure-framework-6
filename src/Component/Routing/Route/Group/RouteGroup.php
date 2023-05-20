@@ -57,16 +57,16 @@ class RouteGroup implements RouteGroupInterface
     protected $routes;
 
 
-
-
     /**
      * RouteGroup constructor
      *
-     * @param array $prefixes
+     * @param $prefixes
+     * @param $routes
     */
-    public function __construct(array $prefixes = [])
+    public function __construct($prefixes = [], $routes = null)
     {
          $this->prefixes($prefixes);
+         $this->routes($routes);
     }
 
 
@@ -90,14 +90,12 @@ class RouteGroup implements RouteGroupInterface
     }
 
 
-
-
     /**
-     * @param Closure $routes
+     * @param Closure|null $routes
      *
      * @return $this
-    */
-    public function routes(Closure $routes): static
+     */
+    public function routes(?Closure $routes): static
     {
          $this->routes = $routes;
 
@@ -119,6 +117,7 @@ class RouteGroup implements RouteGroupInterface
 
          return $this;
     }
+
 
 
 
@@ -190,7 +189,7 @@ class RouteGroup implements RouteGroupInterface
 
     /**
      * @return string
-     */
+    */
     public function getName(): string
     {
         return join($this->name);
@@ -216,7 +215,7 @@ class RouteGroup implements RouteGroupInterface
 
     /**
      * @return array
-     */
+    */
     public function getMiddlewares(): array
     {
         return $this->middlewares;
@@ -250,6 +249,8 @@ class RouteGroup implements RouteGroupInterface
             'middlewares' => $this->getMiddlewares()
         ];
     }
+
+
 
 
 
