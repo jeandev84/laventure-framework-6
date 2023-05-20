@@ -52,7 +52,7 @@ interface RouteInterface
       *
       * @return mixed
      */
-     public function getHandler(): mixed;
+     public function getCallback(): mixed;
 
 
 

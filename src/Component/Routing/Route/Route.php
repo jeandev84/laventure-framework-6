@@ -68,7 +68,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      *
      * @var mixed
     */
-    protected $handler;
+    protected $callback;
 
 
 
@@ -243,7 +243,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
             $this->controller($action[0], $action[1]);
         }
 
-        $this->handler = $action;
+        $this->callback = $action;
 
         return $this;
     }
@@ -478,9 +478,9 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     /**
      * @inheritDoc
     */
-    public function getHandler(): mixed
+    public function getCallback(): mixed
     {
-        return $this->handler;
+        return $this->callback;
     }
 
 
@@ -623,24 +623,28 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
      *
      * @return bool
      */
-    public function callable(): bool
+    public function isCallable(): bool
     {
-        return is_callable($this->handler);
+        return is_callable($this->callback);
     }
 
 
 
 
     /**
-     * @return false|void
+     * @param array $params
+     *
+     * @return mixed
     */
-    public function call()
+    public function call(array $params = []): mixed
     {
-        if (! $this->callable()) {
+        if (! $this->isCallable()) {
             return false;
         }
 
-        call_user_func_array($this->getHandler(), array_values($this->params));
+        $params = array_merge([array_values($this->params), array_values($params)]);
+
+        return call_user_func_array($this->getCallback(), $params);
     }
 
 
@@ -716,7 +720,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     */
     private function getPatternExpression(): string
     {
-        return "#^{$this->getPattern()}$#i";
+        return "#^{$this->pattern}$#i";
     }
 
 
