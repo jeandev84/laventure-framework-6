@@ -62,13 +62,9 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function addRoute(Route $route): Route
       {
-          $this->methods[$route->getMethodsAsString()] = $route;
-
-          if ($route->hasController()) {
-              $this->controllers[$route->getController()] = $route;
-          } elseif ($route->hasName()) {
-              $this->namedRoutes[$route->getName()] = $route;
-          }
+          $this->addMethods($route);
+          $this->addController($route);
+          $this->addName($route);
 
           $this->routes[] = $route;
 
@@ -124,10 +120,7 @@ class RouteCollection implements RouteCollectionInterface
       public function getRoutesByName(): array
       {
            foreach ($this->getRoutes() as $route) {
-               $name = $route->getName();
-               if ($route->hasName() && $this->isNotAlreadyNamed($name)) {
-                   $this->namedRoutes[$name] = $route;
-               }
+               $this->addName($route);
            }
 
            return $this->namedRoutes;
@@ -154,7 +147,50 @@ class RouteCollection implements RouteCollectionInterface
       */
       private function isNotAlreadyNamed(string $name): bool
       {
-           return ! isset($this->namedRoutes);
+           return ! isset($this->namedRoutes[$name]);
       }
+
+
+
+
+     /**
+      * @param Route $route
+      * @return $this
+     */
+     private function addMethods(Route $route): static
+     {
+         $methods = $route->getMethodsAsString();
+
+         $this->methods[$methods][] = $route;
+
+        return $this;
+    }
+
+
+
+    private function addController(Route $route): static
+    {
+        if ($route->hasController()) {
+            $this->controllers[$route->getController()][] = $route;
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @param Route $route
+     * @return $this
+     */
+    private function addName(Route $route): static
+    {
+        $name = $route->getName();
+
+        if ($route->hasName() && $this->isNotAlreadyNamed($name)) {
+            $this->namedRoutes[$name] = $route;
+        }
+
+        return $this;
+    }
 }
 

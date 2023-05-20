@@ -107,7 +107,7 @@ class Router implements RouterInterface
     */
     public function patterns(array $patterns): static
     {
-        $this->patterns = $patterns;
+        $this->patterns = array_merge($this->patterns, $patterns);
 
         return $this;
     }
@@ -349,7 +349,7 @@ class Router implements RouterInterface
      *
      * @return string[]
     */
-    protected function resolveMethods(string $methods): array
+    protected function resolveMethods($methods): array
     {
          return explode("|", $methods);
     }

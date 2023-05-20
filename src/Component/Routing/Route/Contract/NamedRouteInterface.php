@@ -19,5 +19,5 @@ interface NamedRouteInterface extends RouteInterface
        *
        * @return string
       */
-      public function getName(): string;
+      public function getName();
 }

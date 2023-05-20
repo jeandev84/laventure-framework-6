@@ -467,7 +467,7 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     /**
      * @inheritDoc
     */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
