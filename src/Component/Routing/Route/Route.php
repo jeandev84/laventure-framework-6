@@ -287,9 +287,9 @@ class Route implements NamedRouteInterface, MatchedRouteInterface, ArrayAccess
     {
          $name = $this->resolveName($name);
 
-         $this->name .= $name;
-
-         RouteCollection::$namedRoutes[$this->name] = $this;
+         if($this->name .= $name) {
+             RouteCollection::$namedRoutes[$this->name] = $this;
+         }
 
          return $this;
     }
