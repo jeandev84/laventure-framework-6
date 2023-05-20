@@ -8,6 +8,7 @@ use Laventure\Component\Routing\Route\Collection\RouteCollection;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcher;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcherInterface;
 use Laventure\Component\Routing\Route\Exception\RouteNotFoundException;
+use Laventure\Component\Routing\Route\Middleware;
 use Laventure\Component\Routing\Route\Route;
 use Laventure\Component\Routing\Route\RouteFactory;
 use Laventure\Component\Routing\Route\RouteGroup;
@@ -128,7 +129,6 @@ class Router implements RouterInterface
          foreach ($middlewares as $name => $middleware) {
              $this->addMiddleware($name, $middleware);
          }
-
          return $this;
     }
 
@@ -495,6 +495,8 @@ class Router implements RouterInterface
     private function addMiddleware(string $name, string $middleware): static
     {
          $this->middlewares[$name] = $middleware;
+
+         Middleware::$stack[$name] = $middleware;
 
          return $this;
     }

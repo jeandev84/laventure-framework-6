@@ -429,9 +429,10 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @return $this
     */
-    public function middleware($middlewares): static
+    public function middleware(string|array $middlewares): static
     {
-        $this->middlewares = array_merge($this->middlewares, (array) $middlewares);
+        $middlewares = (array)$middlewares;
+        $this->middlewares = array_merge($this->middlewares, $this->resolveMiddlewares($middlewares));
 
         return $this;
     }
@@ -536,6 +537,8 @@ class Route implements NamedRouteInterface, ArrayAccess
     {
         return $this->middlewares;
     }
+
+
 
 
 
@@ -738,6 +741,32 @@ class Route implements NamedRouteInterface, ArrayAccess
         return "#^{$this->pattern}$#i";
     }
 
+
+
+    private function resolveMiddlewares(array $middlewares)
+    {
+        /*
+        $filtered = [];
+
+        foreach ($middlewares as $middleware) {
+            if (array_key_exists($middleware, Middleware::MAP)) {
+                $filtered[] = Middleware::MAP[$middleware];
+            } else {
+                $filtered[] = $middleware;
+            }
+        }
+
+        return $filtered;
+        */
+
+        return array_map(function ($middleware) {
+            if (array_key_exists($middleware, Middleware::$stack)) {
+                return Middleware::$stack[$middleware];
+            } else {
+               return $middleware;
+            }
+        }, $middlewares);
+    }
 
 
 
