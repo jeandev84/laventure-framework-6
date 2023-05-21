@@ -11,7 +11,7 @@ use Laventure\Component\Routing\Route\Exception\RouteNotFoundException;
 use Laventure\Component\Routing\Route\Route;
 use Laventure\Component\Routing\Route\RouteCache;
 use Laventure\Component\Routing\Route\RouteGroup;
-use Laventure\Component\Routing\Route\RouteMiddlewareStack;
+use Laventure\Component\Routing\Route\RouteMiddleware;
 
 
 /**
@@ -118,7 +118,7 @@ class Router implements RouterInterface
      *
      * @return $this
     */
-    public function cache(string $cacheDir): static
+    public function cacheDir(string $cacheDir): static
     {
          $this->cache->cacheDir($cacheDir);
 
@@ -136,9 +136,7 @@ class Router implements RouterInterface
     */
     public function middlewares(array $middlewares): static
     {
-         foreach ($middlewares as $name => $middleware) {
-             $this->addMiddleware($name, $middleware);
-         }
+         $this->collection->addMiddlewares($middlewares);
 
          return $this;
     }
@@ -305,11 +303,15 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-            $route = new Route($methods, $this->resolvePath($path), $this->resolveAction($action));
-            $route->domain($this->domain)
-                  ->wheres($this->patterns)
+            $path   = $this->resolvePath($path);
+            $action = $this->resolveAction($action);
+
+            $route = new Route($this->domain, $methods, $path, $action);
+
+            $route->wheres($this->patterns)
                   ->name($this->group->getName())
-                  ->middleware($this->group->getMiddlewares());
+                  ->middleware($this->group->getMiddlewares())
+                  ->options(['prefixes' => $this->group->getPrefixes()]);
 
             return $route;
     }
@@ -453,21 +455,47 @@ class Router implements RouterInterface
 
 
 
+    /**
+     * @param string $cacheKey
+     *
+     * @return Route|bool
+    */
+    public function getRouteFromCache(string $cacheKey): Route|bool
+    {
+        if (! $this->cache->has($cacheKey)) {
+            return false;
+        }
+
+        return $this->cache->get($cacheKey);
+    }
+
+
+
+
+    /**
+     * @param string $cacheKey
+     *
+     * @param Route $route
+     *
+     * @return $this
+    */
+    public function cacheRoute(string $cacheKey, Route $route): static
+    {
+         $this->cache->set($cacheKey, $route);
+
+         return $this;
+    }
+
+
+
 
     /**
      * @inheritDoc
     */
-    public function match(string $requestMethod, string $requestPath): Route|bool
+    public function match(string $method, string $path): Route|bool
     {
-         $cacheKey = "$requestMethod|$requestPath";
-
-         if ($this->cache->has($cacheKey)) {
-             return $this->cache->get($cacheKey);
-         }
-
          foreach ($this->getRoutes() as $route) {
-              if ($route->match($requestMethod, $requestPath)) {
-                   $this->cache->set($cacheKey, $route);
+              if ($route->match($method, $path)) {
                    return $route;
               }
          }
@@ -512,22 +540,6 @@ class Router implements RouterInterface
 
         return $route->uri($parameters);
     }
-
-
-    /**
-     * @param string $name
-     *
-     * @param string $middleware
-     *
-     * @return $this
-    */
-    private function addMiddleware(string $name, string $middleware): static
-    {
-         RouteMiddlewareStack::$map[$name] = $middleware;
-
-         return $this;
-    }
-
 
 
 

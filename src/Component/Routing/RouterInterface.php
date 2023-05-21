@@ -31,13 +31,13 @@ interface RouterInterface
       * Determine if the current request matches route
       *
       *
-      * @param string $requestMethod
+      * @param string $method request method
       *
-      * @param string $requestPath
+      * @param string $path request path
       *
       * @return mixed
      */
-     public function match(string $requestMethod, string $requestPath);
+     public function match(string $method, string $path);
 
 
 

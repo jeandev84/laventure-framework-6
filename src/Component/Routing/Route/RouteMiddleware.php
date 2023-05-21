@@ -3,7 +3,7 @@ namespace Laventure\Component\Routing\Route;
 
 
 /**
- * @RouteMiddlewareStack
+ * @RouteMiddleware
  *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
@@ -11,7 +11,7 @@ namespace Laventure\Component\Routing\Route;
  *
  * @package Laventure\Component\Routing\Route
 */
-class RouteMiddlewareStack
+class RouteMiddleware
 {
     public static $map = [];
 }

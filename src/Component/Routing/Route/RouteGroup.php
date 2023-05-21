@@ -191,7 +191,7 @@ class RouteGroup
     /**
      * @return array
     */
-    public function toArray(): array
+    public function getPrefixes(): array
     {
         return [
             'path'        => $this->getPath(),

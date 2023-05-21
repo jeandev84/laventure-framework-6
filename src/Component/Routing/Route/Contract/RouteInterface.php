@@ -112,4 +112,18 @@ interface RouteInterface
       * @return bool
      */
      public function match(string $requestMethod, string $requestPath): bool;
+
+
+
+
+
+
+     /**
+      * Generate route URI from given params
+      *
+      * @param array $parameters
+      *
+      * @return string
+    */
+    public function uri(array $parameters = []): string;
 }
