@@ -512,7 +512,7 @@ class Router implements RouterInterface
         }
 
         if ($module = $this->group->getModule()) {
-            $this->namespace .= sprintf('\\%s', $module);
+            return sprintf('%s\\%s', $this->namespace, $module);
         }
 
         return $this->namespace;
@@ -545,7 +545,7 @@ class Router implements RouterInterface
     */
     private function resolveAction($callback)
     {
-         if (is_string($callback) && stripos($callback, '@') === false) {
+         if (is_string($callback) && stripos($callback, '@') !== false) {
               [$controller, $action] = explode('@', $callback, 2);
               return [$this->resolveController($controller), $action];
          }
