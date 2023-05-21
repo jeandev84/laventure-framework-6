@@ -231,7 +231,7 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
     /**
-     * @param callable $callback
+     * @param mixed $callback
      *
      * @return $this
     */
@@ -659,6 +659,16 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
 
+    /**
+     * @return string
+    */
+    public function getAction(): string
+    {
+         return $this->controller['action'];
+    }
+
+
+
 
     /**
      * Determine if route handler is callable
@@ -671,22 +681,39 @@ class Route implements NamedRouteInterface, ArrayAccess
     }
 
 
-
-
     /**
-     * @param array $params
+     * @param callable $callback
      *
      * @return mixed
     */
-    public function call(array $params = []): mixed
+    public function call(callable $callback): mixed
     {
-        if (! $this->isCallable()) {
-            return false;
-        }
-
-        return call_user_func_array($this->getCallback(), $this->getDependencies($params));
+        return call_user_func_array($callback, $this->getValuesOfParams());
     }
 
+
+
+    public function callClosure()
+    {
+         if (! $this->callback instanceof \Closure) {
+              return false;
+         }
+
+         return $this->call($this->getCallback());
+    }
+
+
+
+    public function callAction()
+    {
+        if (! is_array($this->callback)) {
+             return false;
+        }
+
+        $controller = $this->getController();
+
+        return $this->call([new $controller, $this->getAction()]);
+    }
 
 
 
@@ -889,19 +916,6 @@ class Route implements NamedRouteInterface, ArrayAccess
 
         return $methods;
     }
-
-
-
-    /**
-     * @param array $params
-     * @return array
-    */
-    private function getDependencies(array $params): array
-    {
-        return array_merge([$this->getValuesOfParams(), array_values($params)]);
-    }
-
-
 
 
 

@@ -32,17 +32,18 @@ class RouteCache
      }
 
 
-
-     /**
-      * @param string $key
-      *
-      * @param Route $route
-      *
-      * @return $this
+    /**
+     * @param string $key
+     *
+     * @param Route $route
+     *
+     * @return $this
      */
      public function set(string $key, Route $route): static
      {
-          $this->cache($key, serialize($route));
+          if (! $route->isCallable()) {
+              $this->cache($key, serialize($route));
+          }
 
           return $this;
      }
@@ -62,6 +63,10 @@ class RouteCache
          }
 
          $content = file_get_contents($this->path($key));
+
+         if (! $content) {
+             return false;
+         }
 
          return unserialize($content);
      }
@@ -93,13 +98,13 @@ class RouteCache
      public function cache(string $key, $content): bool|int
      {
           $filename = $this->path($key);
-          $dirname = dirname($key);
+          $dirname = dirname($filename);
 
           if (! is_dir($dirname)) {
               mkdir($dirname, 0777, true);
           }
 
-          touch($key);
+          touch($filename);
 
           return file_put_contents($filename, "$content".PHP_EOL, FILE_APPEND);
      }

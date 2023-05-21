@@ -90,7 +90,9 @@ class Router implements RouterInterface
      *
      * @var array
     */
-    protected $patterns = [];
+    protected $patterns = [
+        'id' => '\d+'
+    ];
 
 
 
@@ -465,7 +467,7 @@ class Router implements RouterInterface
 
          foreach ($this->getRoutes() as $route) {
               if ($route->match($requestMethod, $requestPath)) {
-                   $this->cache->cache($cacheKey, $route);
+                   $this->cache->set($cacheKey, $route);
                    return $route;
               }
          }

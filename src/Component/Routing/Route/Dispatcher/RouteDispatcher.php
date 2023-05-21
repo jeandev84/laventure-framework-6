@@ -21,6 +21,10 @@ class RouteDispatcher implements RouteDispatcherInterface
     */
     public function dispatchRoute(Route $route): mixed
     {
-        // TODO: Implement dispatchRoute() method.
+         if ($route->isCallable()) {
+             return $route->callClosure();
+         }
+
+         return $route->callAction();
     }
 }
