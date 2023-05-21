@@ -44,6 +44,16 @@ class RouteCollection implements RouteCollectionInterface
 
 
 
+
+      /**
+       * store routes by name
+       *
+       * @var Route[]
+      */
+      protected $namedRoutes = [];
+
+
+
       /**
        * @param Route $route
        *
@@ -111,8 +121,15 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function getRoutesByName(): array
       {
-           return Mix::$namedRoutes;
+           foreach ($this->routes as $route) {
+               if ($name = $route->getName()) {
+                   $this->namedRoutes[$name] = $route;
+               }
+           }
+
+           return $this->namedRoutes;
       }
+
 
 
 
@@ -123,7 +140,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function hasRouteNamed(string $name): string
       {
-           return isset(Mix::$namedRoutes[$name]);
+           return isset($this->getRoutesByName()[$name]);
       }
 
 
@@ -137,7 +154,7 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function getRouteByName(string $name): ?Route
       {
-            return Mix::$namedRoutes[$name] ?? null;
+            return $this->getRoutesByName()[$name] ?? null;
       }
 }
 

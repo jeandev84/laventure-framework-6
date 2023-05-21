@@ -10,8 +10,8 @@ use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcherInterface;
 use Laventure\Component\Routing\Route\Exception\RouteNotFoundException;
 use Laventure\Component\Routing\Route\Mix;
 use Laventure\Component\Routing\Route\Route;
-use Laventure\Component\Routing\Route\RouteFactory;
 use Laventure\Component\Routing\Route\RouteGroup;
+use Laventure\Component\Routing\Route\RouteMiddlewareStack;
 
 
 /**
@@ -168,6 +168,8 @@ class Router implements RouterInterface
 
 
 
+
+
     /**
      * @param string $module
      *
@@ -281,11 +283,13 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-          return RouteFactory::route($methods, $this->resolvePath($path), $this->resolveAction($action))
-                            ->domain($this->domain)
-                            ->wheres($this->patterns)
-                            ->name($this->group->getName())
-                            ->middleware($this->group->getMiddlewares());
+            $route = new Route($methods, $this->resolvePath($path), $this->resolveAction($action));
+            $route->domain($this->domain)
+                  ->wheres($this->patterns)
+                  ->name($this->group->getName())
+                  ->middleware($this->group->getMiddlewares());
+
+            return $route;
     }
 
 
@@ -408,13 +412,22 @@ class Router implements RouterInterface
     */
     public function group(array $prefixes, Closure $routes): static
     {
-         $group = RouteFactory::group($this->group->getPrefixes(), $routes);
-         $group->prefixes($prefixes);
-         $this->group = $group;
-         $this->group->map($this);
+         $this->group->map($prefixes, $routes, $this);
 
          return $this;
     }
+
+
+
+
+    /**
+     * @return RouteGroup
+    */
+    public function getGroup(): RouteGroup
+    {
+        return $this->group;
+    }
+
 
 
 
@@ -481,7 +494,7 @@ class Router implements RouterInterface
     */
     private function addMiddleware(string $name, string $middleware): static
     {
-         Mix::$middlewares[$name] = $middleware;
+         RouteMiddlewareStack::$map[$name] = $middleware;
 
          return $this;
     }

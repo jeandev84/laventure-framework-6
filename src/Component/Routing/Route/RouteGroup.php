@@ -19,58 +19,33 @@ class RouteGroup
 
 
     /**
-     * @var array
+     * @var string
      */
-    protected $path = [];
+    protected $path;
+
+
+
+
+    /**
+     * @var string
+     */
+    protected $module;
+
+
+
+
+    /**
+     * @var string
+    */
+    protected $name;
 
 
 
 
     /**
      * @var array
-     */
-    protected $module  = [];
-
-
-
-
-    /**
-     * @var array
-     */
-    protected $name = [];
-
-
-
-
-    /**
-     * @var array
-     */
+    */
     protected $middlewares = [];
-
-
-
-
-
-    /**
-     * @var Closure
-    */
-    protected $routes;
-
-
-
-
-    /**
-     * @param array $prefixes
-     *
-     * @param Closure|null $routes
-    */
-    public function __construct(array $prefixes = [], Closure $routes = null)
-    {
-         $this->prefixes($prefixes);
-         $this->routes($routes);
-    }
-
-
 
 
 
@@ -92,29 +67,17 @@ class RouteGroup
 
 
     /**
-     * @param Closure|null $routes
+     * @param array $prefixes
+     * @param Closure $routes
+     * @param Router $router
      *
      * @return $this
-     */
-    public function routes(?Closure $routes): static
-    {
-         $this->routes = $routes;
-
-         return $this;
-    }
-
-
-
-
-
-     /**
-      * @param Router $router
-      *
-      * @return $this
     */
-    public function map(Router $router): static
+    public function map(array $prefixes, Closure $routes, Router $router): static
     {
-         call_user_func($this->routes, $router);
+         $this->prefixes($prefixes);
+
+         call_user_func($routes, $router);
 
          $this->rewind();
 
@@ -130,20 +93,18 @@ class RouteGroup
     */
     public function path(string $prefix): static
     {
-        $this->path[] = trim($prefix, '\\/');
+        $this->path .= '/'. trim($prefix, '\\/');
 
         return $this;
     }
 
 
-
-
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPath(): string
+    public function getPath(): ?string
     {
-        return trim(join('/', $this->path), '\\/');
+        return $this->path;
     }
 
 
@@ -157,7 +118,7 @@ class RouteGroup
      */
     public function module(string $module): self
     {
-        $this->module[] = rtrim($module, '\\');
+        $this->module .= trim($module, '\\');
 
         return $this;
     }
@@ -166,13 +127,11 @@ class RouteGroup
 
 
     /**
-     * @return string
+     * @return string|null
     */
-    public function getModule(): string
+    public function getModule(): ?string
     {
-        $module = join('\\', $this->module);
-
-        return  ltrim($module, "\\");
+        return  $this->module;
     }
 
 
@@ -184,20 +143,19 @@ class RouteGroup
     */
     public function name(string $name): self
     {
-        $this->name[] = $name;
+        $this->name .= $name;
 
         return $this;
     }
 
 
 
-
     /**
-     * @return string
+     * @return string|null
     */
-    public function getName(): string
+    public function getName(): ?string
     {
-        return join($this->name);
+        return $this->name;
     }
 
 
@@ -207,7 +165,7 @@ class RouteGroup
     /**
      * @param array $middlewares
      * @return $this
-     */
+    */
     public function middlewares(array $middlewares): self
     {
         $this->middlewares = array_merge($this->middlewares, $middlewares);
@@ -225,20 +183,6 @@ class RouteGroup
     {
         return $this->middlewares;
     }
-
-
-
-
-
-    /**
-     * @return array
-    */
-    public function toArray(): array
-    {
-        return $this->getPrefixes();
-    }
-
-
 
 
 
@@ -264,10 +208,9 @@ class RouteGroup
     */
     public function rewind(): void
     {
-        $this->path   = [];
-        $this->module = [];
-        $this->name   = [];
+        $this->path   = null;
+        $this->module = null;
+        $this->name   = null;
         $this->middlewares = [];
     }
-
 }

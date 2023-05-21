@@ -89,9 +89,9 @@ class Route implements NamedRouteInterface, ArrayAccess
     /**
      * Route name
      *
-     * @var string
+     * @var array
     */
-    protected $name;
+    protected $name = [];
 
 
 
@@ -248,15 +248,13 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
     /**
-     * @param string $name
+     * @param string|null $name
      *
      * @return $this
     */
-    public function name(string $name): static
+    public function name(?string $name): static
     {
-         $this->name .= $name;
-
-         Mix::$namedRoutes[$this->name] = $this;
+         $this->name[] = $name;
 
          return $this;
     }
@@ -489,7 +487,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     public function getName(): ?string
     {
-        return $this->name;
+        return join($this->name);
     }
 
 
@@ -751,8 +749,8 @@ class Route implements NamedRouteInterface, ArrayAccess
     private function resolveMiddlewares(array $middlewares): array
     {
         return array_map(function ($middleware) {
-            if (array_key_exists($middleware, Mix::$middlewares)) {
-                return Mix::$middlewares[$middleware];
+            if (array_key_exists($middleware,  RouteMiddlewareStack::$map)) {
+                return  RouteMiddlewareStack::$map[$middleware];
             } else {
                return $middleware;
             }
