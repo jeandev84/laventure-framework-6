@@ -2,7 +2,7 @@
 namespace Laventure\Component\Routing\Route;
 
 
-class RouteParameterResolver
+class RouteResolver
 {
 
 
@@ -16,17 +16,15 @@ class RouteParameterResolver
      }
 
 
-    /**
-     * @param RouteParameter $parameter
-     * @return RouteParameter
+     /**
+      * @param $methods
+      * @param $path
+      * @param $action
+      * @return RouteParameter
      */
-     public function resolveParameters(RouteParameter $parameter): RouteParameter
+     public function resolveRouteParameters($methods, $path, $action): RouteParameter
      {
-          return new RouteParameter(
-              $parameter->getMethods(),
-              $this->resolvePath($parameter->getPath()),
-              $this->resolveAction($parameter->getAction())
-          );
+          return new RouteParameter($methods, $this->resolvePath($path), $this->resolveAction($action));
      }
 
 

@@ -13,7 +13,7 @@ use Laventure\Component\Routing\Route\RouteCache;
 use Laventure\Component\Routing\Route\RouteGroup;
 use Laventure\Component\Routing\Route\RouteMiddleware;
 use Laventure\Component\Routing\Route\RouteParameter;
-use Laventure\Component\Routing\Route\RouteParameterResolver;
+use Laventure\Component\Routing\Route\RouteResolver;
 
 
 /**
@@ -339,8 +339,8 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-            $resolver  = new RouteParameterResolver($this->group, $this->namespace);
-            $parameter = $resolver->resolveParameters(new RouteParameter($methods, $path, $action));
+            $resolver  = new RouteResolver($this->group, $this->getNamespace());
+            $parameter = $resolver->resolveRouteParameters($methods, $path, $action);
 
             return Route::create($this->domain, $methods, $parameter->getPath(), $parameter->getAction())
                         ->middlewareStack($this->middlewares)
