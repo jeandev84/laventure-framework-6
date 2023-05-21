@@ -48,6 +48,53 @@ class RouteGroup
     protected $middlewares = [];
 
 
+
+
+
+    /**
+     * Route namespace
+     *
+     * @var string
+    */
+    protected $namespace;
+
+
+
+
+    /**
+     * @param string $namespace
+     *
+     * @return $this
+    */
+    public function namespace(string $namespace): static
+    {
+         $this->namespace = $namespace;
+
+         return $this;
+    }
+
+
+
+
+    /**
+     * @param array $prefixes
+     *
+     * @return $this
+    */
+    public function prefixes(array $prefixes): static
+    {
+        foreach ($prefixes as $name => $value) {
+            if (property_exists($this, $name)) {
+                call_user_func([$this, $name], $value);
+            }
+        }
+
+        return $this;
+    }
+
+
+
+
     /**
      * @param Closure $routes
      *
@@ -117,6 +164,28 @@ class RouteGroup
 
 
 
+
+    /**
+     * Returns group namespace
+     *
+     * @return string
+    */
+    public function getNamespace(): string
+    {
+        if (! $this->namespace) {
+            throw new \InvalidArgumentException("Unable namespace: ". __FILE__);
+        }
+
+        if ($module = $this->getModule()) {
+            return sprintf('%s\\%s', $this->namespace, $module);
+        }
+
+        return sprintf('%s\\', $this->namespace);
+    }
+
+
+
+
     /**
      * @param string $name
      * @return $this
@@ -180,22 +249,6 @@ class RouteGroup
     }
 
 
-
-    /**
-     * @param array $prefixes
-     *
-     * @return $this
-    */
-    public function prefixes(array $prefixes): static
-    {
-        foreach ($prefixes as $name => $value) {
-            if (property_exists($this, $name)) {
-                call_user_func([$this, $name], $value);
-            }
-        }
-
-        return $this;
-    }
 
 
     /**

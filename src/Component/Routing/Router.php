@@ -127,6 +127,8 @@ class Router implements RouterInterface
 
 
 
+
+
     /**
      * @param string $cacheDir
      *
@@ -204,6 +206,8 @@ class Router implements RouterInterface
     public function namespace(string $namespace): static
     {
          $this->namespace = trim($namespace, '\\');
+
+         $this->group->namespace($this->namespace);
 
          return $this;
     }
@@ -339,7 +343,7 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-            $resolver  = new RouteResolver($this->getNamespace(), $this->group);
+            $resolver  = new RouteResolver($this->group);
             $parameter = $resolver->resolveRouteParameters($methods, $path, $action);
 
             return Route::create($this->domain, $methods, $parameter->getPath(), $parameter->getAction())

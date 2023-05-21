@@ -22,14 +22,11 @@ class RouteResolver
 
 
      /**
-      * @param string $namespace
-      *
       * @param RouteGroup|null $group
       *
      */
-     public function __construct(string $namespace, RouteGroup $group = null)
+     public function __construct(RouteGroup $group = null)
      {
-           $this->namespace = $namespace;
            $this->group = $group ?: new RouteGroup();
      }
 
@@ -91,27 +88,6 @@ class RouteResolver
     */
     public function resolveController(string $controller): string
     {
-        return sprintf('%s%s', $this->resolveNamespace(), $controller);
-    }
-
-
-
-
-
-
-    /**
-     * @return string
-    */
-    public function resolveNamespace(): string
-    {
-        if (! $this->namespace) {
-            throw new \InvalidArgumentException("Unable namespace: ". __FILE__);
-        }
-
-        if ($module = $this->group->getModule()) {
-            return sprintf('%s\\%s', $this->namespace, $module);
-        }
-
-        return sprintf('%s\\', $this->namespace);
+        return sprintf('%s%s', $this->group->getNamespace(), $controller);
     }
 }
