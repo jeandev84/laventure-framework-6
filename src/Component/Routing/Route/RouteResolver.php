@@ -5,15 +5,35 @@ namespace Laventure\Component\Routing\Route;
 class RouteResolver
 {
 
+     /**
+      * @var string
+     */
+     protected $namespace;
+
+
+
 
      /**
-      * @param RouteGroup $group
-      *
-      * @param string $namespace
+      * @var RouteGroup
      */
-     public function __construct(protected RouteGroup $group, protected string $namespace)
+     protected RouteGroup $group;
+
+
+
+
+     /**
+      * @param string $namespace
+      *
+      * @param RouteGroup|null $group
+      *
+     */
+     public function __construct(string $namespace, RouteGroup $group = null)
      {
+           $this->namespace = $namespace;
+           $this->group = $group ?: new RouteGroup();
      }
+
+
 
 
      /**
