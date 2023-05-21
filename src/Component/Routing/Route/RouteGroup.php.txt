@@ -120,7 +120,7 @@ class RouteGroup
      */
     public function module(string $module): self
     {
-        $this->module .= trim($module, '\\') . "\\";
+        $this->module .= trim($module, '\\');
 
         return $this;
     }

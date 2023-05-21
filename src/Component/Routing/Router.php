@@ -8,8 +8,8 @@ use Laventure\Component\Routing\Route\Collection\RouteCollection;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcher;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcherInterface;
 use Laventure\Component\Routing\Route\Exception\RouteNotFoundException;
-use Laventure\Component\Routing\Route\Mix;
 use Laventure\Component\Routing\Route\Route;
+use Laventure\Component\Routing\Route\RouteCache;
 use Laventure\Component\Routing\Route\RouteGroup;
 use Laventure\Component\Routing\Route\RouteMiddlewareStack;
 
@@ -76,6 +76,13 @@ class Router implements RouterInterface
 
 
 
+    /**
+     * Route caching
+     *
+     * @var RouteCache
+    */
+    protected $cache;
+
 
 
     /**
@@ -98,10 +105,23 @@ class Router implements RouterInterface
     {
          $this->collection = new RouteCollection();
          $this->group      = new RouteGroup();
+         $this->cache      = new RouteCache();
          $this->dispatcher = $dispatcher ?: new RouteDispatcher();
     }
 
 
+
+    /**
+     * @param string $cacheDir
+     *
+     * @return $this
+    */
+    public function cache(string $cacheDir): static
+    {
+         $this->cache->cacheDir($cacheDir);
+
+         return $this;
+    }
 
 
 
@@ -321,7 +341,7 @@ class Router implements RouterInterface
      * @param $action
      *
      * @return Route
-     */
+    */
     public function get($path, $action): Route
     {
         return $this->map('GET', $path, $action);
@@ -437,8 +457,15 @@ class Router implements RouterInterface
     */
     public function match(string $requestMethod, string $requestPath): Route|bool
     {
+         $cacheKey = "$requestMethod|$requestPath";
+
+         if ($this->cache->has($cacheKey)) {
+             return $this->cache->get($cacheKey);
+         }
+
          foreach ($this->getRoutes() as $route) {
               if ($route->match($requestMethod, $requestPath)) {
+                   $this->cache->cache($cacheKey, $route);
                    return $route;
               }
          }
@@ -515,7 +542,7 @@ class Router implements RouterInterface
             return sprintf('%s\\%s', $this->namespace, $module);
         }
 
-        return $this->namespace;
+        return sprintf('%s\\', $this->namespace);
     }
 
 
@@ -563,6 +590,6 @@ class Router implements RouterInterface
     */
     private function resolveController(string $controller): string
     {
-        return sprintf('%s\\%s', $this->getNamespace(), $controller);
+        return sprintf('%s%s', $this->getNamespace(), $controller);
     }
 }
