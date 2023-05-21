@@ -343,7 +343,7 @@ class Router implements RouterInterface
             $parameter = $resolver->resolveRouteParameters($methods, $path, $action);
 
             return Route::create($this->domain, $methods, $parameter->getPath(), $parameter->getAction())
-                        ->middlewareStack($this->middlewares)
+                        ->middlewareProvides($this->middlewares)
                         ->wheres($this->patterns)
                         ->name($this->group->getName())
                         ->middleware($this->group->getMiddlewares())
