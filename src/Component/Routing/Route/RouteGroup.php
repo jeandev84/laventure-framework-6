@@ -19,17 +19,9 @@ class RouteGroup
 
 
     /**
-     * @var string
+     * @var array
      */
-    protected $path;
-
-
-
-
-    /**
-     * @var string
-     */
-    protected $module;
+    protected $path = [];
 
 
 
@@ -37,7 +29,15 @@ class RouteGroup
     /**
      * @var string
     */
-    protected $name;
+    protected $module = [];
+
+
+
+
+    /**
+     * @var string
+    */
+    protected $name = [];
 
 
 
@@ -93,7 +93,7 @@ class RouteGroup
     */
     public function path(string $prefix): static
     {
-        $this->path .= '/'. trim($prefix, '\\/');
+        $this->path[] = trim($prefix, '\\/');
 
         return $this;
     }
@@ -106,7 +106,7 @@ class RouteGroup
     */
     public function getPath(): ?string
     {
-        return $this->path;
+        return join('/', $this->path);
     }
 
 
@@ -120,7 +120,7 @@ class RouteGroup
      */
     public function module(string $module): self
     {
-        $this->module .= trim($module, '\\') . "\\";
+        $this->module[] = trim($module, '\\') . "\\";
 
         return $this;
     }
@@ -133,7 +133,7 @@ class RouteGroup
     */
     public function getModule(): ?string
     {
-        return  $this->module;
+        return  join($this->module);
     }
 
 
@@ -145,7 +145,7 @@ class RouteGroup
     */
     public function name(string $name): self
     {
-        $this->name .= $name;
+        $this->name[] = $name;
 
         return $this;
     }
@@ -157,7 +157,7 @@ class RouteGroup
     */
     public function getName(): ?string
     {
-        return $this->name;
+        return join($this->name);
     }
 
 
@@ -210,9 +210,9 @@ class RouteGroup
     */
     public function rewind(): void
     {
-        $this->path   = null;
-        $this->module = null;
-        $this->name   = null;
+        $this->path   = [];
+        $this->module = [];
+        $this->name   = [];
         $this->middlewares = [];
     }
 }
