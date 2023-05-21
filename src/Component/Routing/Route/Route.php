@@ -121,7 +121,7 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @var array
     */
-    protected $requirements = [];
+    protected $patterns = [];
 
 
 
@@ -155,17 +155,18 @@ class Route implements NamedRouteInterface, ArrayAccess
      * @var array 
     */
     protected $matches = [];
-    
-    
-    
-    
-    
+
+
+
+
     /**
-     * MiddlewareStack
+     * Storage named Middlewares
      *
      * @var array
     */
-    protected static $middlewareStack = [];
+    protected static $namedMiddlewares = [];
+
+
 
 
     /**
@@ -192,9 +193,9 @@ class Route implements NamedRouteInterface, ArrayAccess
      * 
      * @return $this
     */
-    public function middlewareStack(array $middlewares): static
+    public function namedMiddlewares(array $middlewares): static
     {
-          static::$middlewareStack = $middlewares;
+          static::$namedMiddlewares = $middlewares;
           
           return $this;
     }
@@ -323,7 +324,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     {
         $this->pattern($this->replacePlaceholders($name, $pattern));
 
-        $this->requirements[$name] = $pattern;
+        $this->patterns[$name] = $pattern;
 
         return $this;
     }
@@ -601,27 +602,15 @@ class Route implements NamedRouteInterface, ArrayAccess
         return $this->matches;
     }
 
-
-    
-    
-    /**
-     * @return array
-    */
-    public static function getMiddlewareStack(): array
-    {
-        return self::$middlewareStack;
-    }
-
-
     
     
     
     /**
      * @return array
     */
-    public function getRequirements(): array
+    public function getPatterns(): array
     {
-        return $this->requirements;
+        return $this->patterns;
     }
 
     
@@ -836,26 +825,6 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
 
-
-    /**
-     * @param array $middlewares
-     *
-     * @return array
-    */
-    private function resolveMiddlewares(array $middlewares): array
-    {
-        return array_map(function ($middleware) {
-            if (array_key_exists($middleware,  static::$middlewareStack)) {
-                return  static::$middlewareStack[$middleware];
-            } else {
-               return $middleware;
-            }
-        }, $middlewares);
-    }
-
-
-
-
     /**
      * @param string $path
      *
@@ -880,6 +849,25 @@ class Route implements NamedRouteInterface, ArrayAccess
         }, ARRAY_FILTER_USE_KEY);
     }
 
+
+
+
+
+    /**
+     * @param array $middlewares
+     *
+     * @return array
+   */
+    private function resolveMiddlewares(array $middlewares): array
+    {
+        return array_map(function ($middleware) {
+
+            $named = array_key_exists($middleware,  static::$namedMiddlewares);
+
+            return ($named ? static::$namedMiddlewares[$middleware] : $middleware);
+
+        }, $middlewares);
+    }
 
 
 

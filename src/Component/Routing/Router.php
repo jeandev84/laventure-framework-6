@@ -85,6 +85,18 @@ class Router implements RouterInterface
 
 
 
+
+    /**
+     * Route middlewares
+     *
+     * @var array
+    */
+    protected $middlewares = [];
+
+
+
+
+
     /**
      * Route patterns
      *
@@ -134,12 +146,34 @@ class Router implements RouterInterface
      *
      * @return $this
     */
-    public function middlewares(array $middlewares): static
+    public function addRouteMiddlewaresByName(array $middlewares): static
     {
-         $this->collection->addMiddlewares($middlewares);
+        foreach ($middlewares as $name => $middleware) {
+            $this->addRouteMiddlewareByName($name, $middleware);
+        }
 
          return $this;
     }
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param string $middleware
+     *
+     * @return $this
+    */
+    public function addRouteMiddlewareByName(string $name, string $middleware): static
+    {
+        $this->middlewares[$name] = $middleware;
+
+        return $this;
+    }
+
+
 
 
 
@@ -303,12 +337,9 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-            $path   = $this->resolvePath($path);
-            $action = $this->resolveAction($action);
-
-            $route = new Route($this->domain, $methods, $path, $action);
-
-            $route->wheres($this->patterns)
+            $route = new Route($this->domain, $methods, $this->resolvePath($path), $this->resolveAction($action));
+            $route->namedMiddlewares($this->middlewares)
+                  ->wheres($this->patterns)
                   ->name($this->group->getName())
                   ->middleware($this->group->getMiddlewares())
                   ->options(['prefixes' => $this->group->getPrefixes()]);

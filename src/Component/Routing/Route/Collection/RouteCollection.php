@@ -46,48 +46,6 @@ class RouteCollection implements RouteCollectionInterface
 
 
       /**
-       * @var array
-      */
-      protected $middlewares = [];
-
-
-
-
-      /**
-       * @param array $middlewares
-       *
-       * @return $this
-      */
-      public function addMiddlewares(array $middlewares): static
-      {
-           foreach ($middlewares as $name => $middleware) {
-               $this->addMiddleware($name, $middleware);
-           }
-
-           return $this;
-      }
-
-
-
-
-     /**
-      * @param string $name
-      *
-      * @param string $middleware
-      *
-      * @return $this
-     */
-     public function addMiddleware(string $name, string $middleware): static
-     {
-           $this->middlewares[$name] = $middleware;
-
-           return $this;
-     }
-
-
-
-
-      /**
        * @param Route $route
        *
        * @return Route
@@ -99,8 +57,6 @@ class RouteCollection implements RouteCollectionInterface
           if ($route->hasController()) {
               $this->controllers[$route->getController()][] = $route;
           }
-
-          $route->middlewareStack($this->middlewares);
 
           $this->routes[] = $route;
 
