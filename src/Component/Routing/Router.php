@@ -12,6 +12,8 @@ use Laventure\Component\Routing\Route\Route;
 use Laventure\Component\Routing\Route\RouteCache;
 use Laventure\Component\Routing\Route\RouteGroup;
 use Laventure\Component\Routing\Route\RouteMiddleware;
+use Laventure\Component\Routing\Route\RouteParameter;
+use Laventure\Component\Routing\Route\RouteParameterResolver;
 
 
 /**
@@ -337,14 +339,15 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-            $route = new Route($this->domain, $methods, $this->resolvePath($path), $this->resolveAction($action));
-            $route->middlewareStack($this->middlewares)
-                  ->wheres($this->patterns)
-                  ->name($this->group->getName())
-                  ->middleware($this->group->getMiddlewares())
-                  ->options(['prefixes' => $this->group->getPrefixes()]);
+            $resolver  = new RouteParameterResolver($this->group, $this->namespace);
+            $parameter = $resolver->resolveParameters(new RouteParameter($methods, $path, $action));
 
-            return $route;
+            return Route::create($this->domain, $methods, $parameter->getPath(), $parameter->getAction())
+                        ->middlewareStack($this->middlewares)
+                        ->wheres($this->patterns)
+                        ->name($this->group->getName())
+                        ->middleware($this->group->getMiddlewares())
+                        ->options(['prefixes' => $this->group->getPrefixes()]);
     }
 
 
@@ -467,7 +470,11 @@ class Router implements RouterInterface
     */
     public function group(array $prefixes, Closure $routes): static
     {
-         $this->group->map($prefixes, $routes, $this);
+         $this->group->prefixes($prefixes);
+
+         $this->group->map($routes, $this);
+
+         $this->group->rewind();
 
          return $this;
     }
@@ -576,65 +583,9 @@ class Router implements RouterInterface
 
     /**
      * @return string
-     */
+    */
     public function getNamespace(): string
     {
-        if (! $this->namespace) {
-             throw new \InvalidArgumentException("Unable namespace: ". __FILE__);
-        }
-
-        if ($module = $this->group->getModule()) {
-            return sprintf('%s\\%s', $this->namespace, $module);
-        }
-
-        return sprintf('%s\\', $this->namespace);
-    }
-
-
-
-
-
-    /**
-     * @param string $path
-     * @return string
-    */
-    private function resolvePath(string $path): string
-    {
-        if ($prefix = $this->group->getPath()) {
-            $path = sprintf('%s/%s', $prefix, ltrim($path, '/'));
-        }
-
-        return $path;
-    }
-
-
-
-
-    /**
-     * @param $callback
-     *
-     * @return mixed
-    */
-    private function resolveAction($callback)
-    {
-         if (is_string($callback) && stripos($callback, '@') !== false) {
-              [$controller, $action] = explode('@', $callback, 2);
-              return [$this->resolveController($controller), $action];
-         }
-
-         return $callback;
-    }
-
-
-
-
-    /**
-     * @param string $controller
-     *
-     * @return string
-    */
-    private function resolveController(string $controller): string
-    {
-        return sprintf('%s%s', $this->getNamespace(), $controller);
+        return $this->namespace;
     }
 }

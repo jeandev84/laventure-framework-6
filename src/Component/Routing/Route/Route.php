@@ -94,6 +94,11 @@ class Route implements NamedRouteInterface, ArrayAccess
     protected $name;
 
 
+    /**
+     * @var string
+    */
+    protected $namespace;
+
 
 
 
@@ -155,6 +160,7 @@ class Route implements NamedRouteInterface, ArrayAccess
      * @var array 
     */
     protected $matches = [];
+
 
 
 
@@ -494,6 +500,36 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
     /**
+     * @param string $name
+     *
+     * @return $this
+    */
+    public function only(string $name): static
+    {
+        if (array_key_exists($name, self::$middlewareStack)) {
+            $this->middleware(self::$middlewareStack);
+        }
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * Return middleware stack
+     *
+     * @return array
+    */
+    public static function getMiddlewareStack(): array
+    {
+        return self::$middlewareStack;
+    }
+
+
+
+
+    /**
      * @param string $key
      *
      * @return void
@@ -684,8 +720,8 @@ class Route implements NamedRouteInterface, ArrayAccess
     public function matchPath(string $requestPath): bool
     {
           $path = $this->normalizeRequestPath($requestPath);
-          
-          if (preg_match("#^{$this->getPattern()}$#i", $path, $matches)) {
+
+          if (preg_match("#^{$this->pattern}$#i", $path, $matches)) {
               
               $this->params   = $this->resolveParams($matches);
               $this->realPath = $this->generateRealPath($requestPath);
@@ -821,6 +857,7 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
 
+
     /**
      * @return array
     */
@@ -833,12 +870,21 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
     /**
-     * @return string
+     * @param $domain
+     *
+     * @param $methods
+     *
+     * @param $path
+     *
+     * @param $action
+     *
+     * @return static
     */
-    private function getPatternExpression(): string
+    public static function create($domain, $methods, $path, $action): static
     {
-        return "#^{$this->pattern}$#i";
+         return new static($domain, $methods, $path, $action);
     }
+
 
 
 
@@ -849,7 +895,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     private function normalizeRequestPath(string $path): string
     {
-        return parse_url(rtrim($path, '\\/'), PHP_URL_PATH);
+        return parse_url($path, PHP_URL_PATH);
     }
 
 
@@ -972,15 +1018,27 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
 
+
     /**
      * @param $callback
      *
      * @return mixed
+     *
+     * @throws \Exception
     */
     private function resolveCallback($callback): mixed
     {
         if (is_array($callback)) {
-            $this->controller((string)$callback[0] ?? '', (string)$callback[1] ?? '');
+
+            if (! isset($callback[0])) {
+                throw new \Exception("Controller name is required.");
+            }
+
+            if (! isset($callback[1])) {
+               $callback[1] = '__invoke';
+            }
+
+            $this->controller($callback[0], $callback[1]);
         }
 
         return $callback;

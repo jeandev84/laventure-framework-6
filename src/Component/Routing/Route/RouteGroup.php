@@ -48,38 +48,16 @@ class RouteGroup
     protected $middlewares = [];
 
 
-
     /**
-     * @param array $prefixes
-     *
-     * @return $this
-    */
-    public function prefixes(array $prefixes): static
-    {
-        foreach ($prefixes as $name => $value) {
-            if (property_exists($this, $name)) {
-                call_user_func([$this, $name], $value);
-            }
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * @param array $prefixes
      * @param Closure $routes
+     *
      * @param Router $router
      *
      * @return $this
-    */
-    public function map(array $prefixes, Closure $routes, Router $router): static
+     */
+    public function map(Closure $routes, Router $router): static
     {
-         $this->prefixes($prefixes);
-
          call_user_func($routes, $router);
-
-         $this->rewind();
 
          return $this;
     }
@@ -203,6 +181,21 @@ class RouteGroup
 
 
 
+    /**
+     * @param array $prefixes
+     *
+     * @return $this
+    */
+    public function prefixes(array $prefixes): static
+    {
+        foreach ($prefixes as $name => $value) {
+            if (property_exists($this, $name)) {
+                call_user_func([$this, $name], $value);
+            }
+        }
+
+        return $this;
+    }
 
 
     /**
