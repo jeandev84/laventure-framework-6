@@ -57,7 +57,7 @@ class RouteGroup
     public function prefixes(array $prefixes): static
     {
         foreach ($prefixes as $name => $value) {
-            if (method_exists($this, $name)) {
+            if (property_exists($this, $name)) {
                 call_user_func([$this, $name], $value);
             }
         }
