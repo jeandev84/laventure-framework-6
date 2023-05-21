@@ -160,17 +160,18 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
     /**
-     * Storage named Middlewares
+     * Storage middleware providers
      *
      * @var array
     */
-    protected static $namedMiddlewares = [];
+    protected static $middlewareStack = [];
 
 
 
 
     /**
      * @param $domain
+     *
      * @param $methods
      *
      * @param $path
@@ -184,24 +185,6 @@ class Route implements NamedRouteInterface, ArrayAccess
           $this->path($path);
           $this->callback($action);
     }
-
-
-    
-    
-    /**
-     * @param array $middlewares
-     * 
-     * @return $this
-    */
-    public function namedMiddlewares(array $middlewares): static
-    {
-          static::$namedMiddlewares = $middlewares;
-          
-          return $this;
-    }
-
-
-
 
 
 
@@ -471,6 +454,26 @@ class Route implements NamedRouteInterface, ArrayAccess
     }
 
 
+
+
+    /**
+     * Add middleware stack
+     *
+     * @param array $middlewareStack
+     *
+     * @return Route
+    */
+    public function middlewareStack(array $middlewareStack): static
+    {
+          self::$middlewareStack = $middlewareStack;
+
+          return $this;
+    }
+
+
+
+
+
     /**
      * Add middlewares
      *
@@ -486,6 +489,20 @@ class Route implements NamedRouteInterface, ArrayAccess
 
         return $this;
     }
+
+
+
+
+    /**
+     * @param string $key
+     *
+     * @return void
+    */
+    public function removeMiddleware(string $key): void
+    {
+         unset($this->middlewares[$key]);
+    }
+
 
 
 
@@ -857,14 +874,14 @@ class Route implements NamedRouteInterface, ArrayAccess
      * @param array $middlewares
      *
      * @return array
-   */
+    */
     private function resolveMiddlewares(array $middlewares): array
     {
         return array_map(function ($middleware) {
 
-            $named = array_key_exists($middleware,  static::$namedMiddlewares);
+            $named = array_key_exists($middleware, static::$middlewareStack);
 
-            return ($named ? static::$namedMiddlewares[$middleware] : $middleware);
+            return ($named ? static::$middlewareStack[$middleware] : $middleware);
 
         }, $middlewares);
     }
