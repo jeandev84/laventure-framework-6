@@ -202,7 +202,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     public function path(string $path): static
     {
-        $this->path = $path ?: '/';
+        $this->path = $this->normalizePath($path);
 
         $this->pattern($this->path);
 
@@ -222,7 +222,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     public function pattern(string $pattern): static
     {
-        $this->pattern = $this->normalizePattern($pattern);
+        $this->pattern = $pattern;
 
         return $this;
     }
@@ -726,21 +726,13 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     public function uri(array $parameters = []): string
     {
-        return $this->getPath();
-
-        /*
         $path = $this->getPath();
-
-        $path = '/admin/{id}/{name}';
-        $r    = '/admin/1/something';
 
         foreach ($parameters as $name => $value) {
             $path = preg_replace($this->searchedPlaceholders($name), [$value, $value], $path);
         }
 
-        # {id|name}, {value1, value2}
         return $path;
-        */
     }
 
 
@@ -873,13 +865,13 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
     /**
-     * @param string $pattern
+     * @param string $path
      *
      * @return string
     */
-    private function normalizePattern(string $pattern): string
+    private function normalizePath(string $path): string
     {
-        return '/'. trim($pattern, '\\/');
+        return (! $path ? '/' : '/'. trim($path, '\\/'));
     }
 
 
