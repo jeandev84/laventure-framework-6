@@ -68,7 +68,7 @@ class RouteGroup
     */
     public function namespace(string $namespace): static
     {
-         $this->namespace = $namespace;
+         $this->namespace = trim($namespace, '\\');
 
          return $this;
     }
@@ -158,7 +158,7 @@ class RouteGroup
     */
     public function getModule(): ?string
     {
-        return  join($this->module);
+        return join($this->module);
     }
 
 
@@ -180,7 +180,7 @@ class RouteGroup
             return sprintf('%s\\%s', $this->namespace, $module);
         }
 
-        return sprintf('%s\\', $this->namespace);
+        return $this->namespace;
     }
 
 

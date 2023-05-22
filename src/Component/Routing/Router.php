@@ -70,14 +70,6 @@ class Router implements RouterInterface
 
 
 
-
-    /**
-     * @var string
-    */
-    protected $namespace;
-
-
-
     /**
      * Route caching
      *
@@ -186,9 +178,7 @@ class Router implements RouterInterface
     */
     public function namespace(string $namespace): static
     {
-         $this->namespace = trim($namespace, '\\');
-
-         $this->group->namespace($this->namespace);
+         $this->group->namespace($namespace);
 
          return $this;
     }
@@ -571,6 +561,6 @@ class Router implements RouterInterface
     */
     public function getNamespace(): string
     {
-        return $this->namespace;
+        return $this->group->getNamespace();
     }
 }
