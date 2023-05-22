@@ -1,6 +1,8 @@
 <?php
-namespace Laventure\Component\Routing\Route;
+namespace Laventure\Component\Routing\Cache;
 
+
+use Laventure\Component\Routing\Route\Route;
 
 /**
  * @RouteCache
@@ -9,7 +11,7 @@ namespace Laventure\Component\Routing\Route;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route\Cache
+ * @package Laventure\Component\Routing\Cache
 */
 class RouteCache
 {

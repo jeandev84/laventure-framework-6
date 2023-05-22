@@ -1,8 +1,8 @@
 <?php
-namespace Laventure\Component\Routing\Route\Resource;
+namespace Laventure\Component\Routing\Resource;
 
 
-use Laventure\Component\Routing\Route\Resource\Contract\Resource;
+use Laventure\Component\Routing\Resource\Contract\Resource;
 use Laventure\Component\Routing\Router;
 
 
@@ -13,7 +13,7 @@ use Laventure\Component\Routing\Router;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route\Resource
+ * @package Laventure\Component\Routing\Resource
 */
 class WebResource extends Resource
 {

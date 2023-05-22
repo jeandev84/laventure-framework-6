@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing\Route\Collection;
+namespace Laventure\Component\Routing\Collection;
 
 
 /**
@@ -9,7 +9,7 @@ namespace Laventure\Component\Routing\Route\Collection;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route\Collection
+ * @package Laventure\Component\Routing\Collection
 */
 interface RouteCollectionInterface
 {

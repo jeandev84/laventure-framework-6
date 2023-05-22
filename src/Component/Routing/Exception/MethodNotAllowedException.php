@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing\Route\Exception;
+namespace Laventure\Component\Routing\Exception;
 
 
 use Exception;
@@ -11,7 +11,7 @@ use Exception;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route\Exception
+ * @package Laventure\Component\Routing\Exception
 */
 class MethodNotAllowedException extends Exception
 {

@@ -1,11 +1,11 @@
 <?php
-namespace Laventure\Component\Routing\Route\Collection;
+namespace Laventure\Component\Routing\Collection;
 
-use Laventure\Component\Routing\Route\Mix;
-use Laventure\Component\Routing\Route\Resource\ApiResource;
-use Laventure\Component\Routing\Route\Resource\Contract\Resource;
-use Laventure\Component\Routing\Route\Resource\WebResource;
+
+use Laventure\Component\Routing\Resource\Contract\Resource;
 use Laventure\Component\Routing\Route\Route;
+
+
 
 /**
  * @RouteCollection
@@ -14,7 +14,7 @@ use Laventure\Component\Routing\Route\Route;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route\Collection
+ * @package Laventure\Component\Routing\Collection
 */
 class RouteCollection implements RouteCollectionInterface
 {

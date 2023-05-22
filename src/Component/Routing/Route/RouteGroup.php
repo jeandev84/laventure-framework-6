@@ -3,7 +3,6 @@ namespace Laventure\Component\Routing\Route;
 
 
 use Closure;
-use Laventure\Component\Routing\Router;
 
 /**
  * @RouteGroup
@@ -12,7 +11,7 @@ use Laventure\Component\Routing\Router;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route\Group
+ * @package Laventure\Component\Routing\Group
 */
 class RouteGroup
 {

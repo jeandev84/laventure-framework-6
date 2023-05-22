@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing\Route\Resource\Contract;
+namespace Laventure\Component\Routing\Resource\Contract;
 
 
 use Laventure\Component\Routing\Route\Route;
@@ -12,7 +12,7 @@ use Laventure\Component\Routing\Router;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route\Resource\Contract
+ * @package Laventure\Component\Routing\Resource\Contract
 */
 abstract class Resource
 {

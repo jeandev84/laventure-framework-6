@@ -9,7 +9,7 @@ namespace Laventure\Component\Routing\Route\Contract;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route\Contract
+ * @package Laventure\Component\Routing\Contract
 */
 interface NamedRouteInterface extends RouteInterface
 {
