@@ -173,7 +173,7 @@ class RouteGroup
     public function getNamespace(): string
     {
         if (! $this->namespace) {
-            throw new \InvalidArgumentException("Unable namespace: ". __FILE__);
+            throw new \InvalidArgumentException("group namespace is not established.");
         }
 
         if ($module = $this->getModule()) {
