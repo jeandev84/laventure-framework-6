@@ -143,6 +143,7 @@ class Router implements RouterInterface
 
 
 
+
     /**
      * Add route middlewares
      *
@@ -150,31 +151,11 @@ class Router implements RouterInterface
      *
      * @return $this
     */
-    public function addRouteMiddlewaresByName(array $middlewares): static
+    public function middlewareProvides(array $middlewares): static
     {
-        foreach ($middlewares as $name => $middleware) {
-            $this->addRouteMiddlewareByName($name, $middleware);
-        }
+         $this->middlewares = $middlewares;
 
          return $this;
-    }
-
-
-
-
-
-    /**
-     * @param string $name
-     *
-     * @param string $middleware
-     *
-     * @return $this
-    */
-    public function addRouteMiddlewareByName(string $name, string $middleware): static
-    {
-        $this->middlewares[$name] = $middleware;
-
-        return $this;
     }
 
 

@@ -170,7 +170,7 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @var array
     */
-    protected static $middlewareProviders = [];
+    protected $middlewareProvides = [];
 
 
 
@@ -471,11 +471,12 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     public function middlewareProvides(array $middlewares): static
     {
-          self::$middlewareProviders = $middlewares;
+          $this->middlewareProvides = array_filter($middlewares, function ($key) {
+                 return is_string($key);
+          }, ARRAY_FILTER_USE_KEY);
 
           return $this;
     }
-
 
 
 
@@ -506,8 +507,8 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     public function only(string $name): static
     {
-        if (array_key_exists($name, self::$middlewareProviders)) {
-            $this->middleware(self::$middlewareProviders);
+        if (array_key_exists($name, self::$middlewareProvides)) {
+            $this->middleware(self::$middlewareProvides);
         }
 
         return $this;
@@ -521,9 +522,9 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @return array
     */
-    public static function getMiddlewareProviders(): array
+    public function getMiddlewareProvides(): array
     {
-        return self::$middlewareProviders;
+        return $this->middlewareProvides;
     }
 
 
@@ -925,9 +926,9 @@ class Route implements NamedRouteInterface, ArrayAccess
     {
         return array_map(function ($middleware) {
 
-            $named = array_key_exists($middleware, static::$middlewareProviders);
+            $named = array_key_exists($middleware, $this->middlewareProvides);
 
-            return ($named ? static::$middlewareProviders[$middleware] : $middleware);
+            return ($named ? $this->middlewareProvides[$middleware] : $middleware);
 
         }, $middlewares);
     }
