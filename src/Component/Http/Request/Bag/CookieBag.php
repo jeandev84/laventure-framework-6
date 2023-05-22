@@ -1,7 +1,10 @@
 <?php
 namespace Laventure\Component\Http\Request\Bag;
 
-class CookieBag
+use Laventure\Component\Http\Bag\ParameterBag;
+
+
+class CookieBag extends ParameterBag
 {
 
 }

@@ -1,7 +1,9 @@
 <?php
 namespace Laventure\Component\Http\Request\Bag;
 
-class RequestHeaderBag
+use Laventure\Component\Http\Bag\ParameterBag;
+
+class RequestHeaderBag extends ParameterBag
 {
 
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http;
+namespace Laventure\Component\Http\Bag;
 
 
 
@@ -10,7 +10,7 @@ namespace Laventure\Component\Http;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http
+ * @package Laventure\Component\Http\Bag
 */
 class ParameterBag
 {
@@ -40,13 +40,13 @@ class ParameterBag
     /**
      * Set params
      *
-     * @param string $key
+     * @param string $name
      * @param $value
      * @return $this
     */
-    public function set(string $key, $value): self
+    public function set(string $name, $value): self
     {
-        $this->params[$key] = $value;
+        $this->params[$name] = $value;
 
         return $this;
     }
@@ -56,26 +56,24 @@ class ParameterBag
 
 
     /**
-     * @param string $key
+     * @param string $name
      * @return bool
     */
-    public function has(string $key): bool
+    public function has(string $name): bool
     {
-        return isset($this->params[$key]);
+        return isset($this->params[$name]);
     }
 
 
 
-
-
-
     /**
-     * @param $key
+     * @param string $name
+     *
      * @return bool
     */
-    public function empty(string $key): bool
+    public function empty(string $name): bool
     {
-        return empty($this->params[$key]);
+        return empty($this->params[$name]);
     }
 
 
@@ -86,16 +84,17 @@ class ParameterBag
     /**
      * Returns param value
      *
-     * @param string $key
+     * @param string $name
      *
      * @param $default
      *
      * @return mixed|null
     */
-    public function get(string $key, $default = null): mixed
+    public function get(string $name, $default = null): mixed
     {
-        return $this->params[$key] ?? $default;
+        return $this->params[$name] ?? $default;
     }
+
 
 
 
@@ -134,13 +133,13 @@ class ParameterBag
     /**
      * Remove param by given key
      *
-     * @param string $key
+     * @param string $name
      *
      * @return void
     */
-    public function remove(string $key)
+    public function remove(string $name): void
     {
-        unset($this->params[$key]);
+        unset($this->params[$name]);
     }
 
 
@@ -171,21 +170,16 @@ class ParameterBag
     }
 
 
-
-
-
     /**
-     * Parse param
+     * @param string|array $name
      *
-     * @param string $key
-     *
-     * @param $value
+     * @param null $value
      *
      * @return $this
-    */
-    public function parse(string $key, $value = null): self
+     */
+    public function parse(string|array $name, $value = null): self
     {
-        $this->merge(\is_array($key) ? $key : [$key => $value]);
+        $this->merge(\is_array($name) ? $name : [$name => $value]);
 
         return $this;
     }
@@ -196,13 +190,13 @@ class ParameterBag
     /**
      * Force value to integer
      *
-     * @param string $key
+     * @param string $name
      * @param int $default
      * @return int
     */
-    public function getInt(string $key, int $default = 0): int
+    public function getInt(string $name, int $default = 0): int
     {
-        return (int)$this->get($key, $default);
+        return (int)$this->get($name, $default);
     }
 
 

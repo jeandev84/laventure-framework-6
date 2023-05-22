@@ -1,7 +1,10 @@
 <?php
 namespace Laventure\Component\Http\Response\Bag;
 
-class ResponseHeaderBag
+use Laventure\Component\Http\Bag\ParameterBag;
+
+
+class ResponseHeaderBag extends ParameterBag
 {
 
 }
