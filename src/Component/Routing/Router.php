@@ -315,7 +315,7 @@ class Router implements RouterInterface
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
             $resolver  = new RouteResolver($this->group);
-            $parameter = $resolver->resolveRouteParameters($methods, $path, $action);
+            $parameter = $resolver->resolveMappedParameters($methods, $path, $action);
 
             return Route::create($this->domain, $methods, $parameter->getPath(), $parameter->getAction())
                         ->middlewareProvides($this->middlewares)

@@ -39,7 +39,7 @@ class RouteResolver
       * @param $action
       * @return RouteParameter
      */
-     public function resolveRouteParameters($methods, $path, $action): RouteParameter
+     public function resolveMappedParameters($methods, $path, $action): RouteParameter
      {
           return new RouteParameter($methods, $this->resolvePath($path), $this->resolveAction($action));
      }
