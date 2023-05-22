@@ -102,7 +102,7 @@ class RouteGroup
      *
      * @return $this
      */
-    public function map(Closure $routes, Router $router): static
+    public function mapRoutes(Closure $routes, Router $router): static
     {
          call_user_func($routes, $router);
 

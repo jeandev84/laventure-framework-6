@@ -2,6 +2,9 @@
 namespace Laventure\Component\Routing\Route\Collection;
 
 use Laventure\Component\Routing\Route\Mix;
+use Laventure\Component\Routing\Route\Resource\ApiResource;
+use Laventure\Component\Routing\Route\Resource\Contract\Resource;
+use Laventure\Component\Routing\Route\Resource\WebResource;
 use Laventure\Component\Routing\Route\Route;
 
 /**
@@ -46,6 +49,14 @@ class RouteCollection implements RouteCollectionInterface
 
 
       /**
+       * @var Resource
+      */
+      protected $resources = [];
+
+
+
+
+      /**
        * @param Route $route
        *
        * @return Route
@@ -61,6 +72,22 @@ class RouteCollection implements RouteCollectionInterface
           $this->routes[] = $route;
 
           return $route;
+      }
+
+
+
+
+      /**
+       * @param Resource $resource
+       * @return $this
+      */
+      public function addResource(Resource $resource): static
+      {
+           $resourceType = $resource->getResourceType();
+
+           $this->resources[$resourceType][$resource->getName()] = $resource;
+
+           return $this;
       }
 
 

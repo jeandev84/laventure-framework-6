@@ -8,6 +8,9 @@ use Laventure\Component\Routing\Route\Collection\RouteCollection;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcher;
 use Laventure\Component\Routing\Route\Dispatcher\RouteDispatcherInterface;
 use Laventure\Component\Routing\Route\Exception\RouteNotFoundException;
+use Laventure\Component\Routing\Route\Resource\ApiResource;
+use Laventure\Component\Routing\Route\Resource\Contract\Resource;
+use Laventure\Component\Routing\Route\Resource\WebResource;
 use Laventure\Component\Routing\Route\Route;
 use Laventure\Component\Routing\Route\RouteCache;
 use Laventure\Component\Routing\Route\RouteGroup;
@@ -237,7 +240,7 @@ class Router implements RouterInterface
     */
     public function middleware($middleware): static
     {
-          $this->group->middlewares($middleware);
+          $this->group->middlewares((array)$middleware);
 
           return $this;
     }
@@ -323,146 +326,6 @@ class Router implements RouterInterface
                         ->name($this->group->getName())
                         ->middleware($this->group->getMiddlewares())
                         ->options(['prefixes' => $this->group->getPrefixes()]);
-    }
-
-
-
-
-    /**
-     * Map routes called by any request
-     *
-     * @param $methods
-     *
-     * @param $path
-     *
-     * @param $action
-     * @return Route
-    */
-    public function map($methods, $path, $action): Route
-    {
-         return $this->add($this->makeRoute($methods, $path, $action));
-    }
-
-
-
-
-    /**
-     * Map route called by method GET
-     *
-     * @param $path
-     *
-     * @param $action
-     *
-     * @return Route
-    */
-    public function get($path, $action): Route
-    {
-        return $this->map('GET', $path, $action);
-    }
-
-
-
-
-
-    /**
-     * Map route called by method POST
-     *
-     * @param $path
-     *
-     * @param $action
-     *
-     * @return Route
-    */
-    public function post($path, $action): Route
-    {
-        return $this->map('POST', $path, $action);
-    }
-
-
-
-
-    /**
-     * Map route called by method PUT
-     *
-     * @param $path
-     *
-     * @param $action
-     *
-     * @return Route
-    */
-    public function put($path, $action): Route
-    {
-        return $this->map('PUT', $path, $action);
-    }
-
-
-
-
-
-
-    /**
-     * Map route called by method PATCH
-     *
-     * @param $path
-     *
-     * @param $action
-     *
-     * @return Route
-    */
-    public function patch($path, $action): Route
-    {
-        return $this->map('PATCH', $path, $action);
-    }
-
-
-
-
-
-    /**
-     * Map route called by method DELETE
-     *
-     * @param $path
-     *
-     * @param $action
-     *
-     * @return Route
-    */
-    public function delete($path, $action): Route
-    {
-        return $this->map('DELETE', $path, $action);
-    }
-
-
-
-
-
-    /**
-     * @param array $prefixes
-     *
-     * @param Closure $routes
-     *
-     * @return $this
-    */
-    public function group(array $prefixes, Closure $routes): static
-    {
-         $this->group->prefixes($prefixes);
-
-         $this->group->map($routes, $this);
-
-         $this->group->rewind();
-
-         return $this;
-    }
-
-
-
-
-    /**
-     * @return RouteGroup
-    */
-    public function getGroup(): RouteGroup
-    {
-        return $this->group;
     }
 
 
@@ -562,5 +425,216 @@ class Router implements RouterInterface
     public function getNamespace(): string
     {
         return $this->group->getNamespace();
+    }
+
+
+
+
+    /**
+     * Map routes called by any request
+     *
+     * @param $methods
+     *
+     * @param $path
+     *
+     * @param $action
+     * @return Route
+     */
+    public function map($methods, $path, $action): Route
+    {
+        return $this->add($this->makeRoute($methods, $path, $action));
+    }
+
+
+
+
+    /**
+     * Map route called by method GET
+     *
+     * @param $path
+     *
+     * @param $action
+     *
+     * @return Route
+     */
+    public function get($path, $action): Route
+    {
+        return $this->map('GET', $path, $action);
+    }
+
+
+
+
+
+    /**
+     * Map route called by method POST
+     *
+     * @param $path
+     *
+     * @param $action
+     *
+     * @return Route
+     */
+    public function post($path, $action): Route
+    {
+        return $this->map('POST', $path, $action);
+    }
+
+
+
+
+    /**
+     * Map route called by method PUT
+     *
+     * @param $path
+     *
+     * @param $action
+     *
+     * @return Route
+     */
+    public function put($path, $action): Route
+    {
+        return $this->map('PUT', $path, $action);
+    }
+
+
+
+
+
+
+    /**
+     * Map route called by method PATCH
+     *
+     * @param $path
+     *
+     * @param $action
+     *
+     * @return Route
+     */
+    public function patch($path, $action): Route
+    {
+        return $this->map('PATCH', $path, $action);
+    }
+
+
+
+
+
+    /**
+     * Map route called by method DELETE
+     *
+     * @param $path
+     *
+     * @param $action
+     *
+     * @return Route
+     */
+    public function delete($path, $action): Route
+    {
+        return $this->map('DELETE', $path, $action);
+    }
+
+
+
+
+
+    /**
+     * @param array $prefixes
+     *
+     * @param Closure $routes
+     *
+     * @return $this
+     */
+    public function group(array $prefixes, Closure $routes): static
+    {
+        $this->group->prefixes($prefixes);
+
+        $this->group->mapRoutes($routes, $this);
+
+        $this->group->rewind();
+
+        return $this;
+    }
+
+
+
+    /**
+     * @param Resource $resource
+     *
+     * @return $this
+    */
+    public function addResource(Resource $resource): static
+    {
+        $resource->mapRoutes($this);
+
+        $this->collection->addResource($resource);
+
+        return $this;
+    }
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param string $controller
+     *
+     * @return $this
+    */
+    public function resource(string $name, string $controller): static
+    {
+          return $this->addResource(new WebResource($name, $controller));
+    }
+
+
+
+
+    /**
+     * @param array $resources
+     *
+     * @return $this
+    */
+    public function resources(array $resources): static
+    {
+         foreach ($resources as $name => $controller) {
+               $this->resource($name, $controller);
+         }
+
+         return $this;
+    }
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param string $controller
+     *
+     * @return $this
+    */
+    public function apiResource(string $name, string $controller): static
+    {
+        return $this->addResource(new ApiResource($name, $controller));
+    }
+
+
+
+
+    /**
+     * @param array $resources
+     *
+     * @return $this
+    */
+    public function apiResources(array $resources): static
+    {
+         foreach ($resources as $name => $controller) {
+             $this->apiResource($name, $controller);
+         }
+
+         return $this;
     }
 }

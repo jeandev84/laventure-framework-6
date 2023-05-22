@@ -64,7 +64,6 @@ class RouteResolver
 
 
 
-
     /**
      * @param $callback
      *
