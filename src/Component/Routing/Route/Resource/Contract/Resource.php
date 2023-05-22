@@ -88,7 +88,7 @@ abstract class Resource
      *
      * @return $this
     */
-    public function addRoute(Route $route)
+    protected function addRoute(Route $route): static
     {
         $route->name($this->name($route->getAction()));
 
