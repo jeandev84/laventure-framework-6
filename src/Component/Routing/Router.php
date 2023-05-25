@@ -425,7 +425,7 @@ class Router implements RouterInterface
              return null;
         }
 
-        return $route->generateURI($parameters);
+        return $route->generate($parameters);
     }
 
 
