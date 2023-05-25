@@ -85,7 +85,7 @@ class RouteGroup
     public function prefixes(array $prefixes): static
     {
         foreach ($prefixes as $name => $value) {
-            if (property_exists($this, $name)) {
+            if ($this->prefixExists($name)) {
                 call_user_func([$this, $name], $value);
             }
         }
@@ -251,6 +251,18 @@ class RouteGroup
 
 
 
+    /**
+     * @return array
+    */
+    public function toArray(): array
+    {
+       return [
+           "prefixes"  => $this->getPrefixes(),
+           "namespace" => $this->getNamespace()
+       ];
+    }
+
+
 
     /**
      * @return void
@@ -261,5 +273,17 @@ class RouteGroup
         $this->module = [];
         $this->name   = [];
         $this->middlewares = [];
+    }
+
+
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+    */
+    private function prefixExists(string $name): bool
+    {
+         return array_key_exists($name, $this->getPrefixes());
     }
 }

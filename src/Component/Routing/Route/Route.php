@@ -94,13 +94,6 @@ class Route implements NamedRouteInterface, ArrayAccess
     protected $name;
 
 
-    /**
-     * @var string
-    */
-    protected $namespace;
-
-
-
 
     /**
      * Route params

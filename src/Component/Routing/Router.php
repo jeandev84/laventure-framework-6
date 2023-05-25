@@ -322,7 +322,7 @@ class Router implements RouterInterface
                         ->wheres($this->patterns)
                         ->name($this->group->getName())
                         ->middleware($this->group->getMiddlewares())
-                        ->options(['prefixes' => $this->group->getPrefixes()]);
+                        ->options($this->group->toArray());
     }
 
 
