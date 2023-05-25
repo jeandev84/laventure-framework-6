@@ -104,6 +104,16 @@ class Router implements RouterInterface
 
 
 
+    /**
+     * Controller namespace
+     *
+     * @var string
+    */
+    protected $namespace;
+
+
+
+
 
     /**
      * Router construct
@@ -144,7 +154,7 @@ class Router implements RouterInterface
      *
      * @return $this
     */
-    public function middlewareProvides(array $middlewares): static
+    public function middlewares(array $middlewares): static
     {
          $this->middlewares = $middlewares;
 
@@ -181,8 +191,12 @@ class Router implements RouterInterface
     {
          $this->group->namespace($namespace);
 
+         $this->namespace = trim($namespace, '\\');
+
          return $this;
     }
+
+
 
 
 
@@ -421,7 +435,7 @@ class Router implements RouterInterface
     */
     public function getNamespace(): string
     {
-        return $this->group->getNamespace();
+        return $this->namespace;
     }
 
 
