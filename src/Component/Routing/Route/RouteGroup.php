@@ -3,6 +3,8 @@ namespace Laventure\Component\Routing\Route;
 
 
 use Closure;
+use Laventure\Component\Routing\Router;
+
 
 /**
  * @RouteGroup
@@ -172,7 +174,7 @@ class RouteGroup
     public function getNamespace(): string
     {
         if (! $this->namespace) {
-            throw new \InvalidArgumentException("group namespace is not established.");
+            throw new \InvalidArgumentException("unable module namespace.");
         }
 
         if ($module = $this->getModule()) {

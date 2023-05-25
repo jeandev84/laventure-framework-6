@@ -105,13 +105,13 @@ interface RouteInterface
       * Determine if the current request matches route
       *
       *
-      * @param string $requestMethod
+      * @param string $method (Request method)
       *
-      * @param string $requestPath
+      * @param string $path (Request path)
       *
       * @return bool
      */
-     public function match(string $requestMethod, string $requestPath): bool;
+     public function match(string $method, string $path): bool;
 
 
 
@@ -125,5 +125,5 @@ interface RouteInterface
       *
       * @return string
     */
-    public function uri(array $parameters = []): string;
+    public function generateURI(array $parameters = []): string;
 }

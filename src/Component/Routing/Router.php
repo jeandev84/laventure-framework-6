@@ -14,7 +14,7 @@ use Laventure\Component\Routing\Resource\WebResource;
 use Laventure\Component\Routing\Route\Route;
 use Laventure\Component\Routing\Cache\RouteCache;
 use Laventure\Component\Routing\Route\RouteGroup;
-use Laventure\Component\Routing\Route\RouteResolver;
+use Laventure\Component\Routing\Route\RouteParameterResolver;
 
 
 /**
@@ -315,11 +315,10 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-            $resolver  = new RouteResolver($this->group);
-            $parameter = $resolver->resolveMappedParameters($methods, $path, $action);
+            $resolver  = new RouteParameterResolver($this->group);
+            [$methods, $path, $action] = $resolver->resolve($methods, $path, $action);
 
-            return Route::create($this->domain, $methods, $parameter->getPath(), $parameter->getAction())
-                        ->middlewareProvides($this->middlewares)
+            return Route::create($this->domain, $methods, $path, $action, $this->middlewares)
                         ->wheres($this->patterns)
                         ->name($this->group->getName())
                         ->middleware($this->group->getMiddlewares())
@@ -412,7 +411,7 @@ class Router implements RouterInterface
              return null;
         }
 
-        return $route->uri($parameters);
+        return $route->generateURI($parameters);
     }
 
 

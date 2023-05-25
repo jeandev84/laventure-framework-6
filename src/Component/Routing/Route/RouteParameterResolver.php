@@ -11,7 +11,7 @@ namespace Laventure\Component\Routing\Route;
  *
  * @package Laventure\Component\Routing\Route
 */
-class RouteResolver
+class RouteParameterResolver
 {
 
      /**
@@ -46,11 +46,11 @@ class RouteResolver
       * @param $methods
       * @param $path
       * @param $action
-      * @return RouteParameter
+      * @return array
      */
-     public function resolveMappedParameters($methods, $path, $action): RouteParameter
+     public function resolve($methods, $path, $action): array
      {
-          return new RouteParameter($methods, $this->resolvePath($path), $this->resolveAction($action));
+          return [$methods, $this->resolvePath($path), $this->resolveAction($action)];
      }
 
 

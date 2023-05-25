@@ -170,7 +170,7 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @var array
     */
-    protected $middlewareProvides = [];
+    protected static $middlewareProvides = [];
 
 
 
@@ -266,14 +266,14 @@ class Route implements NamedRouteInterface, ArrayAccess
     }
 
 
-
-
     /**
      * @param mixed $callback
      *
      * @return $this
+     *
+     * @throws \Exception
     */
-    public function callback($callback): static
+    public function callback(mixed $callback): static
     {
          $this->callback = $this->resolveCallback($callback);
 
@@ -469,11 +469,15 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @return Route
     */
-    public function middlewareProvides(array $middlewares): static
+    public function middlewares(array $middlewares): static
     {
-          $this->middlewareProvides = array_filter($middlewares, function ($key) {
+          self::$middlewareProvides = array_filter($middlewares, function ($key) {
                  return is_string($key);
           }, ARRAY_FILTER_USE_KEY);
+
+          $this->middleware(array_filter($middlewares, function ($key) {
+              return is_int($key);
+          }));
 
           return $this;
     }
@@ -513,20 +517,6 @@ class Route implements NamedRouteInterface, ArrayAccess
 
         return $this;
     }
-
-
-
-
-    /**
-     * Return middleware stack
-     *
-     * @return array
-    */
-    public function getMiddlewareProvides(): array
-    {
-        return $this->middlewareProvides;
-    }
-
 
 
 
@@ -701,31 +691,32 @@ class Route implements NamedRouteInterface, ArrayAccess
     /**
      * Determine if the given request method match route
      *
-     * @param string $requestMethod
+     * @param string $method
      *
      * @return bool
     */
-    public function matchMethod(string $requestMethod): bool
+    public function matchMethod(string $method): bool
     {
-         return in_array($requestMethod, $this->methods);
+         return in_array($method, $this->methods);
     }
 
 
 
 
     /**
-     * @param string $requestPath
+     * @param string $uri
      *
      * @return bool
     */
-    public function matchPath(string $requestPath): bool
+    public function matchPath(string $uri): bool
     {
-          $path = $this->normalizeRequestPath($requestPath);
+          $path    = $this->normalizeRequestPath($uri);
+          $pattern = $this->getPattern();
 
-          if (preg_match("#^{$this->pattern}$#i", $path, $matches)) {
+          if (preg_match("#^$pattern$#i", $path, $matches)) {
               
               $this->params   = $this->resolveParams($matches);
-              $this->realPath = $this->generateRealPath($requestPath);
+              $this->realPath = $this->generateRealPath($uri);
               $this->matches  = $matches;
             
               return true;
@@ -742,9 +733,9 @@ class Route implements NamedRouteInterface, ArrayAccess
     /**
      * @inheritDoc
     */
-    public function match(string $requestMethod, string $requestPath): bool
+    public function match(string $method, string $path): bool
     {
-          return $this->matchMethod($requestMethod) && $this->matchPath($requestPath);
+          return $this->matchMethod($method) && $this->matchPath($path);
     }
 
 
@@ -844,7 +835,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     /**
      * @inheritDoc
     */
-    public function uri(array $parameters = []): string
+    public function generateURI(array $parameters = []): string
     {
         $path = $this->getPath();
 
@@ -868,8 +859,6 @@ class Route implements NamedRouteInterface, ArrayAccess
     }
 
 
-
-
     /**
      * @param $domain
      *
@@ -879,11 +868,15 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @param $action
      *
+     * @param array $middlewares
+     *
      * @return static
     */
-    public static function create($domain, $methods, $path, $action): static
+    public static function create($domain, $methods, $path, $action, array $middlewares): static
     {
-         return new static($domain, $methods, $path, $action);
+         $route = new static($domain, $methods, $path, $action);
+         $route->middlewares($middlewares);
+         return $route;
     }
 
 
@@ -926,9 +919,9 @@ class Route implements NamedRouteInterface, ArrayAccess
     {
         return array_map(function ($middleware) {
 
-            $named = array_key_exists($middleware, $this->middlewareProvides);
+            $named = array_key_exists($middleware, self::$middlewareProvides);
 
-            return ($named ? $this->middlewareProvides[$middleware] : $middleware);
+            return ($named ? self::$middlewareProvides[$middleware] : $middleware);
 
         }, $middlewares);
     }
@@ -1033,11 +1026,11 @@ class Route implements NamedRouteInterface, ArrayAccess
 
             if (! isset($callback[0])) {
                 throw new \Exception("Controller name is required.");
-            }
-
-            if (! isset($callback[1])) {
+            } /*elseif (! isset($callback[1])) {
                $callback[1] = '__invoke';
-            }
+            } */
+
+            $callback[1] = $callback[1] ?? '__invoke';
 
             $this->controller($callback[0], $callback[1]);
         }
