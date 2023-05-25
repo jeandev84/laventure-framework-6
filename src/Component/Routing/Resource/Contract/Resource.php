@@ -55,13 +55,27 @@ abstract class Resource
     }
 
 
+    /**
+     * @param string $suffix
+     *
+     * @return string
+     */
+    protected function path(string $suffix = ''): string
+    {
+        return "/{$this->name}". ($suffix ? "/". ltrim($suffix, '\\/') : $suffix);
+    }
+
+
+
+
+
 
     /**
      * @param string $action
      *
      * @return array|string
     */
-    public function action(string $action): array|string
+    protected function action(string $action): array|string
     {
          if (class_exists($this->controller)) {
               return [$this->controller, $action];
@@ -71,11 +85,14 @@ abstract class Resource
     }
 
 
+
+
+
     /**
      * @param string $name
      * @return string
     */
-    public function name(string $name): string
+    protected function name(string $name): string
     {
          return "$this->name.$name";
     }
