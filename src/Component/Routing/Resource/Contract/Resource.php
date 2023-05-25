@@ -55,11 +55,12 @@ abstract class Resource
     }
 
 
+
     /**
      * @param string $suffix
      *
      * @return string
-     */
+    */
     protected function path(string $suffix = ''): string
     {
         return "/{$this->name}". ($suffix ? "/". ltrim($suffix, '\\/') : $suffix);
@@ -105,7 +106,7 @@ abstract class Resource
      *
      * @return $this
     */
-    protected function addRoute(Route $route): static
+    public function addRoute(Route $route): static
     {
         $route->name($this->name($route->getAction()));
 
@@ -113,6 +114,7 @@ abstract class Resource
 
         return $this;
     }
+
 
 
 
