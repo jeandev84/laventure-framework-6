@@ -63,8 +63,9 @@ class Request  extends ServerRequest
         string $content = null
     )
     {
-         parent::__construct($queries, $request, $attributes, $cookies, $files, $server, $content);
+         parent::__construct($queries, $request, $attributes, $cookies, $files, $server);
          $this->session  =  new Session();
+         $this->content  = $content;
     }
 
 
@@ -91,6 +92,10 @@ class Request  extends ServerRequest
     */
     public function getContent(): ?string
     {
+        if (! $this->content) {
+            return http_get_request_body();
+        }
+
         return $this->content;
     }
 
@@ -161,6 +166,7 @@ class Request  extends ServerRequest
     {
         return $this->server->getPathInfo();
     }
+
 
 
 

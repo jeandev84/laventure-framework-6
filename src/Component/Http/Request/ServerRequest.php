@@ -161,7 +161,6 @@ class ServerRequest implements ServerRequestInterface
      * @param array $cookies
      * @param array $files
      * @param array $server
-     * @param string|null $content
      * @return void
     */
     public function __construct(
@@ -171,7 +170,6 @@ class ServerRequest implements ServerRequestInterface
         array $cookies = [],
         array $files = [],
         array $server = [],
-        string $content = null
     ) {
         $this->queries    =  new InputBag($queries);
         $this->request    =  new InputBag($request);
@@ -185,7 +183,6 @@ class ServerRequest implements ServerRequestInterface
         $this->target     =  $this->server->getRequestUri();
         $this->protocol   =  $this->server->getProtocolVersion();
         $this->method     =  $this->server->getRequestMethod();
-        $this->content    =  $content;
     }
 
 
@@ -280,6 +277,11 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getParsedBody(): array
     {
+        if ($this->hasParsedBody()) {
+            parse_str(file_get_contents('php://input'), $data);
+            $this->request = new InputBag($data);
+        }
+
         return $this->request->all();
     }
 
@@ -288,7 +290,7 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function withParsedBody($data): static
     {
         $this->request->merge($data);
@@ -578,5 +580,31 @@ class ServerRequest implements ServerRequestInterface
         $this->uri = $uri;
 
         return $this;
+    }
+
+
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+    */
+    public function isMethod(string $name): bool
+    {
+         return $this->server->isMethod($name);
+    }
+
+
+
+    /**
+     * @return bool
+    */
+    public function hasParsedBody(): bool
+    {
+        $encodedFormUrl = $this->headers->isNotXFormUrlEncoded();
+        $posted         = $this->isMethod('POST');
+        $allowedMethods = $this->server->hasAllowedMethods();
+
+        return ($posted && $encodedFormUrl && $allowedMethods);
     }
 }

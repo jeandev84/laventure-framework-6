@@ -7,6 +7,8 @@ use Laventure\Component\Http\Bag\ParameterBag;
 /**
  * @RequestHeaderBag
  *
+ * @see https://www.php.net/manual/en/function.getallheaders.php
+ *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
@@ -25,7 +27,7 @@ class RequestHeaderBag extends ParameterBag
      /**
       * @return bool
      */
-     public function hasNotXFormUrlEncoded(): bool
+     public function isNotXFormUrlEncoded(): bool
      {
          return (stripos($this->getContentType(), 'application/x-www-form-urlencoded') === 0);
      }

@@ -389,6 +389,22 @@ class ServerBag extends ParameterBag
 
 
 
+
+    /**
+     * Determine if the request method matched
+     *
+     * @param string $name
+     *
+     * @return bool
+    */
+    public function isMethod(string $name): bool
+    {
+        return $this->getRequestMethod() === strtoupper($name);
+    }
+
+
+
+
     /**
      * @return bool
     */
