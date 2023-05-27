@@ -33,7 +33,7 @@ class UrlGenerator implements UrlGeneratorInterface
     */
     public function generateUrl(string $name, array $parameters = [], array $queries = [], string $fragment = null)
     {
-        return sprintf('%s%s', $this->router->getDomain(), $this->generateURI($name, $parameters, $queries, $fragment));
+        return $this->generateNativeUrl($this->generateUri($name, $parameters, $queries, $fragment));
     }
 
 
@@ -42,7 +42,7 @@ class UrlGenerator implements UrlGeneratorInterface
     /**
      * @inheritDoc
     */
-    public function generateURI(string $name, array $parameters = [], array $queries = [], string $fragment = null)
+    public function generateUri(string $name, array $parameters = [], array $queries = [], string $fragment = null)
     {
          if (! $path = $this->router->generate($name, $parameters)) {
               return $this->generateNativePath($name, $queries, $fragment);
@@ -52,21 +52,43 @@ class UrlGenerator implements UrlGeneratorInterface
     }
 
 
-
-
     /**
      * @param string $path
      *
      * @param array $queries
      *
-     * @param string $fragment
+     * @param string|null $fragment
      *
      * @return string
     */
-    private function generateNativePath(string $path, array $queries, string $fragment): string
+    private function generateNativePath(string $path, array $queries = [], string $fragment = null): string
+    {
+        return sprintf('/%s%s%s', trim($path, '\\/'), $this->buildQueryString($queries), $fragment);
+    }
+
+
+    /**
+     * @param string $path
+     *
+     * @return string
+    */
+    private function generateNativeUrl(string $path): string
+    {
+        return sprintf('%s/%s', $this->router->getDomain(), trim($path, '\\/'));
+    }
+
+
+
+
+    /**
+     * @param array $queries
+     *
+     * @return string
+    */
+    private function buildQueryString(array $queries): string
     {
         $queries = array_merge($this->queries, $queries);
 
-        return sprintf('%s%s%s', $path, http_build_query($queries), $fragment);
+        return ($queries ? '?'. http_build_query($queries) : '');
     }
 }

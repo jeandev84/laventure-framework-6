@@ -533,9 +533,9 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withMethod($method): static
     {
-        $this->server->set('REQUEST_METHOD', strtoupper($method));
+        $this->method = strtoupper($method);
 
-        $this->method = $method;
+        $this->server->set('REQUEST_METHOD', $this->method);
 
         return $this;
     }

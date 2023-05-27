@@ -45,5 +45,5 @@ interface UrlGeneratorInterface
        *
        * @return mixed
       */
-      public function generateURI(string $name, array $parameters = [], array $queries = [], string $fragment = null);
+      public function generateUri(string $name, array $parameters = [], array $queries = [], string $fragment = null);
 }
