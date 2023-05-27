@@ -1,6 +1,8 @@
 <?php
 namespace Laventure\Component\Http\Request\Contract;
 
+use Laventure\Component\Http\Message\StreamInterface;
+
 /**
  * @UploadedFileInterface
  *

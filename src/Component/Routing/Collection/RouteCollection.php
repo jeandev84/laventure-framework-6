@@ -83,9 +83,9 @@ class RouteCollection implements RouteCollectionInterface
       */
       public function addResource(Resource $resource): static
       {
-           $resourceType = $resource->getResourceType();
+           $type = $resource->getTypeName();
 
-           $this->resources[$resourceType][$resource->getName()] = $resource;
+           $this->resources[$type][$resource->getName()] = $resource;
 
            return $this;
       }

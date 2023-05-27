@@ -504,8 +504,10 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     public function only(string $name): static
     {
+        $this->removeMiddlewares();
+
         if (array_key_exists($name, self::$middlewareProvides)) {
-            $this->middleware(self::$middlewareProvides);
+            $this->middleware(self::$middlewareProvides[$name]);
         }
 
         return $this;
@@ -523,6 +525,19 @@ class Route implements NamedRouteInterface, ArrayAccess
          unset($this->middlewares[$key]);
     }
 
+
+
+    /**
+     * Remove all route middlewares
+     *
+     * @return $this
+    */
+    public function removeMiddlewares(): static
+    {
+         $this->middlewares = [];
+
+         return $this;
+    }
 
 
 
@@ -861,15 +876,11 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @param $action
      *
-     * @param array $middlewares
-     *
      * @return static
     */
-    public static function create($domain, $methods, $path, $action, array $middlewares): static
+    public static function make($domain, $methods, $path, $action): static
     {
-         $route = new static($domain, $methods, $path, $action);
-         $route->middlewares($middlewares);
-         return $route;
+         return new static($domain, $methods, $path, $action);
     }
 
 

@@ -12,7 +12,7 @@ namespace Laventure\Component\Http\Bag;
  *
  * @package Laventure\Component\Http\Bag
 */
-class ParameterBag
+class ParameterBag implements ParameterBagInterface
 {
 
 
@@ -31,9 +31,6 @@ class ParameterBag
     {
         $this->params = $params;
     }
-
-
-
 
 
 
@@ -98,6 +95,97 @@ class ParameterBag
 
 
 
+    /**
+     * @param string $name
+     *
+     * @param string $default
+     *
+     * @return string
+    */
+    public function getUpperCase(string $name, string $default = ''): string
+    {
+         return mb_strtoupper($this->get($name, $default));
+    }
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param string $default
+     *
+     * @return string
+    */
+    public function getLowerCase(string $name, string $default = ''): string
+    {
+        return mb_strtolower($this->get($name, $default));
+    }
+
+
+
+
+    /**
+     * Force value to integer
+     *
+     * @param string $name
+     * @param int $default
+     * @return int
+     */
+    public function getInt(string $name, int $default = 0): int
+    {
+        return (int)$this->get($name, $default);
+    }
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param float $default
+     *
+     * @return float
+     */
+    public function getFloat(string $name, float $default = 0): float
+    {
+        return (float)$this->get($name, $default);
+    }
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param bool $default
+     *
+     * @return bool
+    */
+    public function getBoolean(string $name, bool $default = false): bool
+    {
+        return (bool)$this->get($name, $default);
+    }
+
+
+    /**
+     * @param string $name
+     *
+     * @param $value
+     *
+     * @return mixed|null
+    */
+    public function equalTo(string $name, $value): mixed
+    {
+         return $this->get($name, $value);
+    }
+
+
+
+
+
 
     /**
      * Returns all params
@@ -108,6 +196,8 @@ class ParameterBag
     {
         return $this->params;
     }
+
+
 
 
 
@@ -162,12 +252,21 @@ class ParameterBag
      * Refresh params
      *
      * @param array $params
-     * @return void
+     *
+     * @return $this
     */
-    public function refresh(array $params)
+    public function refresh(array $params): static
     {
-        // todo implements
+         $this->clear();
+
+         $this->merge($params);
+
+         return $this;
     }
+
+
+
+
 
 
     /**
@@ -182,52 +281,5 @@ class ParameterBag
         $this->merge(\is_array($name) ? $name : [$name => $value]);
 
         return $this;
-    }
-
-
-
-
-    /**
-     * Force value to integer
-     *
-     * @param string $name
-     * @param int $default
-     * @return int
-    */
-    public function getInt(string $name, int $default = 0): int
-    {
-        return (int)$this->get($name, $default);
-    }
-
-
-
-
-
-    /**
-     * @param string $name
-     *
-     * @param float $default
-     *
-     * @return float
-    */
-    public function getFloat(string $name, float $default = 0): float
-    {
-        return (float)$this->get($name, $default);
-    }
-
-
-
-
-
-    /**
-     * @param string $name
-     *
-     * @param bool $default
-     *
-     * @return bool
-    */
-    public function getBoolean(string $name, bool $default = false): bool
-    {
-        return (bool)$this->get($name, $default);
     }
 }

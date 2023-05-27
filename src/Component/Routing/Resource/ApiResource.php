@@ -36,7 +36,7 @@ class ApiResource extends Resource
     /**
      * @inheritDoc
     */
-    public function getResourceType(): string
+    public function getTypeName(): string
     {
          return 'api';
     }

@@ -170,5 +170,5 @@ abstract class Resource
     /**
      * @return string
     */
-    abstract public function getResourceType(): string;
+    abstract public function getTypeName(): string;
 }

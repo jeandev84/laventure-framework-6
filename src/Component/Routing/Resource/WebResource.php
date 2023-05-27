@@ -21,7 +21,7 @@ class WebResource extends Resource
     /**
      * @inheritDoc
     */
-    public function getResourceType(): string
+    public function getTypeName(): string
     {
          return 'web';
     }

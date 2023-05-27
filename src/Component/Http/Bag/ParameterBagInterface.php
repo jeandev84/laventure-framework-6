@@ -1,11 +1,10 @@
 <?php
-namespace Laventure\Component\Http\Request\Bag;
+namespace Laventure\Component\Http\Bag;
 
-use Laventure\Component\Http\Bag\ParameterBag;
 
 
 /**
- * @InputBag
+ * @ParameterBagInterface
  *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
@@ -13,6 +12,7 @@ use Laventure\Component\Http\Bag\ParameterBag;
  *
  * @package Laventure\Component\Http\Bag
 */
-class InputBag extends ParameterBag
+interface ParameterBagInterface
 {
+
 }
