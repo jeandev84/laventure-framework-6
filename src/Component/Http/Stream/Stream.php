@@ -7,6 +7,21 @@ use Laventure\Component\Http\Message\StreamInterface;
 /**
  * @Stream
  *
+ * @link https://www.php.net/manual/fr/ref.stream.php
+ * @link https://www.php.net/manual/fr/class.streamwrapper.php
+ * @link https://www.php.net/manual/fr/function.stream-context-create.php
+ * @link https://www.php.net/manual/en/function.stream-get-contents.php
+ * @link https://www.php.net/manual/en/function.stream-get-meta-data.php
+ * @link https://www.php.net/manual/en/function.is-writable.php
+ * @link https://www.php.net/manual/en/function.fopen.php
+ * @link https://www.php.net/manual/en/function.is-readable.php
+ * @link https://www.php.net/manual/en/function.stream-filter-remove.php
+ * @link https://www.php.net/manual/ru/function.fseek.php
+ * @link https://www.php.net/manual/ru/function.ftell.php
+ * @link https://www.php.net/manual/ru/function.filesize.php
+ * @link https://www.php.net/manual/fr/function.fstat.php
+ * @link https://www.php.net/manual/ru/function.feof.php
+ *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
@@ -28,15 +43,29 @@ class Stream implements StreamInterface
      *
      * @param string $accessMode
     */
-    public function __construct($stream, string $accessMode = 'r')
+    public function __construct($stream, string $accessMode)
     {
-         if (! $this->streamIsFile($stream)) {
-              $stream = fopen($stream, $accessMode);
-         }
-
-         $this->stream = $stream;
+        $this->open($stream, $accessMode);
     }
 
+
+
+
+    /**
+     * @param $stream
+     *
+     * @param string $accessMode
+     *
+     * @return void
+    */
+    public function open($stream, string $accessMode): void
+    {
+        if (! $this->streamIsFile($stream)) {
+            $stream = fopen($stream, $accessMode);
+        }
+
+        $this->stream = $stream;
+    }
 
 
     /**
@@ -48,6 +77,8 @@ class Stream implements StreamInterface
     {
         return is_resource($stream) && (get_resource_type($stream) === 'stream');
     }
+
+
 
 
     /**
@@ -224,6 +255,17 @@ class Stream implements StreamInterface
     public function read($length): bool|string
     {
        return fgets($this->getStream(), $length);
+    }
+
+
+
+
+    /**
+     * @return false|string
+    */
+    public function readFromStream(): bool|string
+    {
+         return stream_get_contents($this->getStream());
     }
 
 

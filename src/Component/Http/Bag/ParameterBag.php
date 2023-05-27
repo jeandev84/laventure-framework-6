@@ -29,7 +29,7 @@ class ParameterBag implements ParameterBagInterface
     */
     public function __construct(array $params = [])
     {
-        $this->params = $params;
+        $this->merge($params);
     }
 
 
@@ -43,7 +43,7 @@ class ParameterBag implements ParameterBagInterface
     */
     public function set(string $name, $value): self
     {
-        $this->params[$name] = $value;
+        $this->params[trim($name)] = trim($value);
 
         return $this;
     }
@@ -119,7 +119,9 @@ class ParameterBag implements ParameterBagInterface
     */
     public function merge(array $params): self
     {
-        $this->params = array_merge($this->params, $params);
+        foreach ($params as $name => $value) {
+            $this->set($name, $value);
+        }
 
         return $this;
     }
@@ -184,7 +186,7 @@ class ParameterBag implements ParameterBagInterface
      *
      * @return $this
      */
-    public function parse(string|array $name, $value = null): self
+    public function parseParams(string|array $name, $value = null): self
     {
         $this->merge(\is_array($name) ? $name : [$name => $value]);
 

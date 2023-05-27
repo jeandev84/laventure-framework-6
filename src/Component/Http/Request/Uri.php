@@ -7,6 +7,8 @@ use Laventure\Component\Http\Request\Contract\UriInterface;
 /**
  * @Uri
  *
+ * @link https://www.php.net/manual/en/function.parse-url.php
+ *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
@@ -113,7 +115,7 @@ class Uri implements UriInterface
     */
     public function __construct(string $url)
     {
-        $this->parseURL($url);
+        $this->parseUrl($url);
     }
 
 
@@ -346,10 +348,13 @@ class Uri implements UriInterface
      *
      * @return void
     */
-    private function parseURL(string $url): void
+    private function parseUrl(string $url): void
     {
+        $username = $this->parse($url, PHP_URL_USER);
+        $password = $this->parse($url, PHP_URL_PASS);
+
         $this->withScheme($this->parse($url, PHP_URL_SCHEME));
-        $this->withUserInfo($this->parse($url, PHP_URL_USER), $this->parse($url, PHP_URL_PASS));
+        $this->withUserInfo($username, $password);
         $this->withHost($this->parse($url, PHP_URL_HOST));
         $this->withPort($this->parse($url, PHP_URL_PORT));
         $this->withPath($this->parse($url, PHP_URL_PATH));

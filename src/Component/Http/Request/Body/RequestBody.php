@@ -6,7 +6,7 @@ use Laventure\Component\Http\Stream\Stream;
 
 
 /**
- * @RequestBody
+ * @ResponseBody
  *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
@@ -19,11 +19,13 @@ class RequestBody extends Stream
 
 
     /**
-     * @inheritdoc
+     * @param $stream
+     *
+     * @param string $accessMode
     */
-    public function __construct($stream = null)
+    public function __construct($stream, string $accessMode = 'r')
     {
-        parent::__construct($stream ?: 'php://input');
+        parent::__construct($stream, $accessMode);
     }
 
 

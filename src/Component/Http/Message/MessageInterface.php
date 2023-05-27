@@ -95,7 +95,7 @@ interface MessageInterface
      * @return string A string of values as provided for the given header
      *    concatenated together using a comma. If the header does not appear in
      *    the message, this method MUST return an empty string.
-     */
+    */
     public function getHeaderLine($name);
 
 

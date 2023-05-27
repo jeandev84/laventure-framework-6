@@ -179,7 +179,7 @@ class ServerRequest implements ServerRequestInterface
         $this->server     =  new ServerBag($server);
         $this->uri        =  new Uri($this->server->getUrl());
         $this->headers    =  new RequestHeaderBag();
-        $this->body       =  new RequestBody();
+        $this->body       =  new RequestBody('php://input');
         $this->target     =  $this->server->getRequestUri();
         $this->protocol   =  $this->server->getProtocolVersion();
         $this->method     =  $this->server->getRequestMethod();
