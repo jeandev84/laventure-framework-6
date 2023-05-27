@@ -3,7 +3,7 @@ namespace Laventure\Component\Routing\Route;
 
 
 use ArrayAccess;
-use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
+use Laventure\Component\Routing\Route\Contract\RouteInterface;
 
 
 /**
@@ -15,7 +15,7 @@ use Laventure\Component\Routing\Route\Contract\NamedRouteInterface;
  *
  * @package Laventure\Component\Routing\Route
 */
-class Route implements NamedRouteInterface, ArrayAccess
+class Route implements RouteInterface, ArrayAccess
 {
 
 

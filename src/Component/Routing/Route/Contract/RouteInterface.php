@@ -58,6 +58,17 @@ interface RouteInterface
 
 
      /**
+      * Return name of route
+      *
+      * @return string
+     */
+     public function getName();
+
+
+
+
+
+     /**
       * Returns route pattern
       *
       * @return string
