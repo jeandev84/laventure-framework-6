@@ -105,17 +105,6 @@ class Router implements RouteCollectorInterface, RouterInterface
 
 
     /**
-     * Prefixed path with local
-     *
-     * @var string
-    */
-    protected $locale;
-
-
-
-
-
-    /**
      * Controller namespace
      *
      * @var string
@@ -132,12 +121,13 @@ class Router implements RouteCollectorInterface, RouterInterface
     */
     public function __construct(string $domain)
     {
-         $this->setDomain($domain);
-         $this->setRouteCollection(new RouteCollection());
-         $this->setRouteGroup(new RouteGroup());
+         $this->collection = new RouteCollection();
+         $this->group      = new RouteGroup();
          $this->cache      = new RouteCache();
-         $this->setRouteDispatcher(new RouteDispatcher());
+         $this->dispatcher = new RouteDispatcher();
+         $this->domain     = $domain;
     }
+
 
 
 
@@ -146,12 +136,13 @@ class Router implements RouteCollectorInterface, RouterInterface
      *
      * @return $this
     */
-    public function setDomain(string $domain): static
+    public function domain(string $domain): static
     {
         $this->domain = $domain;
 
         return $this;
     }
+
 
 
 
@@ -167,35 +158,11 @@ class Router implements RouteCollectorInterface, RouterInterface
 
 
     /**
-     * @return RouteGroup
-    */
-    public function getGroup(): RouteGroup
-    {
-        return $this->group;
-    }
-
-
-
-    /**
-     * @param RouteCollectionInterface $collection
-     *
-     * @return $this
-    */
-    public function setRouteCollection(RouteCollectionInterface $collection): static
-    {
-         $this->collection = $collection;
-
-         return $this;
-    }
-
-
-
-    /**
      * @param RouteDispatcherInterface $dispatcher
      *
      * @return $this
     */
-    public function setRouteDispatcher(RouteDispatcherInterface $dispatcher): static
+    public function dispatcher(RouteDispatcherInterface $dispatcher): static
     {
         $this->dispatcher = $dispatcher;
 
@@ -210,40 +177,11 @@ class Router implements RouteCollectorInterface, RouterInterface
      *
      * @return $this
     */
-    public function setControllerNamespace(string $namespace): static
+    public function namespace(string $namespace): static
     {
         $this->group->namespace($namespace);
 
         $this->namespace = $namespace;
-
-        return $this;
-    }
-
-
-
-    /**
-     * @param RouteGroup $group
-     *
-     * @return $this
-    */
-    public function setRouteGroup(RouteGroup $group): static
-    {
-         $this->group = $group;
-
-         return $this;
-    }
-
-
-
-
-    /**
-     * @param string $locale
-     *
-     * @return $this
-    */
-    public function locale(string $locale): static
-    {
-        $this->locale = trim($locale);
 
         return $this;
     }

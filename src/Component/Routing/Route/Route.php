@@ -809,7 +809,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     */
     public function call(callable $callback): mixed
     {
-        return call_user_func_array($callback, $this->getValuesOfParams());
+        return call_user_func_array($callback, array_values($this->getParams()));
     }
 
 
@@ -867,17 +867,6 @@ class Route implements NamedRouteInterface, ArrayAccess
 
 
 
-
-
-
-
-    /**
-     * @return array
-    */
-    public function getValuesOfParams(): array
-    {
-         return array_values($this->getParams());
-    }
 
 
     /**
