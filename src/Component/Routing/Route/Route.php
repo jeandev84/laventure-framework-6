@@ -263,8 +263,6 @@ class Route implements NamedRouteInterface, ArrayAccess
      * @param mixed $callback
      *
      * @return $this
-     *
-     * @throws \Exception
     */
     public function callback(mixed $callback): static
     {
@@ -985,10 +983,8 @@ class Route implements NamedRouteInterface, ArrayAccess
          $search  = $this->searchedPlaceholders($name);
          $replace = $this->replacedPatterns(sprintf('(?P<%s>%s)', $name, $pattern));
 
-         return preg_replace($search, $replace, $this->pattern);
+         return preg_replace($search, $replace, $this->getPattern());
     }
-
-
 
 
     /**
@@ -1021,18 +1017,14 @@ class Route implements NamedRouteInterface, ArrayAccess
      * @param $callback
      *
      * @return mixed
-     *
-     * @throws \Exception
     */
     private function resolveCallback($callback): mixed
     {
         if (is_array($callback)) {
 
             if (! isset($callback[0])) {
-                throw new \Exception("Controller name is required.");
-            } /*elseif (! isset($callback[1])) {
-               $callback[1] = '__invoke';
-            } */
+                return $callback;
+            }
 
             $callback[1] = $callback[1] ?? '__invoke';
 

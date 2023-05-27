@@ -2,7 +2,9 @@
 namespace Laventure\Component\Routing\Cache;
 
 
+use Laventure\Component\Routing\Route\Contract\RouteInterface;
 use Laventure\Component\Routing\Route\Route;
+use Laventure\Component\Routing\RouterInterface;
 
 /**
  * @RouteCache
@@ -13,7 +15,7 @@ use Laventure\Component\Routing\Route\Route;
  *
  * @package Laventure\Component\Routing\Cache
 */
-class RouteCache
+class RouteCache implements RouteCacheInterface
 {
 
      /**
@@ -24,24 +26,37 @@ class RouteCache
 
 
      /**
-      * @param string $cacheDir
+      * Route constructor
       *
-      * @return void
+      * @param string|null $cacheDir
      */
-     public function cacheDir(string $cacheDir): void
+     public function __construct(string $cacheDir = null)
      {
-          $this->cacheDir = rtrim($cacheDir, DIRECTORY_SEPARATOR);
+          if ($cacheDir) {
+              $this->cacheRouteDir($cacheDir);
+          }
      }
 
 
-    /**
-     * @param string $key
-     *
-     * @param Route $route
-     *
-     * @return $this
+
+
+     /**
+      * @inheritDoc
      */
-     public function set(string $key, Route $route): static
+     public function cacheRouteDir(string $cacheDir): static
+     {
+          $this->cacheDir = rtrim($cacheDir, DIRECTORY_SEPARATOR);
+
+          return $this;
+     }
+
+
+
+
+     /**
+      * @inheritdoc
+     */
+     public function cacheRoute(string $key, RouteInterface $route): static
      {
           if (! $route->isCallable()) {
               $this->cache($key, serialize($route));
@@ -54,20 +69,14 @@ class RouteCache
 
 
      /**
-      * @param string $key
-      *
-      * @return Route|false
+      * @inheritdoc
      */
-     public function get(string $key): Route|bool
+     public function getRoute(string $key): ?RouteInterface
      {
-         if (! $this->has($key)) {
-              return false;
-         }
-
          $content = file_get_contents($this->path($key));
 
-         if (! $content) {
-             return false;
+         if (! $this->hasRoute($key) || $content) {
+              return null;
          }
 
          return unserialize($content);
@@ -81,7 +90,7 @@ class RouteCache
       *
       * @return bool
      */
-     public function has(string $key): bool
+     public function hasRoute(string $key): bool
      {
          return file_exists($this->path($key));
      }
@@ -97,7 +106,7 @@ class RouteCache
       *
       * @return bool|int
      */
-     public function cache(string $key, $content): bool|int
+     private function cache(string $key, $content): bool|int
      {
           $filename = $this->path($key);
           $dirname = dirname($filename);

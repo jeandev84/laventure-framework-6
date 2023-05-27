@@ -96,98 +96,6 @@ class ParameterBag implements ParameterBagInterface
 
 
     /**
-     * @param string $name
-     *
-     * @param string $default
-     *
-     * @return string
-    */
-    public function getUpperCase(string $name, string $default = ''): string
-    {
-         return mb_strtoupper($this->get($name, $default));
-    }
-
-
-
-
-    /**
-     * @param string $name
-     *
-     * @param string $default
-     *
-     * @return string
-    */
-    public function getLowerCase(string $name, string $default = ''): string
-    {
-        return mb_strtolower($this->get($name, $default));
-    }
-
-
-
-
-    /**
-     * Force value to integer
-     *
-     * @param string $name
-     * @param int $default
-     * @return int
-     */
-    public function getInt(string $name, int $default = 0): int
-    {
-        return (int)$this->get($name, $default);
-    }
-
-
-
-
-
-    /**
-     * @param string $name
-     *
-     * @param float $default
-     *
-     * @return float
-     */
-    public function getFloat(string $name, float $default = 0): float
-    {
-        return (float)$this->get($name, $default);
-    }
-
-
-
-
-
-    /**
-     * @param string $name
-     *
-     * @param bool $default
-     *
-     * @return bool
-    */
-    public function getBoolean(string $name, bool $default = false): bool
-    {
-        return (bool)$this->get($name, $default);
-    }
-
-
-    /**
-     * @param string $name
-     *
-     * @param $value
-     *
-     * @return mixed|null
-    */
-    public function equalTo(string $name, $value): mixed
-    {
-         return $this->get($name, $value);
-    }
-
-
-
-
-
-
-    /**
      * Returns all params
      *
      * @return array
@@ -255,7 +163,7 @@ class ParameterBag implements ParameterBagInterface
      *
      * @return $this
     */
-    public function refresh(array $params): static
+    public function rewind(array $params): static
     {
          $this->clear();
 
@@ -281,5 +189,36 @@ class ParameterBag implements ParameterBagInterface
         $this->merge(\is_array($name) ? $name : [$name => $value]);
 
         return $this;
+    }
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param string $default
+     *
+     * @return string
+     */
+    public function toUpper(string $name, string $default = ''): string
+    {
+        return mb_strtoupper($this->get($name, $default));
+    }
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param string $default
+     *
+     * @return string
+    */
+    public function toLower(string $name, string $default = ''): string
+    {
+        return mb_strtolower($this->get($name, $default));
     }
 }

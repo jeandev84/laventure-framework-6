@@ -146,24 +146,50 @@ class Request  extends ServerRequest
     /**
      * @return string
     */
-    public function getRequestURI(): string
+    public function getRequestUri(): string
     {
         return $this->server->getRequestUri();
     }
 
 
+
+
+    /**
+     * @return string
+    */
+    public function getPath(): string
+    {
+        return $this->server->getPathInfo();
+    }
+
+
+
+
     /**
      * @param string $method
      *
-     * @param string $uri
+     * @param string $url
      *
      * @param array $context
      *
-     * @return void
+     * @return static
     */
-    public static function create(string $method, string $uri, array $context = [])
+    public static function create(string $method, string $url, array $context = []): static
     {
+        $request   = new static();
+        $parameter = new ParameterBag($context);
+        $server    = new ServerBag($parameter->get('server'));
+        $query     = new InputBag($parameter->get('queries'));
+        $cookie    = new CookieBag($parameter->get('cookies'));
 
+        $request->server = $server;
+        $request->withUri(new Uri($url));
+        $request->withMethod($method);
+        $request->withRequestTarget($url);
+        $request->withQueryParams($query->all());
+        $request->withCookieParams($cookie->all());
+
+        return $request;
     }
 
 

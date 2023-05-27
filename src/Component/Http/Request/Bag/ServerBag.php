@@ -102,7 +102,7 @@ class ServerBag extends ParameterBag
      */
      public function getRequestMethod(): string
      {
-          return $this->getUpperCase('REQUEST_METHOD', 'GET');
+          return $this->toUpper('REQUEST_METHOD', 'GET');
      }
 
 
@@ -177,15 +177,15 @@ class ServerBag extends ParameterBag
      /**
       * Return request path info
       *
-      * @return mixed|null
+      * @return string
      */
-     public function getPathInfo(): mixed
+     public function getPathInfo(): string
      {
          if (! $this->has('PATH_INFO')) {
              return strtok($this->getRequestUri(), '?');
          }
 
-         return $this->get('PATH_INFO');
+         return $this->get('PATH_INFO', '');
      }
 
 

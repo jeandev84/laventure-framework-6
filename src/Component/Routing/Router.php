@@ -5,6 +5,8 @@ namespace Laventure\Component\Routing;
 
 use Closure;
 use Laventure\Component\Routing\Collection\RouteCollection;
+use Laventure\Component\Routing\Collection\RouteCollectionInterface;
+use Laventure\Component\Routing\Collection\RouteCollectorInterface;
 use Laventure\Component\Routing\Dispatcher\RouteDispatcher;
 use Laventure\Component\Routing\Dispatcher\RouteDispatcherInterface;
 use Laventure\Component\Routing\Exception\RouteNotFoundException;
@@ -27,7 +29,7 @@ use Laventure\Component\Routing\Route\RouteParameterResolver;
  *
  * @package Laventure\Component\Routing
 */
-class Router implements RouterInterface
+class Router implements RouteCollectorInterface, RouterInterface
 {
 
 
@@ -98,9 +100,7 @@ class Router implements RouterInterface
      *
      * @var array
     */
-    protected $patterns = [
-        'id' => '\d+'
-    ];
+    protected $patterns = ['id' => '\d+', '_locale' => '\w+'];
 
 
 
@@ -113,23 +113,92 @@ class Router implements RouterInterface
     protected $namespace;
 
 
+    /**
+     * Router construct
+     *
+     * @param string $domain
+    */
+    public function __construct(string $domain)
+    {
+         $this->setDomain($domain);
+         $this->setRouteCollection(new RouteCollection());
+         $this->setRouteGroup(new RouteGroup());
+         $this->cache      = new RouteCache();
+         $this->setRouteDispatcher(new RouteDispatcher());
+    }
 
 
 
     /**
-     * Router construct
+     * @param string $domain
      *
-     * @param RouteDispatcherInterface|null $dispatcher
+     * @return $this
     */
-    public function __construct(RouteDispatcherInterface $dispatcher = null)
+    public function setDomain(string $domain): static
     {
-         $this->collection = new RouteCollection();
-         $this->group      = new RouteGroup();
-         $this->cache      = new RouteCache();
-         $this->dispatcher = $dispatcher ?: new RouteDispatcher();
+        $this->domain = $domain;
+
+        return $this;
     }
 
 
+
+    /**
+     * @param RouteCollectionInterface $collection
+     *
+     * @return $this
+    */
+    public function setRouteCollection(RouteCollectionInterface $collection): static
+    {
+         $this->collection = $collection;
+
+         return $this;
+    }
+
+
+
+    /**
+     * @param RouteDispatcherInterface $dispatcher
+     *
+     * @return $this
+    */
+    public function setRouteDispatcher(RouteDispatcherInterface $dispatcher): static
+    {
+        $this->dispatcher = $dispatcher;
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @param string $namespace
+     *
+     * @return $this
+    */
+    public function setControllerNamespace(string $namespace): static
+    {
+        $this->group->namespace($namespace);
+
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+
+
+    /**
+     * @param RouteGroup $group
+     *
+     * @return $this
+    */
+    public function setRouteGroup(RouteGroup $group): static
+    {
+         $this->group = $group;
+
+         return $this;
+    }
 
 
 
@@ -140,7 +209,7 @@ class Router implements RouterInterface
     */
     public function cacheDir(string $cacheDir): static
     {
-         $this->cache->cacheDir($cacheDir);
+         $this->cache->cacheRouteDir($cacheDir);
 
          return $this;
     }
@@ -161,42 +230,6 @@ class Router implements RouterInterface
 
          return $this;
     }
-
-
-
-
-
-    /**
-     * @param string $domain
-     *
-     * @return $this
-    */
-    public function domain(string $domain): static
-    {
-        $this->domain = $domain;
-
-        return $this;
-    }
-
-
-
-
-
-
-    /**
-     * @param string $namespace
-     *
-     * @return $this
-    */
-    public function namespace(string $namespace): static
-    {
-         $this->group->namespace($namespace);
-
-         $this->namespace = trim($namespace, '\\');
-
-         return $this;
-    }
-
 
 
 
@@ -330,14 +363,13 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, mixed $action): Route
     {
-            $resolver  = new RouteParameterResolver($this->group);
-            [$methods, $path, $action] = $resolver->resolve($methods, $path, $action);
+          [$methods, $path, $action] = $this->resolveRouteParams($methods, $path, $action);
 
-            return RouteFactory::create($this->domain, $methods, $path, $action, $this->middlewares)
-                                ->wheres($this->patterns)
-                                ->name($this->group->getName())
-                                ->middleware($this->group->getMiddlewares())
-                                ->options($this->group->toArray());
+          return RouteFactory::create($this->domain, $methods, $path, $action, $this->middlewares)
+                              ->wheres($this->patterns)
+                              ->name($this->group->getName())
+                              ->middleware($this->group->getMiddlewares())
+                              ->options($this->group->toArray());
     }
 
 
@@ -350,11 +382,11 @@ class Router implements RouterInterface
     */
     public function getRouteFromCache(string $cacheKey): Route|bool
     {
-        if (! $this->cache->has($cacheKey)) {
+        if (! $this->cache->hasRoute($cacheKey)) {
             return false;
         }
 
-        return $this->cache->get($cacheKey);
+        return $this->cache->getRoute($cacheKey);
     }
 
 
@@ -369,7 +401,7 @@ class Router implements RouterInterface
     */
     public function cacheRoute(string $cacheKey, Route $route): static
     {
-         $this->cache->set($cacheKey, $route);
+         $this->cache->cacheRoute($cacheKey, $route);
 
          return $this;
     }
@@ -431,31 +463,28 @@ class Router implements RouterInterface
 
 
 
+
+
     /**
      * @return string
     */
     public function getNamespace(): string
     {
-        return $this->namespace;
+        return trim($this->namespace, '\\');
     }
 
 
 
 
     /**
-     * Map routes called by any request
-     *
-     * @param $methods
-     *
-     * @param $path
-     *
-     * @param $action
-     * @return Route
-     */
+     * @inheritdoc
+    */
     public function map($methods, $path, $action): Route
     {
         return $this->add($this->makeRoute($methods, $path, $action));
     }
+
+
 
 
 
@@ -468,7 +497,7 @@ class Router implements RouterInterface
      * @param $action
      *
      * @return Route
-     */
+    */
     public function get($path, $action): Route
     {
         return $this->map('GET', $path, $action);
@@ -486,7 +515,7 @@ class Router implements RouterInterface
      * @param $action
      *
      * @return Route
-     */
+    */
     public function post($path, $action): Route
     {
         return $this->map('POST', $path, $action);
@@ -503,7 +532,7 @@ class Router implements RouterInterface
      * @param $action
      *
      * @return Route
-     */
+    */
     public function put($path, $action): Route
     {
         return $this->map('PUT', $path, $action);
@@ -522,7 +551,7 @@ class Router implements RouterInterface
      * @param $action
      *
      * @return Route
-     */
+    */
     public function patch($path, $action): Route
     {
         return $this->map('PATCH', $path, $action);
@@ -540,7 +569,7 @@ class Router implements RouterInterface
      * @param $action
      *
      * @return Route
-     */
+    */
     public function delete($path, $action): Route
     {
         return $this->map('DELETE', $path, $action);
@@ -556,7 +585,7 @@ class Router implements RouterInterface
      * @param Closure $routes
      *
      * @return $this
-     */
+    */
     public function group(array $prefixes, Closure $routes): static
     {
         $this->group->prefixes($prefixes);
@@ -648,5 +677,26 @@ class Router implements RouterInterface
          }
 
          return $this;
+    }
+
+
+
+
+    /**
+     * Return resolved methods, path and action
+     *
+     * @param $methods
+     *
+     * @param $path
+     *
+     * @param $action
+     *
+     * @return array
+    */
+    private function resolveRouteParams($methods, $path, $action): array
+    {
+        $resolver = new RouteParameterResolver($this->group);
+
+        return $resolver->resolveParams($methods, $path, $action);
     }
 }

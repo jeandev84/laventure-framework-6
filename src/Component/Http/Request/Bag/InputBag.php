@@ -15,4 +15,77 @@ use Laventure\Component\Http\Bag\ParameterBag;
 */
 class InputBag extends ParameterBag
 {
+    public function __construct(array $params = [])
+    {
+        parent::__construct($params);
+    }
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param string $default
+     *
+     * @return string
+    */
+    public function string(string $name, string $default = ''): string
+    {
+        return (string)$this->get($name, $default);
+    }
+
+
+
+
+    /**
+     * Force value to integer
+     *
+     * @param string $name
+     * @param int $default
+     * @return int
+    */
+    public function integer(string $name, int $default = 0): int
+    {
+        return (int)$this->get($name, $default);
+    }
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param float $default
+     *
+     * @return float
+    */
+    public function float(string $name, float $default = 0): float
+    {
+        return (float)$this->get($name, $default);
+    }
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param bool $default
+     *
+     * @return bool
+    */
+    public function boolean(string $name, bool $default = false): bool
+    {
+        return (bool)$this->get($name, $default);
+    }
+
+
+
+
+
+    public function json(string $name)
+    {
+    }
 }

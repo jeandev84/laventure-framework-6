@@ -533,12 +533,14 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withMethod($method): static
     {
-        $this->server->set('REQUEST_METHOD', $method);
+        $this->server->set('REQUEST_METHOD', strtoupper($method));
 
         $this->method = $method;
 
         return $this;
     }
+
+
 
 
     /**
@@ -556,7 +558,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @inheritDoc
      */
-    public function getUri()
+    public function getUri(): UriInterface
     {
         return $this->uri;
     }
@@ -567,12 +569,14 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @inheritDoc
     */
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserveHost = false): static
     {
         if ($preserveHost) {
             $uri->withHost($this->getHost());
         }
 
         $this->uri = $uri;
+
+        return $this;
     }
 }

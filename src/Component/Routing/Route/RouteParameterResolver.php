@@ -48,7 +48,7 @@ class RouteParameterResolver
       * @param $action
       * @return array
      */
-     public function resolve($methods, $path, $action): array
+     public function resolveParams($methods, $path, $action): array
      {
           return [$methods, $this->resolvePath($path), $this->resolveAction($action)];
      }

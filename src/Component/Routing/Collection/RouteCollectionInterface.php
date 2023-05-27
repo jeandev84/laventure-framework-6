@@ -2,6 +2,8 @@
 namespace Laventure\Component\Routing\Collection;
 
 
+use Laventure\Component\Routing\Route\Contract\RouteInterface;
+
 /**
  * @RouteCollectionInterface
  *
@@ -16,7 +18,7 @@ interface RouteCollectionInterface
       /**
        * Returns routes
        *
-       * @return mixed
+       * @return RouteInterface[]
       */
-      public function getRoutes();
+      public function getRoutes(): array;
 }
