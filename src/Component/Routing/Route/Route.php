@@ -722,7 +722,7 @@ class Route implements NamedRouteInterface, ArrayAccess
           if (preg_match("#^$pattern$#i", $path, $matches)) {
               
               $this->params   = $this->resolveParams($matches);
-              $this->realPath = $this->generateURL($uri);
+              $this->realPath = $this->generateAbsolutePath($uri);
               $this->matches  = $matches;
             
               return true;
@@ -841,7 +841,7 @@ class Route implements NamedRouteInterface, ArrayAccess
     /**
      * @inheritDoc
     */
-    public function generate(array $parameters = []): string
+    public function generateURI(array $parameters = []): string
     {
         $path = $this->getPath();
 
@@ -851,6 +851,21 @@ class Route implements NamedRouteInterface, ArrayAccess
 
         return $path;
     }
+
+
+
+
+    /**
+     * @param array $parameters
+     *
+     * @return string
+    */
+    public function generateUrl(array $parameters = []): string
+    {
+        return $this->generateAbsolutePath($this->generateURI($parameters));
+    }
+
+
 
 
 
@@ -1004,7 +1019,7 @@ class Route implements NamedRouteInterface, ArrayAccess
      *
      * @return string
     */
-    public function generateURL(string $path): string
+    private function generateAbsolutePath(string $path): string
     {
         return sprintf('%s%s', $this->domain, $path);
     }

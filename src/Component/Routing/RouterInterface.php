@@ -17,6 +17,16 @@ interface RouterInterface
 
 
      /**
+      * Return routes domain
+      *
+      * @return string
+     */
+     public function getDomain(): string;
+
+
+
+
+     /**
       * Returns route collection
       *
       * @return mixed
@@ -49,7 +59,7 @@ interface RouterInterface
       *
       * @param array $parameters
       *
-      * @return mixed
+      * @return string|null
      */
-     public function generate(string $name, array $parameters = []);
+     public function generate(string $name, array $parameters = []): ?string;
 }

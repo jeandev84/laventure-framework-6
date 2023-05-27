@@ -104,6 +104,16 @@ class Router implements RouteCollectorInterface, RouterInterface
 
 
 
+    /**
+     * Prefixed path with local
+     *
+     * @var string
+    */
+    protected $locale;
+
+
+
+
 
     /**
      * Controller namespace
@@ -111,6 +121,8 @@ class Router implements RouteCollectorInterface, RouterInterface
      * @var string
     */
     protected $namespace;
+
+
 
 
     /**
@@ -139,6 +151,27 @@ class Router implements RouteCollectorInterface, RouterInterface
         $this->domain = $domain;
 
         return $this;
+    }
+
+
+
+    /**
+     * @return string
+    */
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
+
+
+
+    /**
+     * @return RouteGroup
+    */
+    public function getGroup(): RouteGroup
+    {
+        return $this->group;
     }
 
 
@@ -199,6 +232,22 @@ class Router implements RouteCollectorInterface, RouterInterface
 
          return $this;
     }
+
+
+
+
+    /**
+     * @param string $locale
+     *
+     * @return $this
+    */
+    public function locale(string $locale): static
+    {
+        $this->locale = trim($locale);
+
+        return $this;
+    }
+
 
 
 
@@ -458,7 +507,7 @@ class Router implements RouteCollectorInterface, RouterInterface
              return null;
         }
 
-        return $route->generate($parameters);
+        return $route->generateURI($parameters);
     }
 
 

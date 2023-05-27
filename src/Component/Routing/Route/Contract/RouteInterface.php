@@ -119,11 +119,11 @@ interface RouteInterface
 
 
      /**
-      * Generate route path from given params
+      * Generate route uri from given params
       *
       * @param array $parameters
       *
       * @return string
     */
-    public function generate(array $parameters = []): string;
+    public function generateURI(array $parameters = []): string;
 }
