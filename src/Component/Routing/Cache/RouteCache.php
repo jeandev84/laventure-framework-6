@@ -2,9 +2,8 @@
 namespace Laventure\Component\Routing\Cache;
 
 
-use Laventure\Component\Routing\Route\Contract\RouteInterface;
-use Laventure\Component\Routing\Route\Route;
-use Laventure\Component\Routing\RouterInterface;
+use Laventure\Component\Routing\Route\RouteInterface;
+
 
 /**
  * @RouteCache

@@ -1,7 +1,7 @@
 <?php
 namespace Laventure\Component\Routing\Cache;
 
-use Laventure\Component\Routing\Route\Contract\RouteInterface;
+use Laventure\Component\Routing\Route\RouteInterface;
 
 
 interface RouteCacheInterface
