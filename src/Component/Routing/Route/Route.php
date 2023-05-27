@@ -138,7 +138,7 @@ class Route implements RouteInterface, \ArrayAccess
      * 
      * @var string
     */
-    protected $realPath;
+    protected $url;
     
     
     
@@ -181,6 +181,8 @@ class Route implements RouteInterface, \ArrayAccess
           $this->path($path);
           $this->callback($action);
     }
+
+
 
 
 
@@ -719,7 +721,7 @@ class Route implements RouteInterface, \ArrayAccess
           if (preg_match("#^$pattern$#i", $path, $matches)) {
               
               $this->params   = $this->resolveParams($matches);
-              $this->realPath = $this->generateAbsolutePath($uri);
+              $this->url = $this->generateAbsolutePath($uri);
               $this->matches  = $matches;
             
               return true;
