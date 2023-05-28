@@ -25,9 +25,9 @@ interface CookieInterface
       *
       * @param string $path
       *
-      * @return mixed
+      * @return $this
      */
-     public function path(string $path);
+     public function path(string $path): static;
 
 
 
@@ -37,9 +37,10 @@ interface CookieInterface
       *
       * @param string $domain
       *
-      * @return mixed
+      * @return $this
      */
-     public function domain(string $domain);
+     public function domain(string $domain): static;
+
 
 
 
@@ -47,9 +48,9 @@ interface CookieInterface
      /**
       * @param bool $secure
       *
-      * @return mixed
+      * @return $this
      */
-     public function secure(bool $secure);
+     public function secure(bool $secure): static;
 
 
 
@@ -57,9 +58,10 @@ interface CookieInterface
      /**
       * @param bool $httpOnly
       *
-      * @return mixed
+      * @return $this
      */
-     public function httpOnly(bool $httpOnly);
+     public function httpOnly(bool $httpOnly): static;
+
 
 
      /**
@@ -68,8 +70,10 @@ interface CookieInterface
       * @param string $name
       *
       * @param $value
+      *
       * @param int $expireAfter
-      * @return mixed
+      *
+      * @return void
      */
-     public function set(string $name, $value, int $expireAfter);
+     public function set(string $name, $value, int $expireAfter): void;
 }

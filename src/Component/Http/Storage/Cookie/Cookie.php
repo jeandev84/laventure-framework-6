@@ -68,11 +68,9 @@ class Cookie implements CookieInterface
     /**
      * @inheritdoc
     */
-    public function set(string $name, $value, int $expireAfter): static
+    public function set(string $name, $value, int $expireAfter): void
     {
          setcookie($name, $value, time() + $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
-
-         return $this;
     }
 
 
@@ -122,7 +120,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
     */
-    public function httpOnly(bool $httpOnly)
+    public function httpOnly(bool $httpOnly): static
     {
         $this->httpOnly = $httpOnly;
 
