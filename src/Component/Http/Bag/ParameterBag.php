@@ -41,7 +41,7 @@ class ParameterBag implements ParameterBagInterface
      * @param $value
      * @return $this
     */
-    public function set(string $name, $value): self
+    public function set(string $name, $value): mixed
     {
         $this->params[trim($name)] = trim($value);
 
@@ -119,9 +119,7 @@ class ParameterBag implements ParameterBagInterface
     */
     public function merge(array $params): self
     {
-        foreach ($params as $name => $value) {
-            $this->set($name, $value);
-        }
+        $this->params = array_merge($this->params, $params);
 
         return $this;
     }

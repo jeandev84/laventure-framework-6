@@ -1,18 +1,7 @@
 <?php
 namespace Laventure\Component\Http\Request;
 
-use Laventure\Component\Http\Bag\ParameterBag;
-use Laventure\Component\Http\Body\RequestBody;
-use Laventure\Component\Http\Message\StreamInterface;
-use Laventure\Component\Http\Request\Bag\CookieBag;
-use Laventure\Component\Http\Request\Bag\FileBag;
-use Laventure\Component\Http\Request\Bag\InputBag;
-use Laventure\Component\Http\Request\Bag\RequestHeaderBag;
-use Laventure\Component\Http\Request\Bag\ServerBag;
-use Laventure\Component\Http\Request\Contract\ServerRequestInterface;
-use Laventure\Component\Http\Request\Contract\UriInterface;
 use Laventure\Component\Http\Storage\Session\SessionInterface;
-use Laventure\Component\Http\Storage\Session\Session;
 
 
 /**
@@ -64,7 +53,6 @@ class Request  extends ServerRequest
     )
     {
          parent::__construct($queries, $request, $attributes, $cookies, $files, $server);
-         $this->session  =  new Session();
          $this->content  = $content;
     }
 
@@ -182,6 +170,7 @@ class Request  extends ServerRequest
     */
     public static function create(string $method, string $url, array $context = []): static
     {
+        /*
         $request   = new static();
         $parameter = new ParameterBag($context);
         $server    = new ServerBag($parameter->get('server'));
@@ -196,6 +185,7 @@ class Request  extends ServerRequest
         $request->withCookieParams($cookie->all());
 
         return $request;
+        */
     }
 
 
@@ -243,4 +233,9 @@ class Request  extends ServerRequest
     {
          return static::createFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
     }
+
+
+
+
+    public static function createFromStream() {}
 }

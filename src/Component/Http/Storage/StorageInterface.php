@@ -14,4 +14,82 @@ namespace Laventure\Component\Http\Storage;
 interface StorageInterface
 {
 
+      /**
+       * Store value given key
+       *
+       * @param $key
+       *
+       * @param $value
+       *
+       * @return mixed
+      */
+      public function set($key, $value);
+
+
+
+
+      /**
+       * Add params in the storage
+       *
+       * @param array $params
+       *
+       * @return mixed
+      */
+      public function merge(array $params);
+
+
+
+
+      /**
+       * Returns value from storage given key
+       *
+       * @param $key
+       *
+       * @return mixed
+      */
+      public function get($key);
+
+
+
+
+      /**
+       * Determine if the value of given key has been stored
+       *
+       * @param $key
+       *
+       * @return bool
+      */
+      public function has($key): bool;
+
+
+
+
+      /**
+       * Remove value of given key from storage
+       *
+       * @param $key
+       *
+       * @return mixed
+      */
+      public function remove($key);
+
+
+
+
+      /**
+       * Remove all stored data from storage
+       *
+       * @return mixed
+      */
+      public function clear();
+
+
+
+
+      /**
+       * Returns all stored data in the storage
+       *
+       * @return mixed
+      */
+      public function all();
 }
