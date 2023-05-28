@@ -501,11 +501,7 @@ class Route implements RouteInterface, \ArrayAccess
     */
     public function only(string $name): static
     {
-        $this->removeMiddlewares();
-
-        if (array_key_exists($name, self::$middlewareProvides)) {
-            $this->middleware(self::$middlewareProvides[$name]);
-        }
+        $this->middleware(self::$middlewareProvides[$name] ?? []);
 
         return $this;
     }

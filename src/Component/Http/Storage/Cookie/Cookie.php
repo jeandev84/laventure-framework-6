@@ -55,7 +55,7 @@ class Cookie implements CookieInterface
      *
      * @param bool $httpOnly
     */
-    public function __construct(string $path, string $domain, bool $secure = false, bool $httpOnly = false)
+    public function __construct(string $path = '/', string $domain = '', bool $secure = false, bool $httpOnly = false)
     {
          $this->path($path);
          $this->domain($domain);
