@@ -66,19 +66,8 @@ class Cookie implements CookieInterface
 
 
     /**
-     * @inheritdoc
-    */
-    public function set(string $name, $value, int $expireAfter): void
-    {
-         setcookie($name, $value, time() + $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
-    }
-
-
-
-
-    /**
      * @inheritDoc
-    */
+     */
     public function path(string $path): static
     {
         $this->path = $path;
@@ -91,7 +80,7 @@ class Cookie implements CookieInterface
 
     /**
      * @inheritDoc
-    */
+     */
     public function domain(string $domain): static
     {
         $this->domain = $domain;
@@ -105,7 +94,7 @@ class Cookie implements CookieInterface
 
     /**
      * @inheritDoc
-    */
+     */
     public function secure(bool $secure): static
     {
         $this->secure = $secure;
@@ -125,5 +114,14 @@ class Cookie implements CookieInterface
         $this->httpOnly = $httpOnly;
 
         return $this;
+    }
+
+
+    /**
+     * @inheritdoc
+    */
+    public function set(string $name, $value, int $expireAfter): void
+    {
+         setcookie($name, $value, time() + $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
     }
 }
