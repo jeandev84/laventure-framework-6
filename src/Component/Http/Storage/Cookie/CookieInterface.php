@@ -1,9 +1,9 @@
 <?php
 namespace Laventure\Component\Http\Storage\Cookie;
 
+
+
 use Laventure\Component\Http\Storage\StorageInterface;
-
-
 
 /**
  * @CookieInterface
@@ -18,31 +18,6 @@ use Laventure\Component\Http\Storage\StorageInterface;
 */
 interface CookieInterface
 {
-
-     /**
-      * Set cookie
-      *
-      * @param string $name
-      *
-      * @param $value
-      *
-      * @return mixed
-     */
-     public function set(string $name, $value);
-
-
-
-
-     /**
-      * Set expires cookie
-      *
-      * @param int $times
-      *
-      * @return mixed
-     */
-     public function expireAfter(int $times);
-
-
 
 
      /**
@@ -85,4 +60,16 @@ interface CookieInterface
       * @return mixed
      */
      public function httpOnly(bool $httpOnly);
+
+
+     /**
+      * Set cookie
+      *
+      * @param string $name
+      *
+      * @param $value
+      * @param int $expireAfter
+      * @return mixed
+     */
+     public function set(string $name, $value, int $expireAfter);
 }

@@ -27,19 +27,6 @@ interface StorageInterface
 
 
 
-
-      /**
-       * Add params in the storage
-       *
-       * @param array $params
-       *
-       * @return mixed
-      */
-      public function merge(array $params);
-
-
-
-
       /**
        * Returns value from storage given key
        *

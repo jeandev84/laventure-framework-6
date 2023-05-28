@@ -46,34 +46,6 @@ class Cookie implements CookieInterface
 
 
 
-
-    /**
-     * The name of the cookie.
-     *
-     * @var string
-    */
-    protected $name;
-
-
-
-
-    /**
-     * The value of the cookie. This value is stored on the clients computer; do not store sensitive information
-     *
-     * @var mixed
-    */
-    protected $value;
-
-
-
-    /**
-     * Cookie expiration lifetime
-     *
-     * @var int
-    */
-    protected $expiresAfter;
-
-
     /**
      * @param string $path
      *
@@ -96,24 +68,11 @@ class Cookie implements CookieInterface
     /**
      * @inheritdoc
     */
-    public function set(string $name, $value): static
+    public function set(string $name, $value, int $expireAfter): static
     {
-         $this->name  = $name;
-         $this->value = $value;
+         setcookie($name, $value, time() + $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
 
          return $this;
-    }
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function expireAfter(int $times): static
-    {
-        $this->expiresAfter = time() + $times;
-
-        return $this;
     }
 
 
@@ -162,18 +121,11 @@ class Cookie implements CookieInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function httpOnly(bool $httpOnly)
     {
         $this->httpOnly = $httpOnly;
 
         return $this;
-    }
-
-
-
-    public function __destruct()
-    {
-        setcookie($this->name, $this->value, $this->expiresAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
     }
 }

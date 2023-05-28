@@ -22,7 +22,7 @@ class CookieBag extends ParameterBag
      */
      public function __construct(array $params = [])
      {
-         parent::__construct($params);
+         parent::__construct($params ?: $_COOKIE);
      }
 
 
@@ -129,14 +129,20 @@ class CookieBag extends ParameterBag
 
      /**
       * @param string $name
+      *
       * @param $value
+      *
       * @param int $expires
-      * @return Cookie
+      *
+      * @return static
      */
-     public function set(string $name, $value, int $expires = 3600): Cookie
+     public function set(string $name, $value, int $expires = 3600): static
      {
          $cookie = new Cookie($this->path, $this->domain, $this->secure, $this->httpOnly);
-         return $cookie->set($name, $value)->expireAfter($expires);
+
+         $cookie->set($name, $value, $expires);
+
+         return $this;
      }
 
 
@@ -144,13 +150,12 @@ class CookieBag extends ParameterBag
 
 
      /**
-      * @param string $name
-      *
-      * @return void
+      * @inheritdoc
      */
-     public function remove(string $name): void
+     public function remove(string $name): static
      {
          $this->set($name, '', -3600);
-         parent::remove($name);
+
+         return $this;
      }
 }

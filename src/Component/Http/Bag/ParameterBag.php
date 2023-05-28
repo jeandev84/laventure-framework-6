@@ -133,11 +133,13 @@ class ParameterBag implements ParameterBagInterface
      *
      * @param string $name
      *
-     * @return void
+     * @return $this
     */
-    public function remove(string $name): void
+    public function remove(string $name): mixed
     {
         unset($this->params[$name]);
+
+        return $this;
     }
 
 
