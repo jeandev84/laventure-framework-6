@@ -58,15 +58,11 @@ class Uri implements UriInterface
 
 
 
-
-
-
-
     /**
      * Get port
      *
      * @var string
-     */
+    */
     protected $port;
 
 
@@ -104,18 +100,13 @@ class Uri implements UriInterface
 
 
 
-    /**
-     * @var string
-    */
-    protected $url;
-
 
     /**
-     * @param string $url
+     * @param $url
     */
-    public function __construct(string $url)
+    public function __construct($url = null)
     {
-        $this->parseUrl($url);
+          if ($url) { $this->parseUrl($url); }
     }
 
 
@@ -137,7 +128,11 @@ class Uri implements UriInterface
      */
     public function getAuthority(): ?string
     {
-        return sprintf("%s@%s", $this->getUserInfo(), $this->getHost());
+        if ($this->username || $this->password) {
+            return "$this->username@$this->password";
+        }
+
+        return '';
     }
 
 
@@ -306,9 +301,12 @@ class Uri implements UriInterface
     */
     public function __toString()
     {
-        return sprintf('%s://%s%s%s%s',
+        if (! $this->scheme) { return ''; }
+
+        return sprintf('%s://%s%s%s%s%s',
             $this->getScheme(),
             $this->getAuthority(),
+            $this->getHost(),
             $this->getPath(),
             $this->getQuery(),
             $this->getFragment()
@@ -318,12 +316,40 @@ class Uri implements UriInterface
 
 
 
+
     /**
-     * @return array
+     * @param string $url
+     *
+     * @return string|null
     */
-    public function toArray(): array
+    private function scheme(string $url): ?string
     {
-        return parse_url($this->url);
+        return (string)parse_url($url,PHP_URL_SCHEME);
+    }
+
+
+
+
+
+    /**
+     * @param string $url
+     * @return string|null
+    */
+    private function user(string $url): ?string
+    {
+        return (string)parse_url($url, PHP_URL_USER);
+    }
+
+
+
+
+    /**
+     * @param string $url
+     * @return string|null
+    */
+    private function password(string $url): ?string
+    {
+        return (string)parse_url($url, PHP_URL_PASS);
     }
 
 
@@ -332,14 +358,62 @@ class Uri implements UriInterface
     /**
      * @param string $url
      *
-     * @param int $component
-     *
      * @return string|null
     */
-    public function parse(string $url, int $component): ?string
+    private function host(string $url): ?string
     {
-        return parse_url($url, $component);
+        return (string)parse_url($url, PHP_URL_HOST);
     }
+
+
+
+
+    /**
+     * @param string $url
+     * @return string|null
+    */
+    private function port(string $url): ?string
+    {
+        return (string)parse_url($url, PHP_URL_PORT);
+    }
+
+
+
+
+    /**
+     * @param string $url
+     * @return string|null
+    */
+    private function path(string $url): ?string
+    {
+        return (string)parse_url($url, PHP_URL_PATH);
+    }
+
+
+
+
+
+    /**
+     * @param string $url
+     * @return string|null
+    */
+    private function query(string $url): ?string
+    {
+        return (string)parse_url($url, PHP_URL_QUERY);
+    }
+
+
+
+
+    /**
+     * @param string $url
+     * @return string|null
+    */
+    private function fragment(string $url): ?string
+    {
+        return (string)parse_url($url, PHP_URL_FRAGMENT);
+    }
+
 
 
 
@@ -350,15 +424,12 @@ class Uri implements UriInterface
     */
     private function parseUrl(string $url): void
     {
-        $username = $this->parse($url, PHP_URL_USER);
-        $password = $this->parse($url, PHP_URL_PASS);
-
-        $this->withScheme($this->parse($url, PHP_URL_SCHEME));
-        $this->withUserInfo($username, $password);
-        $this->withHost($this->parse($url, PHP_URL_HOST));
-        $this->withPort($this->parse($url, PHP_URL_PORT));
-        $this->withPath($this->parse($url, PHP_URL_PATH));
-        $this->withQuery($this->parse($url, PHP_URL_QUERY));
-        $this->withFragment($this->parse($url, PHP_URL_FRAGMENT));
+        $this->withScheme($this->scheme($url));
+        $this->withUserInfo($this->user($url), $this->password($url));
+        $this->withHost($this->host($url));
+        $this->withPort($this->port($url));
+        $this->withPath($this->path($url));
+        $this->withQuery($this->query($url));
+        $this->withFragment($this->fragment($url));
     }
 }

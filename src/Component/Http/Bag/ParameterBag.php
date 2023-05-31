@@ -12,7 +12,7 @@ namespace Laventure\Component\Http\Bag;
  *
  * @package Laventure\Component\Http\Bag
 */
-class ParameterBag implements ParameterBagInterface
+class ParameterBag implements ParameterBagInterface, \ArrayAccess
 {
 
 
@@ -37,13 +37,13 @@ class ParameterBag implements ParameterBagInterface
     /**
      * Set params
      *
-     * @param string $name
+     * @param $name
      * @param $value
      * @return $this
     */
-    public function set(string $name, $value): mixed
+    public function set($name, $value): mixed
     {
-        $this->params[trim($name)] = trim($value);
+        $this->params[$name] = $value;
 
         return $this;
     }
@@ -53,10 +53,10 @@ class ParameterBag implements ParameterBagInterface
 
 
     /**
-     * @param string $name
+     * @param $name
      * @return bool
     */
-    public function has(string $name): bool
+    public function has($name): bool
     {
         return isset($this->params[$name]);
     }
@@ -131,11 +131,11 @@ class ParameterBag implements ParameterBagInterface
     /**
      * Remove param by given key
      *
-     * @param string $name
+     * @param $name
      *
      * @return $this
     */
-    public function remove(string $name): mixed
+    public function remove($name): mixed
     {
         unset($this->params[$name]);
 
@@ -222,5 +222,46 @@ class ParameterBag implements ParameterBagInterface
     public function toLower(string $name, string $default = ''): string
     {
         return mb_strtolower($this->get($name, $default));
+    }
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function offsetExists(mixed $offset): bool
+    {
+          return $this->has($offset);
+    }
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function offsetGet(mixed $offset): mixed
+    {
+         return $this->get($offset);
+    }
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+         $this->set($offset, $value);
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function offsetUnset(mixed $offset): void
+    {
+        $this->remove($offset);
     }
 }

@@ -16,25 +16,46 @@ use Laventure\Component\Http\Stream\Stream;
 */
 class RequestBody extends Stream
 {
-
-
-    /**
-     * @param $stream
-     *
-     * @param string $accessMode
-    */
-    public function __construct($stream, string $accessMode = 'r')
+    public function __construct()
     {
-        parent::__construct($stream, $accessMode);
+        parent::__construct('php://input', 'r');
     }
 
 
 
     /**
-     * @inheritDoc
+     * @return mixed
     */
-    public function __toString()
+    public function getData(): mixed
     {
-        return http_get_request_body();
+        $content = $this->__toString();
+
+        parse_str($content, $data);
+
+        return $data;
+    }
+
+
+    /**
+     * @return mixed
+    */
+    public function toArray(): mixed
+    {
+         $content = $this->__toString();
+
+         if (json_last_error()) {
+              trigger_error(json_last_error_msg());
+         }
+
+         return json_decode($content, true);
+    }
+
+
+    /**
+     * @return bool
+    */
+    public function isEmpty(): bool
+    {
+         return is_null($this->__toString());
     }
 }

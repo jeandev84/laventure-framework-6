@@ -120,7 +120,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritdoc
     */
-    public function set(string $name, $value, int $expireAfter): void
+    public function set(string $name, $value, int $expireAfter = 3600): void
     {
          setcookie($name, $value, time() + $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
     }

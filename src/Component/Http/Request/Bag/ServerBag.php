@@ -305,10 +305,12 @@ class ServerBag extends ParameterBag
 
 
 
+
+
     /**
      * @return string
     */
-    public function getBaseUrl(): string
+    public function getBaseURL(): string
     {
         return sprintf('%s://%s%s', $this->getScheme(), $this->getAuthority(), $this->getHost());
     }
@@ -320,11 +322,10 @@ class ServerBag extends ParameterBag
     /**
      * @return string
     */
-    public function getUrl(): string
+    public function getURL(): string
     {
-         return sprintf('%s%s', $this->getBaseUrl(), $this->getRequestUri());
+         return sprintf('%s%s', $this->getBaseURL(), $this->getRequestUri());
     }
-
 
 
 
@@ -400,16 +401,5 @@ class ServerBag extends ParameterBag
     public function isMethod(string $name): bool
     {
         return $this->getRequestMethod() === strtoupper($name);
-    }
-
-
-
-
-    /**
-     * @return bool
-    */
-    public function hasAllowedMethods(): bool
-    {
-         return in_array($this->getRequestMethod(), ['PUT', 'DELETE', 'PATCH']);
     }
 }

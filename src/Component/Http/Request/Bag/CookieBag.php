@@ -136,7 +136,7 @@ class CookieBag extends ParameterBag
       *
       * @return static
      */
-     public function set(string $name, $value, int $expires = 3600): static
+     public function set($name, $value, int $expires = 3600): static
      {
          $cookie = new Cookie($this->path, $this->domain, $this->secure, $this->httpOnly);
 
@@ -152,7 +152,7 @@ class CookieBag extends ParameterBag
      /**
       * @inheritdoc
      */
-     public function remove(string $name): static
+     public function remove($name): static
      {
          $this->set($name, '', -3600);
 

@@ -75,16 +75,13 @@ class Request  extends ServerRequest
 
 
 
+
     /**
      * @return string|null
     */
     public function getContent(): ?string
     {
-        if (! $this->content) {
-            return http_get_request_body();
-        }
-
-        return $this->content;
+        return $this->content ?? $this->getBody();
     }
 
 
@@ -130,7 +127,7 @@ class Request  extends ServerRequest
     */
     public function baseUrl(): string
     {
-        return $this->server->getBaseUrl();
+        return $this->server->getBaseURL();
     }
 
 
@@ -221,7 +218,6 @@ class Request  extends ServerRequest
     {
         return new static($queries, $request, $attributes, $cookies, $files, $server, $content);
     }
-
 
 
 

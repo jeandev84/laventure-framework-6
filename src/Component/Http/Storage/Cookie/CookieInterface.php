@@ -75,5 +75,5 @@ interface CookieInterface
       *
       * @return void
      */
-     public function set(string $name, $value, int $expireAfter): void;
+     public function set(string $name, $value, int $expireAfter = 3600): void;
 }

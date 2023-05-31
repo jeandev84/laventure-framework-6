@@ -37,6 +37,18 @@ class Stream implements StreamInterface
     protected $stream;
 
 
+    /**
+     * @var string
+    */
+    protected $length;
+
+
+    /**
+     * @var int
+    */
+    protected $offset = -1;
+
+
 
     /**
      * @param string $stream
@@ -45,27 +57,9 @@ class Stream implements StreamInterface
     */
     public function __construct($stream, string $accessMode)
     {
-        $this->open($stream, $accessMode);
+          $this->stream = $this->make($stream, $accessMode);
     }
 
-
-
-
-    /**
-     * @param $stream
-     *
-     * @param string $accessMode
-     *
-     * @return void
-    */
-    public function open($stream, string $accessMode): void
-    {
-        if (! $this->streamIsFile($stream)) {
-            $stream = fopen($stream, $accessMode);
-        }
-
-        $this->stream = $stream;
-    }
 
 
     /**
@@ -75,21 +69,39 @@ class Stream implements StreamInterface
     */
     public function isStream($stream): bool
     {
-        return is_resource($stream) && (get_resource_type($stream) === 'stream');
+         return is_resource($stream) && (get_resource_type($stream) === 'stream');
     }
 
 
 
 
     /**
-     * @param $stream
-     *
-     * @return bool
-    */
-    public function streamIsFile($stream): bool
-    {
-        return $this->isStream($stream) && is_string($stream);
-    }
+      * @param string $length
+      *
+      * @return $this
+     */
+     public function length(string $length): static
+     {
+         $this->length = $length;
+
+         return $this;
+     }
+
+
+
+     /**
+      * @param int $offset
+      *
+      * @return $this
+     */
+     public function offset(int $offset): static
+     {
+          $this->offset = $offset;
+
+          return $this;
+     }
+
+
 
 
 
@@ -98,8 +110,13 @@ class Stream implements StreamInterface
     */
     public function __toString()
     {
-        // TODO: Implement __toString() method.
+         if (! $this->isReadable()) {
+              return '';
+         }
+
+        return stream_get_contents($this->stream, $this->length, $this->offset);
     }
+
 
 
 
@@ -154,7 +171,7 @@ class Stream implements StreamInterface
     */
     public function eof(): bool
     {
-        return feof($this->getStream());
+        return feof($this->stream);
     }
 
 
@@ -190,7 +207,7 @@ class Stream implements StreamInterface
     */
     public function rewind(): bool
     {
-        return rewind($this->getStream());
+        return rewind($this->stream);
     }
 
 
@@ -217,12 +234,14 @@ class Stream implements StreamInterface
 
 
 
+
+
     /**
      * @inheritDoc
     */
     public function write($string): bool|int
     {
-        return fwrite($this->getStream(), $string);
+        return fwrite($this->stream, $string);
     }
 
 
@@ -254,18 +273,22 @@ class Stream implements StreamInterface
     */
     public function read($length): bool|string
     {
-       return fgets($this->getStream(), $length);
+       return fgets($this->stream, $length);
     }
 
 
 
 
     /**
+     * @param $length
+     *
+     * @param $offset
+     *
      * @return false|string
     */
-    public function readFromStream(): bool|string
+    public function readStream($length, $offset): bool|string
     {
-         return stream_get_contents($this->getStream());
+        return stream_get_contents($this->stream, $length, $offset);
     }
 
 
@@ -286,22 +309,31 @@ class Stream implements StreamInterface
     */
     public function getMetadata($key = null)
     {
-        $meta = stream_get_meta_data($this->getStream());
+        $meta = stream_get_meta_data($this->stream);
 
         return $key ? $meta[$key] : $meta;
     }
 
 
 
-    /**
-     * @return resource
-     */
-    public function getStream()
-    {
-         if (! $this->stream) {
-             throw new InvalidArgumentException('Invalid stream provided; must be a string stream identifier or stream resource');
-         }
 
-         return $this->stream;
+    /**
+     * @param $stream
+     *
+     * @param $accessMode
+     *
+     * @return false|mixed|resource
+    */
+    private function make($stream, $accessMode)
+    {
+        if (is_string($stream)) {
+            $stream = fopen($stream, $accessMode);
+        }
+
+        if (! $this->isStream($stream)) {
+            throw new InvalidArgumentException('Invalid stream provided; must be a string stream identifier or stream resource');
+        }
+
+        return $stream;
     }
 }

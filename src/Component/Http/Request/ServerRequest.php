@@ -2,6 +2,7 @@
 namespace Laventure\Component\Http\Request;
 
 use Laventure\Component\Http\Bag\ParameterBag;
+use Laventure\Component\Http\Request\Bag\ParsedBodyBag;
 use Laventure\Component\Http\Request\Body\RequestBody;
 use Laventure\Component\Http\Message\StreamInterface;
 use Laventure\Component\Http\Request\Bag\CookieBag;
@@ -149,7 +150,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var UriInterface
     */
-    protected UriInterface $uri;
+    protected UriInterface $url;
 
 
 
@@ -177,9 +178,9 @@ class ServerRequest implements ServerRequestInterface
         $this->cookies    =  new CookieBag($cookies);
         $this->files      =  new FileBag($files);
         $this->server     =  new ServerBag($server);
-        $this->uri        =  new Uri($this->server->getUrl());
+        $this->url        =  new Uri($this->server->getURL());
         $this->headers    =  new RequestHeaderBag();
-        $this->body       =  new RequestBody('php://input');
+        $this->body       =  new RequestBody();
         $this->target     =  $this->server->getRequestUri();
         $this->protocol   =  $this->server->getProtocolVersion();
         $this->method     =  $this->server->getRequestMethod();
@@ -261,7 +262,7 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function withUploadedFiles(array $uploadedFiles): static
     {
         $this->files->merge($uploadedFiles);
@@ -274,16 +275,23 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * @inheritDoc
-     */
-    public function getParsedBody(): array
+    */
+    public function getParsedBody()
     {
-        if ($this->hasParsedBody()) {
-            parse_str(file_get_contents('php://input'), $data);
-            $this->request = new InputBag($data);
+        if ($this->headers->hasXFormEncodedUrl()) {
+            if (!$this->body->isEmpty() && $this->methodInAllowedMethods()) {
+                 $this->request = new InputBag($this->body->getData());
+            }
+            return $this->request;
         }
 
-        return $this->request->all();
+        if (! $data = $this->body->toArray()) {
+             return new InputBag();
+        }
+
+        return new InputBag($data);
     }
+
 
 
 
@@ -503,7 +511,7 @@ class ServerRequest implements ServerRequestInterface
     */
     public function url(): string
     {
-        return $this->server->getUrl();
+        return $this->server->getURL();
     }
 
 
@@ -560,9 +568,9 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @inheritDoc
      */
-    public function getUri(): UriInterface
+    public function getUrl(): UriInterface
     {
-        return $this->uri;
+        return $this->url;
     }
 
 
@@ -577,7 +585,7 @@ class ServerRequest implements ServerRequestInterface
             $uri->withHost($this->getHost());
         }
 
-        $this->uri = $uri;
+        $this->url = $uri;
 
         return $this;
     }
@@ -596,15 +604,12 @@ class ServerRequest implements ServerRequestInterface
 
 
 
+
     /**
      * @return bool
     */
-    public function hasParsedBody(): bool
+    public function methodInAllowedMethods(): bool
     {
-        $encodedFormUrl = $this->headers->isNotXFormUrlEncoded();
-        $posted         = $this->isMethod('POST');
-        $allowedMethods = $this->server->hasAllowedMethods();
-
-        return ($posted && $encodedFormUrl && $allowedMethods);
+        return in_array($this->getMethod(), ['PUT', 'DELETE', 'PATCH', 'OPTIONS']);
     }
 }

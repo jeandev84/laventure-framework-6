@@ -15,6 +15,7 @@ use Laventure\Component\Http\Bag\ParameterBag;
 */
 class InputBag extends ParameterBag
 {
+
     public function __construct(array $params = [])
     {
         parent::__construct($params);
@@ -84,8 +85,30 @@ class InputBag extends ParameterBag
 
 
 
-
-    public function json(string $name)
+    /**
+     * @return false|string
+    */
+    public function asJson(): bool|string
     {
+        $json = json_encode($this->params, JSON_PRETTY_PRINT);
+
+        if (json_last_error()) {
+            trigger_error(json_last_error_msg());
+        }
+
+        return $json;
+    }
+
+
+
+
+
+
+    /**
+     * @return array
+     */
+    public function asArray(): array
+    {
+        return $this->all();
     }
 }

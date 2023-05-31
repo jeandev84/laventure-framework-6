@@ -17,6 +17,13 @@ use Laventure\Component\Http\Bag\ParameterBag;
 */
 class RequestHeaderBag extends ParameterBag
 {
+
+     private $formEncoded = [
+         'application/x-www-form-urlencoded',
+         'multipart/form-data'
+     ];
+
+
      public function __construct()
      {
          parent::__construct(getallheaders());
@@ -24,10 +31,28 @@ class RequestHeaderBag extends ParameterBag
 
 
 
+
      /**
       * @return bool
      */
-     public function isNotXFormUrlEncoded(): bool
+     public function hasXFormEncodedUrl(): bool
+     {
+         foreach ($this->formEncoded as $encoding) {
+             if (stripos($this->getContentType(), $encoding) === 0) {
+                   return true;
+             }
+         }
+
+         return false;
+     }
+
+
+
+
+     /**
+      * @return bool
+     */
+     public function hasXFormUrlEncoded(): bool
      {
          return (stripos($this->getContentType(), 'application/x-www-form-urlencoded') === 0);
      }

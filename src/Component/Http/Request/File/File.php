@@ -14,21 +14,68 @@ namespace Laventure\Component\Http\Request\File;
 class File
 {
 
-     /**
-      * @param string $name
-      * @param string $type
-      * @param int $size
-      * @param int $error
+
+    /**
+     * @var string
+     */
+    protected $name;
+
+
+
+    /**
+     * @var string
+     */
+    protected $type;
+
+
+
+    /**
+     * @var string
     */
-    public function __construct(protected string $name, protected string $type, protected int $size, protected int $error)
+    protected $temp;
+
+
+
+    /**
+     * @var int
+     */
+    protected $error;
+
+
+
+
+    /**
+     * @var int
+    */
+    protected $size;
+
+
+
+
+    /**
+     * UploadedFile constructor.
+     * @param string $name
+     * @param string $type
+     * @param string $temp
+     * @param string $error
+     * @param int $size
+    */
+    public function __construct(string $name, string $type, string $temp, string $error, int $size)
     {
+        $this->name = $name;
+        $this->type = $type;
+        $this->temp = $temp;
+        $this->error = $error;
+        $this->size = $size;
     }
+
+
 
 
     /**
      * @return string
     */
-    public function getName(): string
+    public function getOriginalName(): string
     {
         return $this->name;
     }
@@ -38,11 +85,21 @@ class File
     /**
      * @return string
     */
-    public function getType(): string
+    public function getMimeType(): string
     {
         return $this->type;
     }
 
+
+
+
+    /**
+     * @return string
+    */
+    public function getTempFile(): string
+    {
+        return $this->temp;
+    }
 
     /**
      * @return int
