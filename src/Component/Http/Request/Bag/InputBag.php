@@ -88,7 +88,7 @@ class InputBag extends ParameterBag
     /**
      * @return false|string
     */
-    public function asJson(): bool|string
+    public function toJson(): bool|string
     {
         $json = json_encode($this->params, JSON_PRETTY_PRINT);
 
@@ -106,8 +106,8 @@ class InputBag extends ParameterBag
 
     /**
      * @return array
-     */
-    public function asArray(): array
+    */
+    public function toArray(): array
     {
         return $this->all();
     }

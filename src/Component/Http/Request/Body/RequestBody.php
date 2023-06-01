@@ -20,46 +20,4 @@ class RequestBody extends Stream
     {
         parent::__construct('php://input', 'r');
     }
-
-
-
-    /**
-     * @return mixed
-    */
-    public function getData(): mixed
-    {
-        $content = $this->__toString();
-
-        parse_str($content, $data);
-
-        return $data;
-    }
-
-
-    /**
-     * @return mixed
-    */
-    public function toArray(): mixed
-    {
-         $content = $this->__toString();
-
-         if (json_last_error()) {
-              trigger_error(json_last_error_msg());
-         }
-
-         if(! $data =  json_decode($content, true)) {
-              return [];
-         }
-
-         return $data;
-    }
-
-
-    /**
-     * @return bool
-    */
-    public function isEmpty(): bool
-    {
-         return is_null($this->__toString());
-    }
 }

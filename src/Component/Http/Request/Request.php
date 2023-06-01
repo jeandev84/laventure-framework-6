@@ -81,7 +81,7 @@ class Request  extends ServerRequest
     */
     public function getContent(): ?string
     {
-        return $this->content ?? $this->getBody();
+        return $this->content ?? $this->body;
     }
 
 

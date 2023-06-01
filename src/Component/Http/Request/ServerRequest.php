@@ -3,6 +3,7 @@ namespace Laventure\Component\Http\Request;
 
 use Laventure\Component\Http\Bag\ParameterBag;
 use Laventure\Component\Http\Request\Bag\ParsedBodyBag;
+use Laventure\Component\Http\Request\Body\ParsedBody;
 use Laventure\Component\Http\Request\Body\RequestBody;
 use Laventure\Component\Http\Message\StreamInterface;
 use Laventure\Component\Http\Request\Bag\CookieBag;
@@ -278,9 +279,11 @@ class ServerRequest implements ServerRequestInterface
     */
     public function getParsedBody()
     {
+        $parsedBody = new ParsedBody();
+
         if ($this->headers->formEncoded()) {
-            if (!$this->body->isEmpty() && $this->inAllowedFormMethods()) {
-                 $this->request = new InputBag($this->body->getData());
+            if (!$parsedBody->isEmpty() && $this->inAllowedFormMethods()) {
+                 $this->request = new InputBag($parsedBody->getData());
             }
             return $this->request;
         }
@@ -289,7 +292,7 @@ class ServerRequest implements ServerRequestInterface
              return new InputBag();
         }
 
-        return new InputBag($this->body->toArray());
+        return new InputBag($parsedBody->asArray());
     }
 
 
