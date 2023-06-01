@@ -278,18 +278,18 @@ class ServerRequest implements ServerRequestInterface
     */
     public function getParsedBody()
     {
-        if ($this->headers->hasXFormEncodedUrl()) {
-            if (!$this->body->isEmpty() && $this->methodInAllowedMethods()) {
+        if ($this->headers->encodedForm()) {
+            if (!$this->body->isEmpty() && $this->inAllowedFormMethods()) {
                  $this->request = new InputBag($this->body->getData());
             }
             return $this->request;
         }
 
-        if (! $data = $this->body->toArray()) {
+        if (! $this->inAllowedResourceMethods()) {
              return new InputBag();
         }
 
-        return new InputBag($data);
+        return new InputBag($this->body->toArray());
     }
 
 
@@ -608,8 +608,19 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @return bool
     */
-    public function methodInAllowedMethods(): bool
+    public function inAllowedFormMethods(): bool
     {
-        return in_array($this->getMethod(), ['PUT', 'DELETE', 'PATCH', 'OPTIONS']);
+        return in_array($this->getMethod(), ['PUT', 'DELETE', 'PATCH']);
+    }
+
+
+
+
+    /**
+     * @return bool
+    */
+    public function inAllowedResourceMethods(): bool
+    {
+        return in_array($this->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']);
     }
 }

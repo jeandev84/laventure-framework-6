@@ -47,7 +47,11 @@ class RequestBody extends Stream
               trigger_error(json_last_error_msg());
          }
 
-         return json_decode($content, true);
+         if(! $data =  json_decode($content, true)) {
+              return [];
+         }
+
+         return $data;
     }
 
 

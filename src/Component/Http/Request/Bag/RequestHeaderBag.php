@@ -35,7 +35,7 @@ class RequestHeaderBag extends ParameterBag
      /**
       * @return bool
      */
-     public function hasXFormEncodedUrl(): bool
+     public function encodedForm(): bool
      {
          foreach ($this->formEncoded as $encoding) {
              if (stripos($this->getContentType(), $encoding) === 0) {
