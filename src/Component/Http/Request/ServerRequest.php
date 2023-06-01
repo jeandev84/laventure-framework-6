@@ -278,7 +278,7 @@ class ServerRequest implements ServerRequestInterface
     */
     public function getParsedBody()
     {
-        if ($this->headers->encodedForm()) {
+        if ($this->headers->formEncoded()) {
             if (!$this->body->isEmpty() && $this->inAllowedFormMethods()) {
                  $this->request = new InputBag($this->body->getData());
             }
