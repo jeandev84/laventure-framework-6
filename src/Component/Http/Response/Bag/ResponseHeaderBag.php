@@ -20,33 +20,39 @@ class ResponseHeaderBag extends ParameterBag
     /**
      * @var bool
     */
-    protected $statusCodeSent = false;
+    protected $sent = false;
 
 
     /**
      * @var array
     */
-    protected static $parsedHeaders = [];
+    protected $parsedHeaders = [];
 
 
     /**
-     * @inheritdoc
+     * @var array
+    */
+    protected $sendedHeaders = [];
+
+
+
+    /**
+     * @param array $params
     */
     public function __construct(array $params = [])
     {
-        $parsedHeaders = $this->parseHeaders(headers_list());
-
-        parent::__construct(array_merge($parsedHeaders));
+        parent::__construct($this->parseHeaders($params));
     }
+
 
 
 
     /**
      * @return bool
     */
-    public function sentHeaders(): bool
+    public function sentHeaders()
     {
-        return headers_sent();
+         return $this->sent = headers_sent();
     }
 
 
@@ -58,9 +64,8 @@ class ResponseHeaderBag extends ParameterBag
     public function sendHeaders(): void
     {
         foreach ($this->params as $name => $value) {
-            if (! isset(static::$parsedHeaders[$name])) {
-                $this->sendHeader("$name: $value");
-            }
+            $this->sendHeader("$name: $value");
+            $this->sendedHeaders[$name] = $value;
         }
     }
 
@@ -74,13 +79,15 @@ class ResponseHeaderBag extends ParameterBag
      *
      * @param int $responseCode
      *
-     * @return void
+     * @return $this
     */
-    public function sendHeader(string $header, bool $replace = true, int $responseCode = 0): void
+    public function sendHeader(string $header, bool $replace = true, int $responseCode = 0): static
     {
-          header($header, $replace, $responseCode);
-          $this->parseHeader($header);
+         header($header, $replace, $responseCode);
+
+         return $this;
     }
+
 
 
 
@@ -91,16 +98,15 @@ class ResponseHeaderBag extends ParameterBag
      *
      * @param string $reasonPhrase
      *
-     * @return bool
+     * @return void
     */
-    public function sendStatusCode(string $version, int $code, string $reasonPhrase = ''): bool
+    public function sendStatusCode(string $version, int $code, string $reasonPhrase = '')
     {
-        if (! $this->statusCodeSent) {
-            $reasonPhrase ? header("$version $code $reasonPhrase") : http_send_status($code);
-            $this->statusCodeSent = true;
+        if (! $reasonPhrase) {
+            http_response_code($code);
+        } else {
+            $this->sendHeader("$version $code $reasonPhrase");
         }
-
-        return $this->statusCodeSent;
     }
 
 
@@ -136,6 +142,7 @@ class ResponseHeaderBag extends ParameterBag
 
 
 
+
     /**
      * @param string $name
      *
@@ -143,15 +150,13 @@ class ResponseHeaderBag extends ParameterBag
     */
     public function getHeaderLine(string $name): string
     {
-         if (! $this->has($name)) {
+         $lines = $this->get($name);
+
+         if (! is_array($lines)) {
               return "";
          }
 
-         if (! is_array($this->get($name))) {
-              return "";
-         }
-
-         return join(";", array_values($this->get($name)));
+         return join(";", array_values($lines));
     }
 
 
@@ -160,7 +165,7 @@ class ResponseHeaderBag extends ParameterBag
     /**
      * @inheritdoc
     */
-    public function has(string $name): bool
+    public function has($name): bool
     {
         $parsedHeaders = $this->parseHeaders($this->all());
 
@@ -177,25 +182,31 @@ class ResponseHeaderBag extends ParameterBag
      *
      * @return array
     */
-    public function parseHeaders(array $headers): array
+    private function parseHeaders(array $headers): array
     {
-         foreach ($headers as $header) {
-             $this->parseHeader($header);
+         foreach (headers_list() as $header) {
+             $this->parseHeaderString($header);
          }
 
-         return static::$parsedHeaders;
+         return array_merge($this->parsedHeaders, $headers);
     }
 
 
 
+
     /**
+     * Parse header from string
+     *
      * @param string $header
      *
-     * @return void
+     * @return array
     */
-    public function parseHeader(string $header): void
+    private function parseHeaderString(string $header): array
     {
         [$name, $value] = explode(':', $header, 2);
-        self::$parsedHeaders[$name] = $value;
+
+        $this->parsedHeaders[$name] = $value;
+
+        return $this->parsedHeaders;
     }
 }

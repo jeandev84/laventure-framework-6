@@ -4,7 +4,7 @@ vendor
 public
 app
 bootstrap
-templates
+demo/views/templates
 demo
 cache
 config

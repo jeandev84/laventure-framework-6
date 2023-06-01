@@ -80,22 +80,20 @@ class Response extends ResponseStatusCode implements ResponseInterface
     protected $version;
 
 
-
-
-    /**
-     * @param null $content
-     *
-     * @param int $statusCode
-     *
-     * @param array $headers
-    */
-    public function __construct($content = null, int $statusCode = 200, array $headers = [])
-    {
-         $this->content    = $content;
-         $this->statusCode = $statusCode;
-         $this->headers    = new ResponseHeaderBag($headers);
-         $this->body       = new ResponseBody('php://temp');
-    }
+     /**
+      * @param string|null $content
+      *
+      * @param int $statusCode
+      *
+      * @param array $headers
+     */
+     public function __construct(?string $content = null, int $statusCode = 200, array $headers = [])
+     {
+          $this->content    = $content;
+          $this->statusCode = $statusCode;
+          $this->headers    = new ResponseHeaderBag($headers);
+          $this->body       = new ResponseBody('php://temp');
+     }
 
 
 

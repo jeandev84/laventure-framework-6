@@ -2,6 +2,7 @@
 namespace Laventure\Component\Http\Request;
 
 use Laventure\Component\Http\Request\Contract\UriInterface;
+use Laventure\Component\Http\Request\Parser\UrlParser;
 
 
 /**
@@ -101,12 +102,13 @@ class Uri implements UriInterface
 
 
 
+
     /**
      * @param $url
     */
-    public function __construct($url = null)
+    public function __construct($url)
     {
-          if ($url) { $this->parseUrl($url); }
+        $this->parseUrl($url);
     }
 
 
@@ -315,108 +317,6 @@ class Uri implements UriInterface
 
 
 
-
-
-    /**
-     * @param string $url
-     *
-     * @return string|null
-    */
-    private function scheme(string $url): ?string
-    {
-        return (string)parse_url($url,PHP_URL_SCHEME);
-    }
-
-
-
-
-
-    /**
-     * @param string $url
-     * @return string|null
-    */
-    private function user(string $url): ?string
-    {
-        return (string)parse_url($url, PHP_URL_USER);
-    }
-
-
-
-
-    /**
-     * @param string $url
-     * @return string|null
-    */
-    private function password(string $url): ?string
-    {
-        return (string)parse_url($url, PHP_URL_PASS);
-    }
-
-
-
-
-    /**
-     * @param string $url
-     *
-     * @return string|null
-    */
-    private function host(string $url): ?string
-    {
-        return (string)parse_url($url, PHP_URL_HOST);
-    }
-
-
-
-
-    /**
-     * @param string $url
-     * @return string|null
-    */
-    private function port(string $url): ?string
-    {
-        return (string)parse_url($url, PHP_URL_PORT);
-    }
-
-
-
-
-    /**
-     * @param string $url
-     * @return string|null
-    */
-    private function path(string $url): ?string
-    {
-        return (string)parse_url($url, PHP_URL_PATH);
-    }
-
-
-
-
-
-    /**
-     * @param string $url
-     * @return string|null
-    */
-    private function query(string $url): ?string
-    {
-        return (string)parse_url($url, PHP_URL_QUERY);
-    }
-
-
-
-
-    /**
-     * @param string $url
-     * @return string|null
-    */
-    private function fragment(string $url): ?string
-    {
-        return (string)parse_url($url, PHP_URL_FRAGMENT);
-    }
-
-
-
-
     /**
      * @param string $url
      *
@@ -424,12 +324,14 @@ class Uri implements UriInterface
     */
     private function parseUrl(string $url): void
     {
-        $this->withScheme($this->scheme($url));
-        $this->withUserInfo($this->user($url), $this->password($url));
-        $this->withHost($this->host($url));
-        $this->withPort($this->port($url));
-        $this->withPath($this->path($url));
-        $this->withQuery($this->query($url));
-        $this->withFragment($this->fragment($url));
+        $parser = new UrlParser($url);
+
+        $this->withScheme($parser->getScheme());
+        $this->withUserInfo($parser->getUsername(), $parser->getPassword());
+        $this->withHost($parser->getHost());
+        $this->withPort($parser->getPort());
+        $this->withPath($parser->getPath());
+        $this->withQuery($parser->getQueryString());
+        $this->withFragment($parser->getFragment());
     }
 }
