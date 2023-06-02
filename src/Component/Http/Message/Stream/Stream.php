@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Stream;
+namespace Laventure\Component\Http\Message\Stream;
 
 use InvalidArgumentException;
 use Laventure\Component\Http\Message\StreamInterface;

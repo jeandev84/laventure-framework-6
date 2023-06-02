@@ -59,8 +59,6 @@ class Request  extends ServerRequest
 
 
 
-
-
     /**
      * @param string|null $content
      *
@@ -101,6 +99,7 @@ class Request  extends ServerRequest
 
 
 
+
     /**
      * @return bool
     */
@@ -122,10 +121,11 @@ class Request  extends ServerRequest
 
 
 
+
     /**
      * @return string
     */
-    public function baseUrl(): string
+    public function getBaseUrl(): string
     {
         return $this->server->getBaseURL();
     }

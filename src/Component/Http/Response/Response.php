@@ -2,7 +2,6 @@
 namespace Laventure\Component\Http\Response;
 
 use Laventure\Component\Http\Message\StreamInterface;
-use Laventure\Component\Http\Request\Body\RequestBody;
 use Laventure\Component\Http\Response\Bag\ResponseHeaderBag;
 use Laventure\Component\Http\Response\Body\ResponseBody;
 use Laventure\Component\Http\Response\Contract\ResponseInterface;
@@ -81,13 +80,13 @@ class Response extends ResponseStatusCode implements ResponseInterface
 
 
      /**
-      * @param string|null $content
+      * @param null $content
       *
       * @param int $statusCode
       *
       * @param array $headers
      */
-     public function __construct(?string $content = null, int $statusCode = 200, array $headers = [])
+     public function __construct($content = null, int $statusCode = 200, array $headers = [])
      {
           $this->content    = $content;
           $this->statusCode = $statusCode;

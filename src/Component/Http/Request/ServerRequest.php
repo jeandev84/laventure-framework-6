@@ -460,6 +460,24 @@ class ServerRequest implements ServerRequestInterface
 
 
     /**
+     * @param array $headers
+     *
+     * @return $this
+    */
+    public function withHeaders(array $headers): static
+    {
+        foreach ($headers as $name => $value) {
+            $this->headers->set($name, $value);
+        }
+
+        return $this;
+    }
+
+
+
+
+
+    /**
      * @inheritDoc
      */
     public function withAddedHeader($name, $value): static

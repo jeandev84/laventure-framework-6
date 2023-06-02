@@ -1,7 +1,7 @@
 <?php
 namespace Laventure\Component\Http\Response\Body;
 
-use Laventure\Component\Http\Stream\Stream;
+use Laventure\Component\Http\Message\Stream\Stream;
 
 
 /**
