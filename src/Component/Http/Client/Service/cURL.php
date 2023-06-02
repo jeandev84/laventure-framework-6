@@ -97,6 +97,26 @@ class cURL
 
 
 
+    /**
+     * @return int
+    */
+    public function getStatusCode(): int
+    {
+         return 200;
+    }
+
+
+
+
+    /**
+     * @return array
+    */
+    public function getHeaders(): array
+    {
+         return [];
+    }
+
+
 
     /**
      * @return bool|string

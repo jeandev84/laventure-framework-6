@@ -366,9 +366,11 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
     */
     public function clear()
     {
-        session_destroy();
-
-        // TODO complete remove cookies
+        if (session_id()) {
+            setcookie(session_name(), session_id(), time() -60*60*24);
+            session_unset();
+            session_destroy();
+        }
     }
 
 
