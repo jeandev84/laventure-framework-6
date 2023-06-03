@@ -34,7 +34,7 @@ interface Middleware
        *
        * @param Response $response
        *
-       * @return mixed
+       * @return Response
       */
-      public function terminate(Request $request, Response $response);
+      public function terminate(Request $request, Response $response): Response;
 }

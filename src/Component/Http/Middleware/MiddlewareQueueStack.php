@@ -2,11 +2,12 @@
 namespace Laventure\Component\Http\Middleware;
 
 
+use Closure;
 use Laventure\Component\Http\Message\Request\Request;
 use Laventure\Component\Http\Message\Response\Response;
 
 /**
- * @MiddlewareStack
+ * @MiddlewareQueueStack
  *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
@@ -14,20 +15,30 @@ use Laventure\Component\Http\Message\Response\Response;
  *
  * @package Laventure\Component\Http\Middleware
 */
-class MiddlewareStack
+class MiddlewareQueueStack
 {
 
     /**
-     * @var \Closure
+     * @var Closure
     */
     protected $fallback;
 
 
 
+    /**
+     * @var Middleware[]
+    */
+    protected $middlewares = [];
 
-    public function __construct()
+
+
+
+    /**
+     * @param Closure|null $fallback
+    */
+    public function __construct(Closure $fallback = null)
     {
-        $this->fallback = function () {
+        $this->fallback = $fallback ?: function () {
              return '';
         };
     }
@@ -48,7 +59,8 @@ class MiddlewareStack
         $this->fallback = function (Request $request) use ($middleware, $next) {
             $response = $middleware->handle($request, $next);
             $middleware->terminate($request, $response);
-            return $response;
+            $this->middlewares[] = $middleware;
+            return $next($request);
         };
 
         return $this;
@@ -58,11 +70,23 @@ class MiddlewareStack
 
 
     /**
+     * @return Middleware[]
+    */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
+
+
+
+
+
+    /**
      * @param Request $request
      *
-     * @return void
+     * @return Response
     */
-    public function handle(Request $request)
+    public function handle(Request $request): Response
     {
         return call_user_func($this->fallback, $request);
     }
