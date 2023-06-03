@@ -232,6 +232,5 @@ class Request  extends ServerRequest
 
 
 
-
     public static function createFromStream() {}
 }

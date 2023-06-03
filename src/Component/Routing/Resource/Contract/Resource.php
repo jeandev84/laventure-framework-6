@@ -12,7 +12,7 @@ use Laventure\Component\Routing\Router;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Resource\Contract
+ * @package Laventure\Component\Routing\Resource\Stack
 */
 abstract class Resource
 {

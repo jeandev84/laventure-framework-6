@@ -5,7 +5,7 @@ namespace Laventure\Component\Http\Message\Request\Contract;
 /**
  * @ServerRequestInterface
  *
- * @package Laventure\Component\Http\Message\Request\Contract
+ * @package Laventure\Component\Http\Message\Request\Stack
  */
 interface ServerRequestInterface extends RequestInterface
 {
