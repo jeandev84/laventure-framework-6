@@ -1,9 +1,9 @@
 <?php
-namespace Laventure\Component\Http;
+namespace Laventure\Component\Message\Http;
 
 
-use Laventure\Component\Http\Request\Request;
-use Laventure\Component\Http\Response\Response;
+use Laventure\Component\Http\Message\Request;
+use Laventure\Component\Http\Message\Response;
 
 
 /**
@@ -13,7 +13,7 @@ use Laventure\Component\Http\Response\Response;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http
+ * @package Laventure\Component\Message\Http
 */
 interface Kernel
 {

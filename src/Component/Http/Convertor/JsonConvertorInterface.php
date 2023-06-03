@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Convertor;
+namespace Laventure\Component\Message\Http\Convertor;
 
 interface JsonConvertorInterface
 {

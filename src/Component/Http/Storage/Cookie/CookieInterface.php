@@ -1,9 +1,9 @@
 <?php
-namespace Laventure\Component\Http\Storage\Cookie;
+namespace Laventure\Component\Message\Http\Storage\Cookie;
 
 
 
-use Laventure\Component\Http\Storage\StorageInterface;
+use Laventure\Component\Message\Http\Storage\StorageInterface;
 
 /**
  * @CookieInterface
@@ -14,7 +14,7 @@ use Laventure\Component\Http\Storage\StorageInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Storage\Cookie
+ * @package Laventure\Component\Message\Http\Storage\Cookie
 */
 interface CookieInterface
 {

@@ -1,15 +1,15 @@
 <?php
-namespace Laventure\Component\Http\Client;
+namespace Laventure\Component\Message\Http\Client;
 
 use Laventure\Component\Http\Bag\clientParameterBag;
 use Laventure\Component\Http\Bag\ParameterBag;
-use Laventure\Component\Http\Client\Service\cURL;
-use Laventure\Component\Http\Request\Contract\RequestInterface;
-use Laventure\Component\Http\Request\Contract\ServerRequestInterface;
-use Laventure\Component\Http\Request\Request;
-use Laventure\Component\Http\Request\Uri;
-use Laventure\Component\Http\Response\Contract\ResponseInterface;
-use Laventure\Component\Http\Response\Response;
+use Laventure\Component\Message\Http\Client\Service\cURL;
+use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
+use Laventure\Component\Http\Message\Request\Contract\ServerRequestInterface;
+use Laventure\Component\Http\Message\Request;
+use Laventure\Component\Http\Message\Request\Uri;
+use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
+use Laventure\Component\Http\Message\Response;
 
 
 /**
@@ -19,7 +19,7 @@ use Laventure\Component\Http\Response\Response;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\HttpClient
+ * @package Laventure\Component\Message\Http\HttpClient
 */
 class HttpClient implements HttpClientInterface
 {

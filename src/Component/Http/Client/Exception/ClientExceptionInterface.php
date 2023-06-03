@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Client\Exception;
+namespace Laventure\Component\Message\Http\Client\Exception;
 
 /**
  * @ClientExceptionInterface
@@ -8,7 +8,7 @@ namespace Laventure\Component\Http\Client\Exception;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Client\Exception
+ * @package Laventure\Component\Message\Http\Client\Exception
 */
 interface ClientExceptionInterface extends \Throwable
 {

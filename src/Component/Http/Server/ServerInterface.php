@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Server;
+namespace Laventure\Component\Message\Http\Server;
 
 interface ServerInterface
 {

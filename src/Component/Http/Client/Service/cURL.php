@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Client\Service;
+namespace Laventure\Component\Message\Http\Client\Service;
 
 use CurlHandle;
 use Laventure\Component\Http\Bag\clientParameterBag;
@@ -13,7 +13,7 @@ use Laventure\Component\Http\Bag\ParameterBag;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Client\Upload
+ * @package Laventure\Component\Message\Http\Client\Upload
 */
 class cURL
 {

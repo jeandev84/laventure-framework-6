@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Storage\Cookie;
+namespace Laventure\Component\Message\Http\Storage\Cookie;
 
 
 /**

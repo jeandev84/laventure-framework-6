@@ -1,8 +1,8 @@
 <?php
-namespace Laventure\Component\Http\Client;
+namespace Laventure\Component\Message\Http\Client;
 
-use Laventure\Component\Http\Request\Contract\RequestInterface;
-use Laventure\Component\Http\Response\Contract\ResponseInterface;
+use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
+use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
 
 /**
  * @ClientInterface
@@ -11,7 +11,7 @@ use Laventure\Component\Http\Response\Contract\ResponseInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Client\ClientInterface
+ * @package Laventure\Component\Message\Http\Client\ClientInterface
 */
 interface ClientInterface
 {

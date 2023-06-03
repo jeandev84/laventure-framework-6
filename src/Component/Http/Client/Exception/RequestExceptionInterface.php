@@ -1,7 +1,7 @@
 <?php
-namespace Laventure\Component\Http\Client\Exception;
+namespace Laventure\Component\Message\Http\Client\Exception;
 
-use Laventure\Component\Http\Request\Contract\RequestInterface;
+use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
 
 /**
  * Exception for when a request failed.

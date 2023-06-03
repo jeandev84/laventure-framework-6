@@ -26,7 +26,7 @@ use Laventure\Component\Http\Message\StreamInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Stream
+ * @package Laventure\Component\Message\Http\Stream
 */
 class Stream implements StreamInterface
 {

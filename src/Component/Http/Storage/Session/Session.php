@@ -1,8 +1,8 @@
 <?php
-namespace Laventure\Component\Http\Storage\Session;
+namespace Laventure\Component\Message\Http\Storage\Session;
 
 
-use Laventure\Component\Http\Storage\Cookie\CookieInterface;
+use Laventure\Component\Message\Http\Storage\Cookie\CookieInterface;
 
 
 /**
