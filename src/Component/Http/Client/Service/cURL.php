@@ -13,7 +13,7 @@ use Laventure\Component\Http\Bag\ParameterBag;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Client\Service
+ * @package Laventure\Component\Http\Client\Upload
 */
 class cURL
 {

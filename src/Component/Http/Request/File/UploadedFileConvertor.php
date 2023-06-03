@@ -26,7 +26,10 @@ trait UploadedFileConvertor
 
         foreach ($resolvedFiles as $name => $items) {
             foreach ($items as $file) {
-                $uploadedFiles[$name][] = new UploadedFile($file['name'], $file['type'], $file['tmp_name'], $file['error'], $file['size']);
+                $uploadedFile = $this->createUploadedFileFromArray($file);
+                if ($uploadedFile->isUploaded()) {
+                    $uploadedFiles[$name][] = $uploadedFile;
+                }
             }
         }
 
@@ -56,5 +59,25 @@ trait UploadedFileConvertor
         }
 
         return $fileParams;
+    }
+
+
+
+
+    /**
+     * @param array $file
+     *
+     * @return UploadedFile
+    */
+    private function createUploadedFileFromArray(array $file): UploadedFile
+    {
+        return new UploadedFile(
+            $file['name'],
+            $file['full_path'],
+            $file['type'],
+            $file['tmp_name'],
+            $file['error'],
+            $file['size']
+        );
     }
 }

@@ -79,4 +79,30 @@ class FileBag extends ParameterBag
 
         return parent::set($name, $value);
     }
+
+
+
+
+    /**
+     * @return UploadedFile[]
+    */
+    public function all(): array
+    {
+        return parent::all();
+    }
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @param $default
+     *
+     * @return UploadedFile|null
+    */
+    public function get(string $name, $default = null): ?UploadedFile
+    {
+        return parent::get($name, $default);
+    }
 }

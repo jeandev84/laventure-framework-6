@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Stream\Stream;
+namespace Laventure\Component\Http\Message\Stream;
 
 class StreamFactory
 {

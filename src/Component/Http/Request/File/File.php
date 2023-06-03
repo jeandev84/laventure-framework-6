@@ -16,35 +16,55 @@ class File
 
 
     /**
+     * File name
+     *
      * @var string
-     */
+    */
     protected $name;
 
 
 
     /**
+     * File path
+     *
      * @var string
-     */
-    protected $type;
+    */
+    protected $path;
 
 
 
     /**
+     * File mime type
+     *
+     * @var string
+    */
+    protected $mime;
+
+
+
+    /**
+     * Temp path
+     *
      * @var string
     */
     protected $temp;
 
 
 
+
     /**
+     * File error
+     *
      * @var int
-     */
+    */
     protected $error;
 
 
 
 
     /**
+     * File size
+     *
      * @var int
     */
     protected $size;
@@ -53,17 +73,25 @@ class File
 
 
     /**
-     * UploadedFile constructor.
+     * File constructor.
+     *
      * @param string $name
+     *
+     * @param string $path
+     *
      * @param string $type
+     *
      * @param string $temp
-     * @param string $error
+     *
+     * @param int $error
+     *
      * @param int $size
     */
-    public function __construct(string $name, string $type, string $temp, string $error, int $size)
+    public function __construct(string $name, string $path, string $type, string $temp, int $error, int $size)
     {
         $this->name = $name;
-        $this->type = $type;
+        $this->path = $path;
+        $this->mime = $type;
         $this->temp = $temp;
         $this->error = $error;
         $this->size = $size;
@@ -87,7 +115,7 @@ class File
     */
     public function getMimeType(): string
     {
-        return $this->type;
+        return $this->mime;
     }
 
 
@@ -100,6 +128,9 @@ class File
     {
         return $this->temp;
     }
+
+
+
 
     /**
      * @return int
@@ -118,5 +149,15 @@ class File
     public function getError(): int
     {
         return $this->error;
+    }
+
+
+
+    /**
+     * @return string
+    */
+    public function getExtension(): string
+    {
+        return pathinfo($this->name)['extension'] ?? '';
     }
 }
