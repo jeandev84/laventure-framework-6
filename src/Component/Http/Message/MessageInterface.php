@@ -6,7 +6,7 @@ use InvalidArgumentException;
 
 
 /**
- * HTTP messages consist of requests from a client to a server and responses
+ * HTTP messages consist of curl from a client to a server and responses
  *
  * @MessageInterface
  *

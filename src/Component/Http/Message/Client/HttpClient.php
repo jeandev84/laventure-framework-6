@@ -1,15 +1,13 @@
 <?php
-namespace Laventure\Component\Message\Http\Client;
+namespace Laventure\Component\Http\Message\Client;
 
-use Laventure\Component\Http\Bag\clientParameterBag;
-use Laventure\Component\Http\Bag\ParameterBag;
-use Laventure\Component\Message\Http\Client\Service\cURL;
+use Laventure\Component\Http\Bag\ClientParameterBag;
+use Laventure\Component\Http\Message\Request\Request;
+use Laventure\Component\Http\Message\Response\Response;
+use Laventure\Component\Http\Message\Client\Service\cURL;
 use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
-use Laventure\Component\Http\Message\Request\Contract\ServerRequestInterface;
-use Laventure\Component\Http\Message\Request;
 use Laventure\Component\Http\Message\Request\Uri;
 use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
-use Laventure\Component\Http\Message\Response;
 
 
 /**
@@ -19,7 +17,7 @@ use Laventure\Component\Http\Message\Response;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Message\Http\HttpClient
+ * @package Laventure\Component\Http\Message\Client\HttpClient
 */
 class HttpClient implements HttpClientInterface
 {
@@ -38,7 +36,7 @@ class HttpClient implements HttpClientInterface
     */
     public function __construct()
     {
-        $this->parameter = new clientParameterBag();
+        $this->parameter = new ClientParameterBag();
     }
 
 
@@ -70,7 +68,7 @@ class HttpClient implements HttpClientInterface
          $curl       = new cURL($request->getUrl());
          $statusCode = 200;
 
-         $response = new Response($curl->exec(), );
+         $response = new Response($curl->exec());
          $response->withProtocolVersion($request->getProtocolVersion());
          $response->send();
 
@@ -86,7 +84,7 @@ class HttpClient implements HttpClientInterface
     */
     public function send(string $method, string $url, array $options = []): ResponseInterface
     {
-         $request = new Request();
+         $request = Request::createFromGlobals();
          $request->withMethod($method);
          $request->withUri(new Uri($url));
          $this->parameter->merge($options);
@@ -106,6 +104,8 @@ class HttpClient implements HttpClientInterface
     {
         // TODO: Implement get() method.
     }
+
+
 
 
 

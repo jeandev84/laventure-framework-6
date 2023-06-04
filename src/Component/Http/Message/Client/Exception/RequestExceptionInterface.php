@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Message\Http\Client\Exception;
+namespace Laventure\Component\Http\Message\Client\Exception;
 
 use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
 

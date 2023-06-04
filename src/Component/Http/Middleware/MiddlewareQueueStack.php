@@ -32,13 +32,9 @@ class MiddlewareQueueStack
 
 
 
-
-    /**
-     * @param Closure|null $fallback
-    */
-    public function __construct(Closure $fallback = null)
+    public function __construct()
     {
-        $this->fallback = $fallback ?: function () {
+        $this->fallback = function () {
              return '';
         };
     }

@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Message\Http\Client;
+namespace Laventure\Component\Http\Message\Client;
 
 use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
 
@@ -10,7 +10,7 @@ use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Message\Http\Client
+ * @package Laventure\Component\Http\Message\Client
 */
 interface HttpClientInterface extends ClientInterface
 {
