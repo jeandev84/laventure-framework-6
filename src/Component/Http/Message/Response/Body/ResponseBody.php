@@ -20,13 +20,13 @@ class ResponseBody extends Stream
 
 
     /**
-     * @param $stream
+     * @param $resource
      *
      * @param string $accessMode
     */
-    public function __construct($stream, string $accessMode = 'w')
+    public function __construct($resource, string $accessMode = 'w')
     {
-        parent::__construct($stream, $accessMode);
+        parent::__construct($resource, $accessMode);
     }
 
 

@@ -51,13 +51,37 @@ class Stream implements StreamInterface
 
 
     /**
-     * @param string $stream
+     * @param $resource
      *
      * @param string|null $accessMode
     */
-    public function __construct($stream, string $accessMode = null)
+    public function __construct($resource, string $accessMode = null)
     {
-          $this->stream = $this->resolveStream($stream, $accessMode);
+          $this->open($resource, $accessMode);
+    }
+
+
+
+    /**
+     * @param $resource
+     *
+     * @param string|null $accessMode
+     *
+     * @return $this
+    */
+    public function open($resource, string $accessMode = null): static
+    {
+        if (is_string($resource)) {
+            $resource = fopen($resource, $accessMode);
+        }
+
+        if (! $this->isStream($resource)) {
+            throw new InvalidArgumentException('Invalid stream provided; must be a string stream identifier or stream resource');
+        }
+
+        $this->stream = $resource;
+
+        return $this;
     }
 
 
@@ -312,29 +336,6 @@ class Stream implements StreamInterface
         $meta = stream_get_meta_data($this->stream);
 
         return $key ? $meta[$key] : $meta;
-    }
-
-
-
-
-    /**
-     * @param $stream
-     *
-     * @param $accessMode
-     *
-     * @return false|mixed|resource
-    */
-    private function resolveStream($stream, $accessMode)
-    {
-        if (is_string($stream)) {
-            $stream = fopen($stream, $accessMode);
-        }
-
-        if (! $this->isStream($stream)) {
-            throw new InvalidArgumentException('Invalid stream provided; must be a string stream identifier or stream resource');
-        }
-
-        return $stream;
     }
 
 

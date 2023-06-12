@@ -3,6 +3,8 @@ namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
 
 
+use Laventure\Component\Http\Message\Client\Service\Stream\Stream;
+
 /**
  * @cUrlRequest
  *
@@ -45,7 +47,7 @@ class cUrlRequest
 
 
      /**
-      * @var cUrlStream
+      * @var Stream
      */
      protected $uploadedFile;
 
@@ -53,7 +55,7 @@ class cUrlRequest
 
 
      /**
-      * @var cUrlStream
+      * @var Stream
      */
      protected $downloadFile;
 
@@ -422,7 +424,7 @@ class cUrlRequest
      {
          if (! $resource) { return $this; }
 
-         $this->uploadedFile = new cUrlStream($resource, 'r');
+         $this->uploadedFile = new Stream($resource, 'r');
 
          return $this->options([
              CURLOPT_UPLOAD     => true,
@@ -446,7 +448,7 @@ class cUrlRequest
               $stream = @fopen($stream, 'w');
           }
 
-          $this->downloadFile = new cUrlStream($stream);
+          $this->downloadFile = new Stream($stream);
 
           return $this->option(CURLOPT_FILE, $stream);
      }
@@ -701,9 +703,9 @@ class cUrlRequest
 
 
     /**
-     * @return cUrlStream
+     * @return Stream
     */
-    public function getUploadedFile(): cUrlStream
+    public function getUploadedFile(): Stream
     {
         return $this->uploadedFile;
     }
@@ -712,9 +714,9 @@ class cUrlRequest
 
 
     /**
-     * @return cUrlStream
+     * @return Stream
     */
-    public function getDownloadFile(): cUrlStream
+    public function getDownloadFile(): Stream
     {
         return $this->downloadFile;
     }
