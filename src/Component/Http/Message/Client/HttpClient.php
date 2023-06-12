@@ -35,9 +35,9 @@ class HttpClient implements HttpClientInterface
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
          $curlRequest = new cUrlRequest();
+         $curlResponse = $curlRequest->request($request->getMethod(), $request->url(), $this->options);
 
-
-         return new Response();
+         return new Response($curlResponse->getBody(), $curlResponse->getStatusCode(), $curlResponse->getHeaders());
     }
 
 

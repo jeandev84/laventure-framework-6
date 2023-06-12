@@ -385,6 +385,7 @@ class cUrlRequest
 
 
 
+
      /**
       * @return cUrlResponse
      */
@@ -542,7 +543,7 @@ class cUrlRequest
     /**
      * @return bool|string
     */
-    public function exec(): bool|string
+    private function exec(): bool|string
     {
         return curl_exec($this->ch);
     }
@@ -553,10 +554,11 @@ class cUrlRequest
     /**
      * @return void
     */
-    public function close()
+    private function close()
     {
         curl_close($this->ch);
     }
+
 
 
 
@@ -660,16 +662,5 @@ class cUrlRequest
         $this->close();
 
         return $response;
-    }
-
-
-
-
-    /**
-     * @return void
-    */
-    public function __destruct()
-    {
-         $this->close();
     }
 }
