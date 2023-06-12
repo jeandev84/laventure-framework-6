@@ -1,7 +1,7 @@
 <?php
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
-class cUrlUploadFile
+class cUrlStream
 {
 
      /**
@@ -18,12 +18,15 @@ class cUrlUploadFile
 
 
      /**
-      * @param string $path
+      * @param $resource
      */
-     public function __construct(string $path)
+     public function __construct($resource)
      {
-         $this->stream = fopen($path, 'r');
-         $this->size   = filesize($path);
+         if (is_file($resource)) {
+             $this->stream = fopen($resource, 'r');
+             $this->size   = filesize($resource);
+         }
+
      }
 
 
@@ -31,12 +34,13 @@ class cUrlUploadFile
 
 
      /**
-      * @return bool
+      * @return mixed
      */
-     public function getResource(): bool
+     public function getStream(): mixed
      {
          return $this->stream;
      }
+
 
 
 

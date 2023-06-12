@@ -228,7 +228,7 @@ class cUrlRequest
      public function body(mixed $body): static
      {
          if (is_array($body)) {
-             $this->data($body);
+             return $this->data($body);
          }
 
          $this->body = $body;
@@ -351,13 +351,26 @@ class cUrlRequest
      {
          if (! $path) { return $this; }
 
-         $file = new cUrlUploadFile($path);
+         $file = new cUrlStream($path);
 
          return $this->options([
              CURLOPT_UPLOAD     => true,
              CURLOPT_INFILESIZE => $file->getSize(),
-             CURLOPT_INFILE     => $file->getResource()
+             CURLOPT_INFILE     => $file->getStream()
          ]);
+     }
+
+
+
+
+     /**
+      * @param $stream
+      * @return $this
+     */
+     public function download($stream)
+     {
+
+          return $this;
      }
 
 
@@ -412,14 +425,14 @@ class cUrlRequest
      public function request(string $method, string $url, array $context = []): cUrlResponse
      {
           $context = new cUrlContext($context);
-
           $request = new static();
           $request->method($method);
           $request->url($url, $context->getQuery());
           $request->headers($context->getHeaders());
-          $request->body($request->getBody());
+          $request->body($context->getBody());
           $request->files($context->getFiles());
           $request->upload($context->getUploadedFile());
+
 
           return $request->send();
      }
@@ -742,14 +755,10 @@ class cUrlRequest
     }
 
 
-
-
     /**
-     * @param string $method
-     *
      * @return void
     */
-    private function prepareOptions()
+    private function prepareOptions(): void
     {
         switch ($this->method):
             case 'GET':
