@@ -162,6 +162,8 @@ class cUrlRequest
               $this->url .= '?'. $this->buildQuery($queries);
           }
 
+          $this->proxy($url);
+
           $this->option(CURLOPT_URL, $this->url);
 
           return $this;
@@ -472,13 +474,14 @@ class cUrlRequest
           $request = new static();
           $request->method($method);
           $request->url($url, $context->getQuery());
+          $request->proxy($context->getProxy());
           $request->auth($context->getAuth());
           $request->headers($context->getHeaders());
           $request->body($context->getBody());
           $request->files($context->getFiles());
           $request->cookies($context->getCookies());
           $request->upload($context->getUploadedFile());
-          $request->proxy($context->getProxy());
+
 
           return $request->send();
      }
