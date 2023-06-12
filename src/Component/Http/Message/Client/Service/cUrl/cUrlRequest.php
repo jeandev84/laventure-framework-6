@@ -225,6 +225,10 @@ class cUrlRequest
      */
      public function body(mixed $body): static
      {
+         if (is_array($body)) {
+             $this->data($body);
+         }
+
          $this->body = $body;
 
          return $this;
@@ -260,7 +264,7 @@ class cUrlRequest
             CURLOPT_HTTPHEADER => ['Content-Type: application/json']
         ]);
 
-        $this->body = json_encode($data, JSON_UNESCAPED_UNICODE);
+        $this->body(json_encode($data, JSON_UNESCAPED_UNICODE));
 
         return $this;
      }
@@ -687,34 +691,9 @@ class cUrlRequest
     */
     private function getResponse(): cUrlResponse
     {
-        switch ($this->method):
-            case 'GET':
-            case 'HEAD':
-                $this->option(CURLOPT_HEADER, false);
-                break;
-            case 'POST':
-            case 'PUT':
-            case 'PATCH':
-            case 'DELETE':
-              $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
-            break;
-        endswitch;
-
-        $body = $this->exec();
-
-        if ($errno = curl_errno($this->ch)) {
-             return (function () use ($errno) {
-                 throw new cUrlException(curl_error($this->ch), $errno);
-             })();
-        }
-
-        $response = new cUrlResponse($body);
-        $response->setStatusCode($this->getStatusCode());
-        $response->setHeaders($this->getResponseHeaders());
-        $this->close();
-
-        return $response;
+        return $this->createResponse();
     }
+
 
 
 
@@ -728,4 +707,51 @@ class cUrlRequest
         return $this->option(CURLOPT_HEADER, $return);
     }
 
+
+
+
+    /**
+     * @param string $method
+     *
+     * @return void
+    */
+    private function prepareOptions()
+    {
+        switch ($this->method):
+            case 'GET':
+            case 'HEAD':
+                $this->option(CURLOPT_HEADER, false);
+                break;
+            case 'POST':
+            case 'PUT':
+            case 'PATCH':
+            case 'DELETE':
+                $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
+                break;
+        endswitch;
+    }
+
+
+    /**
+     * @return cUrlResponse
+    */
+    private function createResponse(): cUrlResponse
+    {
+        $this->prepareOptions();
+
+        $body = $this->exec();
+
+        if ($errno = curl_errno($this->ch)) {
+            return (function () use ($errno) {
+                throw new cUrlException(curl_error($this->ch), $errno);
+            })();
+        }
+
+        $response = new cUrlResponse($body);
+        $response->setStatusCode($this->getStatusCode());
+        $response->setHeaders($this->getResponseHeaders());
+        $this->close();
+
+        return $response;
+    }
 }
