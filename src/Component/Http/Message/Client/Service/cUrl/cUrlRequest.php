@@ -2,7 +2,6 @@
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
 
-use Laventure\Component\Http\Message\Request\File\UploadedFile;
 
 /**
  * @cUrlRequest
@@ -527,7 +526,7 @@ class cUrlRequest
      */
      public function send(): cUrlResponse
      {
-         $this->prepareOptions();
+         $this->setOtherOptions();
 
          $body = $this->exec();
 
@@ -835,25 +834,10 @@ class cUrlRequest
 
 
 
-
-    /**
-     * @param bool $return
-     *
-     * @return $this
-    */
-    private function returnHeader(bool $return = false): static
-    {
-        return $this->option(CURLOPT_HEADER, $return);
-    }
-
-
-
-
-
     /**
      * @return void
     */
-    private function prepareOptions(): void
+    private function setOtherOptions(): void
     {
         switch ($this->method):
             case 'GET':
