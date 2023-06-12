@@ -2,6 +2,8 @@
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
 
+use Laventure\Component\Http\Message\Request\File\UploadedFile;
+
 /**
  * @cUrlRequest
  *
@@ -343,6 +345,26 @@ class cUrlRequest
 
 
      /**
+      * @return $this
+     */
+     public function upload($path): static
+     {
+         if (! $path) { return $this; }
+
+         $file = new cUrlUploadFile($path);
+
+         return $this->options([
+             CURLOPT_UPLOAD     => true,
+             CURLOPT_INFILESIZE => $file->getSize(),
+             CURLOPT_INFILE     => $file->getResource()
+         ]);
+     }
+
+
+
+
+
+     /**
       * @param $key
       *
       * @param $value
@@ -395,12 +417,9 @@ class cUrlRequest
           $request->method($method);
           $request->url($url, $context->getQuery());
           $request->headers($context->getHeaders());
-
-          if (is_array($context->getBody())) {
-              $request->data($context->getBody());
-          }
-
+          $request->body($request->getBody());
           $request->files($context->getFiles());
+          $request->upload($context->getUploadedFile());
 
           return $request->send();
      }

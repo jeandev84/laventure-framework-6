@@ -11,7 +11,8 @@ class cUrlContext implements \ArrayAccess
          'query'   => [],
          'headers' => [],
          'body'    => null,
-         'files'   => []
+         'files'   => [],
+         'upload'  => null
      ];
 
 
@@ -67,6 +68,19 @@ class cUrlContext implements \ArrayAccess
      {
         return $this->getOption('files', []);
      }
+
+
+
+
+
+     /**
+      * @return mixed
+     */
+     public function getUploadedFile(): mixed
+     {
+         return $this->getOption('upload', '');
+     }
+
 
 
 
