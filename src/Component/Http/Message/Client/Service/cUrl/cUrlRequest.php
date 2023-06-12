@@ -646,7 +646,15 @@ class cUrlRequest
             $this->option(CURLOPT_HEADER, false);
         }
 
-        $response = new cUrlResponse($this->exec());
+        $body = $this->exec();
+
+        if ($errno = curl_errno($this->ch)) {
+             return (function () use ($errno) {
+                 throw new cUrlException(curl_error($this->ch), $errno);
+             })();
+        }
+
+        $response = new cUrlResponse($body);
         $response->setStatusCode($this->getStatusCode());
         $response->setHeaders($this->getResponseHeaders());
         $this->close();
