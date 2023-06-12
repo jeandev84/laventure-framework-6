@@ -14,7 +14,23 @@ namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 class cUrlRequest
 {
 
-     /**
+
+    /**
+     * @var \CurlHandle|false
+    */
+    protected $ch;
+
+
+
+    /**
+     * @var cUrlInfo
+    */
+    protected $info;
+
+
+
+
+    /**
       * @var string|null
      */
      protected ?string $url;
@@ -42,19 +58,21 @@ class cUrlRequest
 
 
 
-
      /**
       * @var array
      */
-     protected $attributes = [];
-
-
-
-
-     /**
-      * @var array
-     */
-     protected $headers = [];
+     protected $headers = [
+         'cache-control: max-age=0',
+         'upgrade-insecure-requests: 1',
+         'user-agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36',
+         'sec-fetch-user: ?1',
+         'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+         'x-compress: null',
+         'sec-fetch-site: none',
+         'sec-fetch-mode: navigate',
+         'accept-encoding: deflate, br',
+         'accept-language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+     ];
 
 
 
@@ -77,25 +95,7 @@ class cUrlRequest
      /**
       * @var array
      */
-     protected $options = [
-         CURLOPT_RETURNTRANSFER => true,
-         CURLOPT_SSL_VERIFYPEER => false,
-         CURLOPT_HEADER => false
-     ];
-
-
-
-     /**
-      * @var \CurlHandle|false
-     */
-     protected $ch;
-
-
-
-     /**
-      * @var cUrlInfo
-     */
-     protected $info;
+     protected $options = [];
 
 
 
@@ -105,10 +105,29 @@ class cUrlRequest
      */
      public function __construct(string $url = null)
      {
-          $this->ch   = curl_init($url);
-          $this->info = new cUrlInfo($this->ch);
+          $this->init($url);
      }
 
+
+
+
+     /**
+      * @param string|null $url
+      * @return $this
+     */
+     public function init(string $url = null): static
+     {
+         $this->ch   = curl_init($url);
+         $this->info = new cUrlInfo($this->ch);
+
+         $this->options([
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_SSL_VERIFYPEER => false,
+             CURLOPT_HEADER => false
+         ]);
+
+         return $this;
+     }
 
 
 
@@ -122,13 +141,14 @@ class cUrlRequest
      */
      public function url(string $url, array $queries = []): static
      {
-          $this->url = $url;
+          $this->url     = $url;
+          $this->queries = $queries;
 
           if ($queries) {
               $this->url .= '?'. $this->buildQuery($queries);
           }
 
-          $this->queries = $queries;
+          $this->option(CURLOPT_URL, $this->url);
 
           return $this;
      }
@@ -173,26 +193,17 @@ class cUrlRequest
      */
      public function body(array|string $body): static
      {
+         if (is_array($body)) {
+            $body = array_merge((array)$this->getBody(), $body);
+            $this->option(CURLOPT_POSTFIELDS, $this->buildQuery($body));
+         }
+
          $this->body = $body;
 
          return $this;
      }
 
 
-
-
-
-     /**
-      * @param array $attributes
-      *
-      * @return $this
-     */
-     public function attributes(array $attributes): static
-     {
-         $this->attributes = array_merge($this->attributes, $attributes);
-
-         return $this;
-     }
 
 
 
@@ -204,6 +215,7 @@ class cUrlRequest
      */
      public function headers(array $headers): static
      {
+
          $this->headers = $headers;
 
          return $this;
@@ -253,6 +265,8 @@ class cUrlRequest
      {
           curl_setopt($this->ch, $key, $value);
 
+          $this->options[$key] = $value;
+
           return $this;
      }
 
@@ -267,6 +281,8 @@ class cUrlRequest
      public function options(array $options): static
      {
           curl_setopt_array($this->ch, $options);
+
+          $this->options = array_merge($this->options, $options);
 
           return $this;
      }
@@ -299,35 +315,9 @@ class cUrlRequest
      */
      public function send(): cUrlResponse
      {
-         /*
-         // method
-         switch ($this->method):
-             case 'GET':
-             case 'HEAD':
-                 if ($this->queries) { $this->url .= '?'. http_build_query($this->queries); }
-                 break;
-             case 'POST':
-             case 'PUT':
-             case 'PATCH':
-             case 'DELETE':
-                 break;
-         endswitch;
-         */
-
-         #dd($this->url);
-
          return $this->getResponse();
      }
 
-
-
-    /**
-     * @return array
-    */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
 
 
 
@@ -337,8 +327,6 @@ class cUrlRequest
     */
     public function getResponse(): cUrlResponse
     {
-        $this->option(CURLOPT_URL, $this->url);
-        $this->options($this->options);
         $response = new cUrlResponse($this->exec());
         $info = $this->getInfo();
         $response->setStatusCode($info->getStatusCode());
@@ -356,6 +344,92 @@ class cUrlRequest
     public function getInfo(): cUrlInfo
     {
          return $this->info;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+
+    /**
+     * @return array|string
+     */
+    public function getBody(): array|string
+    {
+        return $this->body;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getCookies(): array
+    {
+        return $this->cookies;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getFiles(): array
+    {
+        return $this->files;
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getMethod(): ?string
+    {
+        return $this->method;
+    }
+
+
+
+    /**
+     * @return array
+    */
+    public function getQueries(): array
+    {
+        return $this->queries;
+    }
+
+
+
+    /**
+     * @return string|null
+    */
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+
+
+    /**
+     * @return array
+    */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+
+
+
+    /**
+     * @return \CurlHandle|false
+    */
+    public function getHandle(): \CurlHandle|bool
+    {
+        return $this->ch;
     }
 
 
@@ -381,6 +455,7 @@ class cUrlRequest
     }
 
 
+
     /**
      * @param array $parameters
      *
@@ -389,5 +464,30 @@ class cUrlRequest
     private function buildQuery(array $parameters): string
     {
         return http_build_query($parameters, '', '&');
+    }
+
+
+
+
+    /**
+     * @param array $headers
+     *
+     * @return array
+    */
+    private function resolveHeaders(array $headers): array
+    {
+         $resolved = [];
+
+         foreach ($headers as $key => $value) {
+             $resolved[] = (is_string($key) ? "$key: $value" : $value);
+         }
+
+         return $resolved;
+    }
+
+
+    public function __destruct()
+    {
+         $this->close();
     }
 }

@@ -126,8 +126,11 @@ class Request  extends ServerRequest
      * @param string $url
      *
      * @param string $method
+     *
      * @param array $queries
+     *
      * @param array $request
+     *
      * @param array $cookies
      *
      * @param array $files
@@ -140,7 +143,7 @@ class Request  extends ServerRequest
     */
     public static function create(
         string $url,
-        string $method = 'GET',
+        string $method,
         array $queries = [],
         array $request = [],
         array $cookies = [],

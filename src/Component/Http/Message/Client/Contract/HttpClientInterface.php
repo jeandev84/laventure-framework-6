@@ -18,10 +18,10 @@ interface HttpClientInterface extends ClientInterface
 
       /**
        * @param RequestInterface $request
-       * @param array $options
+       *
        * @return ResponseInterface
       */
-      public function sendRequest(RequestInterface $request, array $options = []): ResponseInterface;
+      public function sendRequest(RequestInterface $request): ResponseInterface;
 
 
 
