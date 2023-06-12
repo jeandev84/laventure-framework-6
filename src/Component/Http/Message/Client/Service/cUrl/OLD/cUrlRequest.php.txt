@@ -23,6 +23,14 @@ class cUrlRequest
 
 
     /**
+     * @var cUrlInfo
+    */
+    protected $info;
+
+
+
+
+    /**
       * @var string|null
      */
      protected ?string $url;
@@ -117,6 +125,7 @@ class cUrlRequest
      public function init(string $url = null): static
      {
          $this->ch   = curl_init($url);
+         $this->info = new cUrlInfo($this->ch);
 
          $this->options([
              CURLOPT_RETURNTRANSFER => true,
@@ -153,20 +162,6 @@ class cUrlRequest
 
          return $this;
      }
-
-
-
-
-     /**
-      * @return $this
-     */
-     public function withoutBrowserHeaders(): static
-     {
-          $this->browserHeaders = [];
-
-          return $this;
-     }
-
 
 
 
@@ -259,7 +254,7 @@ class cUrlRequest
 
          return $this->options([
              CURLOPT_HTTPHEADER => $this->headers,
-             CURLOPT_HEADER     => true
+             CURLOPT_HEADER => true
          ]);
      }
 
@@ -360,6 +355,11 @@ class cUrlRequest
           $request = new static();
           $request->method($method);
           $request->url($url, $context['query'] ?? []);
+
+//          if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+//              $request->headers($context['headers'] ?? []);
+//          }
+
           $request->headers($context['headers'] ?? []);
           $request->body($context['body'] ?? '');
 
@@ -386,13 +386,11 @@ class cUrlRequest
     */
     public function getResponse(): cUrlResponse
     {
-        if (in_array($this->method, ['GET', 'HEAD'])) {
-            $this->option(CURLOPT_HEADER, false);
-        }
-
-        $response = new cUrlResponse($this->exec());
-        $response->setStatusCode($this->getStatusCode());
-        $response->setHeaders($this->getResponseHeaders());
+        $content = $this->exec();
+        $response   = new cUrlResponse($content);
+        $this->info = new cUrlInfo($this->ch);
+        $this->info->setResponse($content);
+        $response->setStatusCode($this->info->getStatusCode());
         $this->close();
 
         return $response;
@@ -402,46 +400,11 @@ class cUrlRequest
 
 
     /**
-     * @return mixed
+     * @return cUrlInfo
     */
-    public function getInfos(): mixed
+    public function getInfo(): cUrlInfo
     {
-         return curl_getinfo($this->ch);
-    }
-
-
-
-
-    /**
-     * @param $key
-     *
-     * @return mixed
-    */
-    public function getInfo($key)
-    {
-         return curl_getinfo($this->ch, $key);
-    }
-
-
-
-
-
-    /**
-     * @return mixed
-    */
-    public function getHeaderSize()
-    {
-        return $this->getInfo(CURLINFO_HEADER_SIZE);
-    }
-
-
-
-    /**
-     * @return int
-    */
-    public function getStatusCode(): int
-    {
-        return (int) $this->getInfo(CURLINFO_HTTP_CODE);
+         return $this->info;
     }
 
 
@@ -456,9 +419,6 @@ class cUrlRequest
     }
 
 
-
-
-
     /**
      * @return array|string
      */
@@ -468,27 +428,22 @@ class cUrlRequest
     }
 
 
-
-
     /**
      * @return array
-    */
+     */
     public function getCookies(): array
     {
         return $this->cookies;
     }
 
 
-
     /**
      * @return array
-    */
+     */
     public function getFiles(): array
     {
         return $this->files;
     }
-
-
 
 
     /**
@@ -528,6 +483,7 @@ class cUrlRequest
     {
         return $this->options;
     }
+
 
 
 
@@ -590,50 +546,6 @@ class cUrlRequest
          }
 
          return array_merge($this->browserHeaders, $resolved);
-    }
-
-
-
-
-    /**
-     * @param $response
-     *
-     * @return string
-    */
-    private function getResponseWithoutHeaders($response)
-    {
-        return substr($response, $this->getHeaderSize());
-    }
-
-
-
-
-    /**
-     * @return array
-    */
-    private function getResponseHeaders(): array
-    {
-         $this->options([
-             CURLOPT_HEADER => true,
-             CURLOPT_NOBODY => true
-         ]);
-
-         $response = $this->exec();
-
-         $headersRows = explode(PHP_EOL, $response);
-         $headersRows = array_filter($headersRows, 'trim');
-
-         $headers = [];
-
-         foreach ($headersRows as $headersRow) {
-              $position = stripos($headersRow, ':');
-              if ($position !== false) {
-                  list($key, $value) = explode(':', $headersRow);
-                  $headers[$key] = trim($value);
-              }
-         }
-
-         return $headers;
     }
 
 

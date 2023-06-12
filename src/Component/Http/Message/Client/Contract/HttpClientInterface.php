@@ -16,15 +16,6 @@ use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
 interface HttpClientInterface extends ClientInterface
 {
 
-      /**
-       * @param RequestInterface $request
-       *
-       * @return ResponseInterface
-      */
-      public function sendRequest(RequestInterface $request): ResponseInterface;
-
-
-
 
       /**
        * Send request to client and get a response by each method

@@ -4,6 +4,16 @@ namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 class cUrlInfo
 {
 
+
+
+     /**
+      * @var string|null
+     */
+     protected ?string $response;
+
+
+
+
      /**
       * @param \CurlHandle|false $ch
      */
@@ -42,6 +52,29 @@ class cUrlInfo
      */
      public function getStatusCode(): int
      {
-         return (int) $this->get(CURLINFO_HTTP_CODE);
+         return (int) $this->getInfo(CURLINFO_HTTP_CODE);
      }
+
+
+
+
+    /**
+     * @return mixed
+    */
+    public function getHeaderSize()
+    {
+        return $this->get(CURLINFO_HEADER_SIZE);
+    }
+
+
+
+
+
+    /**
+     * @return string
+    */
+    public function getHeaderString(): string
+    {
+        return substr($this->response, 0, $this->getHeaderSize());
+    }
 }
