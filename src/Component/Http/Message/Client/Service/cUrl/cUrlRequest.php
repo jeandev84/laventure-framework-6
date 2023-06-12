@@ -729,7 +729,8 @@ class cUrlRequest
     */
     private function createFileFromArray(array $params): \CURLFile
     {
-        $file = new cUrlFileBag($params);
+        $file = new cUrlFile($params);
+
         return curl_file_create($file->getPath(), $file->getMime(), $file->getName());
     }
 

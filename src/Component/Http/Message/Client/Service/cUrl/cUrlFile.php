@@ -1,7 +1,7 @@
 <?php
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
-class cUrlFileBag
+class cUrlFile
 {
 
 
