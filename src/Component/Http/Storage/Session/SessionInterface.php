@@ -152,7 +152,7 @@ interface SessionInterface extends StorageInterface
 
 
      /**
-      * Return cookies params
+      * Return data params
       *
       * @link https://www.php.net/manual/en/function.session-get-cookie-params.php
       *

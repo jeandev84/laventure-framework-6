@@ -23,9 +23,9 @@ interface ServerRequestInterface extends RequestInterface
 
 
     /**
-     * Retrieve cookies.
+     * Retrieve data.
      *
-     * Retrieves cookies sent by the client to the server.
+     * Retrieves data sent by the client to the server.
      *
      * The data MUST be compatible with the structure of the $_COOKIE
      * superglobal.
@@ -37,7 +37,7 @@ interface ServerRequestInterface extends RequestInterface
 
 
     /**
-     * Return an instance with the specified cookies.
+     * Return an instance with the specified data.
      *
      * The data IS NOT REQUIRED to come from the $_COOKIE superglobal, but MUST
      * be compatible with the structure of $_COOKIE. Typically, this data will
@@ -50,7 +50,7 @@ interface ServerRequestInterface extends RequestInterface
      * immutability of the message, and MUST return an instance that has the
      * updated cookie values.
      *
-     * @param array $cookies Array of key/value pairs representing cookies.
+     * @param array $cookies Array of key/value pairs representing data.
      * @return static
      */
     public function withCookieParams(array $cookies);

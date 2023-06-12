@@ -134,41 +134,11 @@ class cUrlRequest
      {
          $this->ch = curl_init($url);
          $this->options([
-             CURLOPT_RETURNTRANSFER => true,
              CURLOPT_SSL_VERIFYPEER => false,
              CURLOPT_HEADER => false
          ]);
 
          return $this;
-     }
-
-
-
-     /**
-      * Set user agent
-      *
-      * @param string $agent
-      *
-      * @return $this
-     */
-     public function userAgent(string $agent): static
-     {
-         $this->option(CURLOPT_USERAGENT, $agent);
-
-         return $this;
-     }
-
-
-
-
-     /**
-      * @param bool $return
-      *
-      * @return $this
-     */
-     public function returnTransfer(bool $return): static
-     {
-          return $this->option(CURLOPT_RETURNTRANSFER, $return);
      }
 
 
@@ -216,6 +186,49 @@ class cUrlRequest
           ]);
      }
 
+
+
+
+     /**
+      * @param string $login
+      *
+      * @param string $password
+      *
+      * @return $this
+     */
+     public function auth(string $login, string $password): static
+     {
+          return $this->option(CURLOPT_USERPWD, "$login:$password");
+     }
+
+
+
+
+
+     /**
+      * @param string $user
+      * @param array $headers
+      *
+      * @param string|null $cookieFilename
+      *
+      * @return $this
+    */
+    public function userAgent(string $user, array $headers, string $cookieFilename = null): static
+    {
+        $this->option(CURLOPT_USERAGENT, $user);
+
+        $headers = array_merge($this->browserHeaders, $headers);
+
+        $this->headers(array_merge($this->browserHeaders, $headers));
+
+        if (! $cookieFilename) {
+            $cookieFilename = __DIR__.'/data/cookie.txt';
+        }
+
+        $this->cookieJar($cookieFilename);
+
+        return $this->returnHeader(true);
+    }
 
 
 
@@ -320,25 +333,6 @@ class cUrlRequest
 
 
 
-
-     /**
-      * @param array $headers
-      *
-      * @return $this
-     */
-     public function browserHeaders(array $headers): static
-     {
-        $headers = array_merge($this->browserHeaders, $headers);
-
-        $this->headers(array_merge($this->browserHeaders, $headers));
-
-        return $this->returnTransfer(true);
-     }
-
-
-
-
-
      /**
       * @param array $cookies
       *
@@ -351,6 +345,22 @@ class cUrlRequest
           $this->cookies = $cookies;
 
           return $this;
+     }
+
+
+
+
+     /**
+      * @param string $path
+      *
+      * @return $this
+     */
+     public function cookieJar(string $path): static
+     {
+          return $this->options([
+              CURLOPT_COOKIEFILE => $path,
+              CURLOPT_COOKIEJAR  => $path
+          ]);
      }
 
 
@@ -791,6 +801,10 @@ class cUrlRequest
     */
     private function prepareOptions(): void
     {
+        $this->options([
+            CURLOPT_RETURNTRANSFER => true,
+        ]);
+
         switch ($this->method):
             case 'GET':
             case 'HEAD':

@@ -22,7 +22,7 @@ class ClientParameterBag extends ParameterBag
         "headers"    => [],
         "query"      => [],
         "files"      => [],
-        "cookies"    => [],
+        "data"    => [],
         "body"       => null
     ];
 
@@ -111,7 +111,7 @@ class ClientParameterBag extends ParameterBag
     */
     public function getCookies(): array
     {
-         return $this->get("cookies", []);
+         return $this->get("data", []);
     }
 
 

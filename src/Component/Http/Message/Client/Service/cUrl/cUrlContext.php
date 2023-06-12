@@ -14,7 +14,7 @@ class cUrlContext implements \ArrayAccess
          'query'   => [],
          'headers' => [],
          'files'   => [],
-         'cookies' => []
+         'cookies'    => []
      ];
 
 
