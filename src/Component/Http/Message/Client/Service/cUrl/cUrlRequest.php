@@ -292,8 +292,6 @@ class cUrlRequest
      {
          if (is_array($body)) {
              return $this->data($body);
-         } elseif (is_string($body)) {
-             return $this->json($body);
          }
 
          $this->body = $body;
@@ -311,10 +309,18 @@ class cUrlRequest
      */
      public function data(array $data): static
      {
+          foreach ($data as $key => $value) {
+               if (is_array($value)) {
+                   $data[$key] = $this->encodingJson($value);
+               }
+          }
+
           $this->data =  $data;
 
           return $this;
      }
+
+
 
 
      /**
@@ -327,7 +333,7 @@ class cUrlRequest
          $this->headers(['Content-Type' => 'application/json; charset=UTF-8']);
 
          if (is_array($data)) {
-             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
+             $data = $this->encodingJson($data);
          }
 
          return $this->body($data);
@@ -858,5 +864,18 @@ class cUrlRequest
         if ($this->method === 'PUT' && $this->uploadedFile) {
             $this->option(CURLOPT_PUT, 1);
         }
+    }
+
+
+
+
+    /**
+     * @param array $data
+     *
+     * @return string|bool
+    */
+    private function encodingJson(array $data): string|bool
+    {
+        return (string)json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 }
