@@ -240,9 +240,9 @@ class cUrlRequest
      */
      public function data(array $data): static
      {
-          $this->data = array_merge($this->data, $data);
+          $this->data =  $data;
 
-          return $this->body($this->buildQuery($this->data));
+          return $this;
      }
 
 
@@ -298,9 +298,8 @@ class cUrlRequest
         $headers = array_merge($this->browserHeaders, $headers);
 
         $this->headers(array_merge($this->browserHeaders, $headers));
-        $this->returnTransfer(true);
 
-        return $this;
+        return $this->returnTransfer(true);
      }
 
 
@@ -329,7 +328,9 @@ class cUrlRequest
      */
      public function files(array $files): static
      {
-         $this->files = $files;
+         foreach ($files as $key => $params) {
+            $this->files[$key] = $this->createFileFromArray($params);
+         }
 
          return $this;
      }
@@ -384,11 +385,18 @@ class cUrlRequest
      */
      public function request(string $method, string $url, array $context = []): cUrlResponse
      {
+          $context = new cUrlContext($context);
+
           $request = new static();
           $request->method($method);
-          $request->url($url, $context['query'] ?? []);
-          $request->headers($context['headers'] ?? []);
-          $request->body($context['body'] ?? '');
+          $request->url($url, $context->getQuery());
+          $request->headers($context->getHeaders());
+
+          if (is_array($context->getBody())) {
+              $request->data($context->getBody());
+          }
+
+          $request->files($context->getFiles());
 
           return $request->send();
      }
@@ -539,15 +547,39 @@ class cUrlRequest
 
 
 
-
     /**
-     * @return \CurlHandle|false
+     * @return array
     */
-    public function getHandle(): \CurlHandle|bool
+    public function getData(): array
     {
-        return $this->ch;
+        return $this->data;
     }
 
+
+
+
+    /**
+     * @return array
+    */
+    public function getPostFields(): array
+    {
+         return array_merge($this->data, $this->files);
+    }
+
+
+
+
+
+    /**
+     * @param array $params
+     *
+     * @return \CURLFile
+    */
+    private function createFileFromArray(array $params): \CURLFile
+    {
+        $file = new cUrlFile($params);
+        return curl_file_create($file->getPath(), $file->getMime(), $file->getName());
+    }
 
 
 
@@ -664,7 +696,7 @@ class cUrlRequest
             case 'PUT':
             case 'PATCH':
             case 'DELETE':
-              $this->option(CURLOPT_POSTFIELDS, $this->body);
+              $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
             break;
         endswitch;
 
