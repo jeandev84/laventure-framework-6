@@ -37,9 +37,16 @@ class cUrlRequest
 
 
      /**
-      * @var array|string
+      * @var mixed
      */
      protected $body;
+
+
+
+     /**
+      * @var array
+     */
+     protected $data = [];
 
 
 
@@ -116,8 +123,7 @@ class cUrlRequest
      */
      public function init(string $url = null): static
      {
-         $this->ch   = curl_init($url);
-
+         $this->ch = curl_init($url);
          $this->options([
              CURLOPT_RETURNTRANSFER => true,
              CURLOPT_SSL_VERIFYPEER => false,
@@ -159,34 +165,6 @@ class cUrlRequest
 
 
 
-     /**
-      * @param array $headers
-      * @return $this
-     */
-     public function browserHeaders(array $headers): static
-     {
-         $this->browserHeaders = $headers;
-
-         return $this;
-     }
-
-
-
-
-     /**
-      * @return $this
-     */
-     public function withoutBrowserHeaders(): static
-     {
-          $this->browserHeaders = [];
-
-          return $this;
-     }
-
-
-
-
-
 
      /**
       * @param string $url
@@ -221,11 +199,9 @@ class cUrlRequest
      public function method(string $method): static
      {
           switch ($method):
-              case 'GET':
-              case 'HEAD':
-                  //
-                  break;
               case 'POST':
+                  $this->option(CURLOPT_POST, 1);
+              break;
               case 'PUT':
               case 'PATCH':
               case 'DELETE':
@@ -243,21 +219,52 @@ class cUrlRequest
 
 
      /**
-      * @param array|string $body
+      * @param mixed $body
       *
       * @return $this
      */
-     public function body(array|string $body): static
+     public function body(mixed $body): static
      {
-         if (is_array($body)) {
-            $body = array_merge((array)$this->getBody(), $body);
-            $this->option(CURLOPT_POSTFIELDS, $this->buildQuery($body));
-         }
-
          $this->body = $body;
 
          return $this;
      }
+
+
+
+
+     /**
+      * @param array $data
+      *
+      * @return $this
+     */
+     public function data(array $data): static
+     {
+          $this->data = array_merge($this->data, $data);
+
+          return $this->body($this->buildQuery($this->data));
+     }
+
+
+
+
+
+     /**
+      * @param array $data
+      *
+      * @return $this
+     */
+     public function json(array $data): static
+     {
+        $this->options([
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json']
+        ]);
+
+        $this->body = json_encode($data, JSON_UNESCAPED_UNICODE);
+
+        return $this;
+     }
+
 
 
 
@@ -273,23 +280,27 @@ class cUrlRequest
 
          $this->headers = array_merge($this->headers, $headers);
 
-         return $this->options([
-             CURLOPT_HTTPHEADER => $this->headers,
-             CURLOPT_HEADER     => true
-         ]);
+         return $this->option(CURLOPT_HTTPHEADER, $this->headers);
      }
 
 
 
 
+
+
      /**
-      * @param bool $return
+      * @param array $headers
       *
       * @return $this
      */
-     public function returnHeader(bool $return): static
+     public function browserHeaders(array $headers): static
      {
-         return $this->option(CURLOPT_HEADER, $return);
+        $headers = array_merge($this->browserHeaders, $headers);
+
+        $this->headers(array_merge($this->browserHeaders, $headers));
+        $this->returnTransfer(true);
+
+        return $this;
      }
 
 
@@ -456,9 +467,9 @@ class cUrlRequest
 
 
     /**
-     * @return array|string
+     * @return mixed
      */
-    public function getBody(): array|string
+    public function getBody(): mixed
     {
         return $this->body;
     }
@@ -588,7 +599,7 @@ class cUrlRequest
              $resolved[] = (is_string($key) ? "$key: $value" : $value);
          }
 
-         return array_merge($this->browserHeaders, $resolved);
+         return $resolved;
     }
 
 
@@ -644,9 +655,18 @@ class cUrlRequest
     */
     private function getResponse(): cUrlResponse
     {
-        if (in_array($this->method, ['GET', 'HEAD'])) {
-            $this->option(CURLOPT_HEADER, false);
-        }
+        switch ($this->method):
+            case 'GET':
+            case 'HEAD':
+                $this->option(CURLOPT_HEADER, false);
+                break;
+            case 'POST':
+            case 'PUT':
+            case 'PATCH':
+            case 'DELETE':
+              $this->option(CURLOPT_POSTFIELDS, $this->body);
+            break;
+        endswitch;
 
         $body = $this->exec();
 
@@ -663,4 +683,17 @@ class cUrlRequest
 
         return $response;
     }
+
+
+
+    /**
+     * @param bool $return
+     *
+     * @return $this
+     */
+    private function returnHeader(bool $return): static
+    {
+        return $this->option(CURLOPT_HEADER, $return);
+    }
+
 }
