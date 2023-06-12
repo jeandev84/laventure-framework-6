@@ -46,9 +46,18 @@ class cUrlRequest
 
 
      /**
-      * @var
+      * @var cUrlStream
      */
      protected $uploadedFile;
+
+
+
+
+     /**
+      * @var cUrlStream
+     */
+     protected $downloadFile;
+
 
 
 
@@ -190,28 +199,32 @@ class cUrlRequest
      }
 
 
-
-
      /**
-      * @param string $login
-      *
-      * @param string $password
-      *
+      * @param array $credentials
       * @return $this
      */
      public function auth(array $credentials): static
      {
-          if (empty($credentials['login'])) {
-              return $this;
-          }
-
-          if (empty($credentials['password'])) {
+          if (empty($credentials['login']) || $credentials['password']) {
               return $this;
           }
 
           $credentials = join(":", array_values($credentials));
 
           return $this->option(CURLOPT_USERPWD, $credentials);
+     }
+
+
+
+     /**
+      * @param string $token
+      * @return $this
+     */
+     public function oAuth(string $token): static
+     {
+          return $this->headers([
+              "Authorization: $token"
+          ]);
      }
 
 
@@ -247,7 +260,7 @@ class cUrlRequest
      */
      public function method(string $method): static
      {
-          switch ($method):
+         switch ($method):
               case 'POST':
                   $this->option(CURLOPT_POST, 1);
               break;
@@ -308,9 +321,7 @@ class cUrlRequest
      */
      public function json(string|array $data): static
      {
-        $this->options([
-            CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8']
-        ]);
+         $this->headers(['Content-Type' => 'application/json; charset=UTF-8']);
 
          if (is_array($data)) {
              $data = json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -320,6 +331,18 @@ class cUrlRequest
      }
 
 
+
+
+
+     /**
+      * @param string $data
+      *
+      * @return $this
+     */
+     public function xml(string $data): static
+     {
+          return $this;
+     }
 
 
 
@@ -394,30 +417,37 @@ class cUrlRequest
      /**
       * @return $this
      */
-     public function upload($path): static
+     public function upload($resource): static
      {
-         if (! $path) { return $this; }
+         if (! $resource) { return $this; }
 
-         $file = new cUrlStream($path);
+         $this->uploadedFile = new cUrlStream($resource, 'r');
 
          return $this->options([
              CURLOPT_UPLOAD     => true,
-             CURLOPT_INFILESIZE => $file->getSize(),
-             CURLOPT_INFILE     => $file->getStream()
+             CURLOPT_INFILESIZE => $this->uploadedFile->getSize(),
+             CURLOPT_INFILE     => $this->uploadedFile->getStream()
          ]);
      }
 
 
 
 
+
      /**
       * @param $stream
+      *
       * @return $this
      */
-     public function download($stream)
+     public function download($stream): static
      {
+          if (is_file($stream)) {
+              $stream = @fopen($stream, 'w');
+          }
 
-          return $this;
+          $this->downloadFile = new cUrlStream($stream);
+
+          return $this->option(CURLOPT_FILE, $stream);
      }
 
 
@@ -477,13 +507,12 @@ class cUrlRequest
           $request->url($url, $context->getQuery());
           $request->proxy($context->getProxy());
           $request->auth($context->getAuth());
+          $request->oAuth($context->getToken());
           $request->headers($context->getHeaders());
           $request->body($context->getBody());
           $request->files($context->getFiles());
           $request->cookies($context->getCookies());
           $request->upload($context->getUploadedFile());
-
-
           return $request->send();
      }
 
@@ -655,6 +684,25 @@ class cUrlRequest
 
 
 
+    /**
+     * @return cUrlStream
+    */
+    public function getUploadedFile(): cUrlStream
+    {
+        return $this->uploadedFile;
+    }
+
+
+
+
+    /**
+     * @return cUrlStream
+    */
+    public function getDownloadFile(): cUrlStream
+    {
+        return $this->downloadFile;
+    }
+
 
     /**
      * @param array $params
@@ -823,5 +871,9 @@ class cUrlRequest
                 $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
                 break;
         endswitch;
+
+        if ($this->method === 'PUT' && $this->uploadedFile) {
+            $this->option(CURLOPT_PUT, 1);
+        }
     }
 }

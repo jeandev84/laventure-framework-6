@@ -1,54 +1,34 @@
 <?php
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
-class cUrlStream
+use Laventure\Component\Http\Message\Stream\Stream;
+
+
+class cUrlStream extends Stream
 {
-
      /**
-      * @var resource|false
-      */
-     protected $stream;
-
-
-     /**
-      * @var int|null
+      * @param $stream
+      *
+      * @param string|null $accessMode
      */
-     protected ?int $size;
-
-
-
-     /**
-      * @param $resource
-     */
-     public function __construct($resource)
+     public function __construct($stream, string $accessMode = null)
      {
-         if (is_file($resource)) {
-             $this->stream = fopen($resource, 'r');
-             $this->size   = filesize($resource);
-         }
-
+         parent::__construct($stream, $accessMode);
      }
 
-
-
-
-
-     /**
-      * @return mixed
-     */
-     public function getStream(): mixed
-     {
-         return $this->stream;
-     }
 
 
 
 
     /**
-     * @return int|null
+     * @inheritdoc
     */
-    public function getSize(): ?int
+    public function getSize(): int
     {
-        return $this->size;
+        if (is_file($this->stream)) {
+           return filesize($this->stream);
+        }
+
+        return parent::getSize();
     }
 }

@@ -53,11 +53,11 @@ class Stream implements StreamInterface
     /**
      * @param string $stream
      *
-     * @param string $accessMode
+     * @param string|null $accessMode
     */
-    public function __construct($stream, string $accessMode)
+    public function __construct($stream, string $accessMode = null)
     {
-          $this->stream = $this->make($stream, $accessMode);
+          $this->stream = $this->resolveStream($stream, $accessMode);
     }
 
 
@@ -324,7 +324,7 @@ class Stream implements StreamInterface
      *
      * @return false|mixed|resource
     */
-    private function make($stream, $accessMode)
+    private function resolveStream($stream, $accessMode)
     {
         if (is_string($stream)) {
             $stream = fopen($stream, $accessMode);
@@ -335,5 +335,16 @@ class Stream implements StreamInterface
         }
 
         return $stream;
+    }
+
+
+
+
+    /**
+     * @return mixed
+    */
+    public function getStream(): mixed
+    {
+        return $this->stream;
     }
 }

@@ -10,8 +10,9 @@ class cUrlContext implements \ArrayAccess
      protected $options = [
          'proxy'   => null,
          'body'    => null,
-         'auth'    => ['login' => '', 'password' => ''],
+         'token'   => null,
          'upload'  => null,
+         'auth'    => ['login' => '', 'password' => ''],
          'query'   => [],
          'headers' => [],
          'files'   => [],
@@ -114,6 +115,17 @@ class cUrlContext implements \ArrayAccess
      public function getAuth(): array
      {
          return $this->getOption('auth');
+     }
+
+
+
+
+     /**
+      * @return string
+     */
+     public function getToken(): string
+     {
+         return $this->getOption('token', '');
      }
 
 
