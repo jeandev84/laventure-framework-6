@@ -20,7 +20,7 @@ use Laventure\Component\Http\Message\Request\File\Exception\UploadedFileExceptio
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request\File
+ * @package Laventure\Component\Http\Message\cUrlRequest\File
 */
 class UploadedFile extends File implements UploadedFileInterface
 {

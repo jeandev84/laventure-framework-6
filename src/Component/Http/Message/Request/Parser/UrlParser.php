@@ -111,6 +111,7 @@ class UrlParser implements UrlParserInterface
         $this->password = $this->password($url);
         $this->host     = $this->host($url);
         $this->port     = $this->port($url);
+        $this->path     = $this->path($url);
         $this->query    = $this->query($url);
         $this->fragment = $this->fragment($url);
     }

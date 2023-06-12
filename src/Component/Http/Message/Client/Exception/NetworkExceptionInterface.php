@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Message\Client;
+namespace Laventure\Component\Http\Message\Client\Exception;
 
 
 use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
@@ -17,7 +17,7 @@ use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Client
+ * @package Laventure\Component\Http\Message\Client\Exception
  *
 */
 interface NetworkExceptionInterface

@@ -1,0 +1,151 @@
+<?php
+namespace Laventure\Component\Http\Message\Client;
+
+
+use Laventure\Component\Http\Bag\ClientParameterBag;
+use Laventure\Component\Http\Bag\ParameterBag;
+use Laventure\Component\Http\Message\Client\Contract\HttpClientInterface;
+use Laventure\Component\Http\Message\Client\Service\cUrlService;
+use Laventure\Component\Http\Message\Client\Service\Exception\cUrlServiceException;
+use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
+use Laventure\Component\Http\Message\Request\Request;
+use Laventure\Component\Http\Message\Response\Body\ResponseBody;
+use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
+use Laventure\Component\Http\Message\Response\Response;
+
+
+/**
+ * @HttpClient
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Http\Message\Client\HttpClient
+ */
+class HttpClient implements HttpClientInterface
+{
+
+    /**
+     * @var ClientParameterBag
+    */
+    protected ClientParameterBag $parameter;
+
+
+    public function __construct()
+    {
+        $this->parameter = new ClientParameterBag();
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+     *
+     * @param RequestInterface $request
+     *
+     * @return ResponseInterface
+     *
+     * @throws cUrlServiceException
+    */
+    public function sendRequest(RequestInterface $request): ResponseInterface
+    {
+         $curl = new cUrlService($request->url());
+         $curl->request($request->getMethod(), $this->parameter->getParsedBody())
+              ->headers($request->getHeaders())
+              ->cookies($this->parameter->getCookies())
+              ->files($this->parameter->getFiles());
+
+         $info = $curl->exec();
+
+         $response = new Response($info->getResponse(), $info->getStatusCode(), $info->getHeaders());
+         $response->withProtocolVersion($request->getProtocolVersion());
+         $response->send();
+         return $response;
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function request(string $url, string $method = null, array $options = []): ResponseInterface
+    {
+         $this->parameter->merge($options);
+
+         $request = Request::create($url, $method,
+            $this->parameter->getQuery(),
+            $this->parameter->getParsedBody(),
+            $this->parameter->getCookies(),
+            $this->parameter->getFiles(),
+            $this->parameter->getServerParams(),
+            $this->parameter->getContent()
+         );
+
+         $request->withHeaders($this->parameter->getHeaders());
+
+         return $this->sendRequest($request);
+    }
+
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function get(string $url, array $options = []): ResponseInterface
+    {
+        return $this->request($url, 'GET', $options);
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function post(string $url, array $options = []): ResponseInterface
+    {
+        return $this->request($url, 'POST', $options);
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function put(string $url, array $options = []): ResponseInterface
+    {
+        return $this->request($url, 'PUT', $options);
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function patch(string $url, array $options = []): ResponseInterface
+    {
+        return $this->request($url, 'PATCH', $options);
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function delete(string $url, array $options = []): ResponseInterface
+    {
+        return $this->request($url, 'DELETE', $options);
+    }
+}

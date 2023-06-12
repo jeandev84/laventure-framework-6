@@ -10,7 +10,7 @@ namespace Laventure\Component\Http\Message\Request\Body;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request\Body
+ * @package Laventure\Component\Http\Message\cUrlRequest\Body
 */
 interface ParsedBodyInterface
 {

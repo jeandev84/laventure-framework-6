@@ -1,14 +1,10 @@
 <?php
 namespace Laventure\Component\Http\Message\Client;
 
-use Laventure\Component\Http\Bag\ClientParameterBag;
-use Laventure\Component\Http\Message\Request\Request;
-use Laventure\Component\Http\Message\Response\Response;
-use Laventure\Component\Http\Message\Client\Service\cURL;
-use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
-use Laventure\Component\Http\Message\Request\Uri;
-use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
 
+use Laventure\Component\Http\Message\Client\Contract\HttpClientInterface;
+use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
+use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
 
 /**
  * @HttpClient
@@ -22,78 +18,23 @@ use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
 class HttpClient implements HttpClientInterface
 {
 
-
     /**
-     * @var ClientParameterBag
-    */
-    private $parameter;
-
-
-
-
-    /**
-     * HttpClient constructor.
-    */
-    public function __construct()
+     * @inheritDoc
+     */
+    public function sendRequest(RequestInterface $request, array $options = []): ResponseInterface
     {
-        $this->parameter = new ClientParameterBag();
+
     }
-
-
-
-
-    /**
-     * @param string $method
-     *
-     * @param string $url
-     *
-     * @param array $context
-     *
-     * @return Response
-    */
-    public static function create(string $method, string $url, array $context = []): Response
-    {
-          return new Response();
-    }
-
-
 
 
 
     /**
      * @inheritDoc
     */
-    public function sendRequest(RequestInterface $request): ResponseInterface
+    public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-         $curl       = new cURL($request->getUrl());
-         $statusCode = 200;
-
-         $response = new Response($curl->exec());
-         $response->withProtocolVersion($request->getProtocolVersion());
-         $response->send();
-
-         return $response;
+        // TODO: Implement request() method.
     }
-
-
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function send(string $method, string $url, array $options = []): ResponseInterface
-    {
-         $request = Request::createFromGlobals();
-         $request->withMethod($method);
-         $request->withUri(new Uri($url));
-         $this->parameter->merge($options);
-
-         return $this->sendRequest($request);
-    }
-
-
-
 
 
 
@@ -104,7 +45,6 @@ class HttpClient implements HttpClientInterface
     {
         // TODO: Implement get() method.
     }
-
 
 
 
@@ -126,8 +66,6 @@ class HttpClient implements HttpClientInterface
     {
         // TODO: Implement put() method.
     }
-
-
 
     /**
      * @inheritDoc

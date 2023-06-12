@@ -12,7 +12,7 @@ use Laventure\Component\Http\Bag\ParameterBag;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Response\Bag
+ * @package Laventure\Component\Http\Message\cUrlResponse\Bag
 */
 class ResponseHeaderBag extends ParameterBag
 {
@@ -63,7 +63,7 @@ class ResponseHeaderBag extends ParameterBag
     */
     public function sendHeaders(): void
     {
-        foreach ($this->params as $name => $value) {
+        foreach ($this->config as $name => $value) {
             $this->sendHeader("$name: $value");
             $this->sendedHeaders[$name] = $value;
         }
@@ -100,7 +100,7 @@ class ResponseHeaderBag extends ParameterBag
      *
      * @return void
     */
-    public function sendStatusCode(string $version, int $code, string $reasonPhrase = '')
+    public function sendStatusCode($version, $code, $reasonPhrase = '')
     {
         if (! $reasonPhrase) {
             http_response_code($code);

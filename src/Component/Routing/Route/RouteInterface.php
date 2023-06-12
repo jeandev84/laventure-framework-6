@@ -116,9 +116,9 @@ interface RouteInterface
       * Determine if the current request matches route
       *
       *
-      * @param string $method (Request method)
+      * @param string $method (cUrlRequest method)
       *
-      * @param string $path (Request path)
+      * @param string $path (cUrlRequest path)
       *
       * @return bool
      */

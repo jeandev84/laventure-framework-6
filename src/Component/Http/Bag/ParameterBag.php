@@ -19,7 +19,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     /**
      * @var array
     */
-    protected $params = [];
+    protected $config = [];
 
 
 
@@ -43,7 +43,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function set($name, $value): mixed
     {
-        $this->params[$name] = $value;
+        $this->config[$name] = $value;
 
         return $this;
     }
@@ -59,7 +59,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function has($name): bool
     {
-        return isset($this->params[$name]);
+        return isset($this->config[$name]);
     }
 
 
@@ -71,7 +71,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function empty(string $name): bool
     {
-        return empty($this->params[$name]);
+        return empty($this->config[$name]);
     }
 
 
@@ -90,7 +90,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function get(string $name, $default = null): mixed
     {
-        return $this->params[$name] ?? $default;
+        return $this->config[$name] ?? $default;
     }
 
 
@@ -103,7 +103,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function all(): array
     {
-        return $this->params;
+        return $this->config;
     }
 
 
@@ -120,7 +120,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function merge(array $params): self
     {
-        $this->params = array_merge($this->params, $params);
+        $this->config = array_merge($this->config, $params);
 
         return $this;
     }
@@ -138,7 +138,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function remove($name): mixed
     {
-        unset($this->params[$name]);
+        unset($this->config[$name]);
 
         return $this;
     }
@@ -153,7 +153,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function clear(): void
     {
-        $this->params = [];
+        $this->config = [];
     }
 
 

@@ -1,8 +1,32 @@
 <?php
 namespace Laventure\Component\Http\Bag;
 
+
+/**
+ * @ClientParameterBag
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Http\Bag
+*/
 class ClientParameterBag extends ParameterBag
 {
+
+
+    /**
+     * @var array
+    */
+    protected $config = [
+        "headers"    => [],
+        "query"      => [],
+        "files"      => [],
+        "cookies"    => [],
+        "body"       => null
+    ];
+
+
 
 
     /**
@@ -10,28 +34,22 @@ class ClientParameterBag extends ParameterBag
     */
     public function __construct(array $params = [])
     {
-        parent::__construct($this->mergeParameters($params));
-    }
+        parent::__construct($this->config);
 
+        $this->merge($params);
+    }
 
 
 
 
     /**
-     * @param array $params
-     *
      * @return array
     */
-    private function mergeParameters(array $params): array
+    public function getQuery(): array
     {
-         return array_merge([
-             "headers"    => [],
-             "cookies"    => [],
-             "attributes" => [],
-             "files"      => [],
-             "body"       => null
-         ], $params);
+        return $this->get('query', []);
     }
+
 
 
 
@@ -43,6 +61,47 @@ class ClientParameterBag extends ParameterBag
     {
         return $this->get("headers", []);
     }
+
+
+
+
+
+    /**
+     * @return string|null
+    */
+    public function getContent(): ?string
+    {
+        if (! is_string($content = $this->getBody())) {
+             return '';
+        }
+
+        return $content;
+    }
+
+
+
+
+
+    /**
+     * @return mixed|null
+    */
+    public function getBody(): mixed
+    {
+        return $this->get('body');
+    }
+
+
+
+
+
+    /**
+     * @return array
+    */
+    public function getParsedBody(): array
+    {
+        return $this->get('body', []);
+    }
+
 
 
 
@@ -70,11 +129,12 @@ class ClientParameterBag extends ParameterBag
 
 
 
+
     /**
      * @return array
     */
-    public function getAttributes(): array
+    public function getServerParams(): array
     {
-        return $this->get("attributes", []);
+        return $_SERVER;
     }
 }

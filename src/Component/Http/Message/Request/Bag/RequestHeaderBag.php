@@ -13,21 +13,15 @@ use Laventure\Component\Http\Bag\ParameterBag;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request\Bag
+ * @package Laventure\Component\Http\Message\cUrlRequest\Bag
 */
 class RequestHeaderBag extends ParameterBag
 {
 
-     private $formEncoded = [
+     private $formHeaders = [
          'application/x-www-form-urlencoded',
          'multipart/form-data'
      ];
-
-
-     public function __construct()
-     {
-         parent::__construct(getallheaders());
-     }
 
 
 
@@ -35,10 +29,10 @@ class RequestHeaderBag extends ParameterBag
      /**
       * @return bool
      */
-     public function formEncoded(): bool
+     public function hasFormHeaders(): bool
      {
-         foreach ($this->formEncoded as $encoding) {
-             if (stripos($this->getContentType(), $encoding) === 0) {
+         foreach ($this->formHeaders as $header) {
+             if (stripos($this->getContentTypeHeader(), $header) === 0) {
                    return true;
              }
          }
@@ -54,7 +48,7 @@ class RequestHeaderBag extends ParameterBag
      */
      public function hasXFormUrlEncoded(): bool
      {
-         return (stripos($this->getContentType(), 'application/x-www-form-urlencoded') === 0);
+         return (stripos($this->getContentTypeHeader(), 'application/x-www-form-urlencoded') === 0);
      }
 
 
@@ -63,7 +57,7 @@ class RequestHeaderBag extends ParameterBag
      /**
       * @return string
      */
-     public function getContentType(): string
+     public function getContentTypeHeader(): string
      {
          return $this->get('Content-Type', '');
      }

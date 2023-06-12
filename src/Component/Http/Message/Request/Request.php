@@ -5,13 +5,13 @@ use Laventure\Component\Message\Http\Storage\Session\SessionInterface;
 
 
 /**
- * @Request
+ * @cUrlRequest
  *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request
+ * @package Laventure\Component\Http\Message\cUrlRequest
 */
 class Request  extends ServerRequest
 {
@@ -24,6 +24,8 @@ class Request  extends ServerRequest
      * @var SessionInterface
     */
     public $session;
+
+
 
 
 
@@ -120,82 +122,12 @@ class Request  extends ServerRequest
     }
 
 
-
-
     /**
-     * @return string
-    */
-    public function getBaseUrl(): string
-    {
-        return $this->server->getBaseURL();
-    }
-
-
-
-
-    /**
-     * @return string
-    */
-    public function getRequestUri(): string
-    {
-        return $this->server->getRequestUri();
-    }
-
-
-
-
-    /**
-     * @return string
-    */
-    public function getPath(): string
-    {
-        return $this->server->getPathInfo();
-    }
-
-
-
-
-
-    /**
-     * @param string $method
-     *
      * @param string $url
      *
-     * @param array $context
-     *
-     * @return static
-    */
-    public static function create(string $method, string $url, array $context = []): static
-    {
-        /*
-        $request   = new static();
-        $parameter = new ParameterBag($context);
-        $server    = new ServerBag($parameter->get('server'));
-        $query     = new InputBag($parameter->get('queries'));
-        $cookie    = new CookieBag($parameter->get('cookies'));
-
-        $request->server = $server;
-        $request->withUri(new Uri($url));
-        $request->withMethod($method);
-        $request->withRequestTarget($url);
-        $request->withQueryParams($query->all());
-        $request->withCookieParams($cookie->all());
-
-        return $request;
-        */
-    }
-
-
-
-
-
-    /**
+     * @param string $method
      * @param array $queries
-     *
      * @param array $request
-     *
-     * @param array $attributes
-     *
      * @param array $cookies
      *
      * @param array $files
@@ -204,33 +136,26 @@ class Request  extends ServerRequest
      *
      * @param string|null $content
      *
-     * @return Request
+     * @return $this
     */
-    public static function createFromFactory(
+    public static function create(
+        string $url,
+        string $method = 'GET',
         array $queries = [],
         array $request = [],
-        array $attributes = [],
         array $cookies = [],
         array $files = [],
         array $server = [],
         string $content = null
     ): static
     {
-        return new static($queries, $request, $attributes, $cookies, $files, $server, $content);
+
+        $uri     = new Uri($url);
+        $request = static::createFromFactory($queries, $request, [], $cookies, $files, $server);
+        $uri->withQuery(http_build_query($queries, '', '&'));
+        $request->withUri($uri);
+        $request->withMethod(strtoupper($method));
+        $request->setContent($content);
+        return $request;
     }
-
-
-
-
-    /**
-     * @return static
-    */
-    public static function createFromGlobals(): static
-    {
-         return static::createFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
-    }
-
-
-
-    public static function createFromStream() {}
 }

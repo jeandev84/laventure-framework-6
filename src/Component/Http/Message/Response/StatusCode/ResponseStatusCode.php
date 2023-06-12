@@ -12,7 +12,7 @@ namespace Laventure\Component\Http\Message\Response\StatusCode;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Response\StatusCode
+ * @package Laventure\Component\Http\Message\cUrlResponse\StatusCode
 */
 class ResponseStatusCode implements ResponseStatusCodeInterface
 {

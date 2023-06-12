@@ -90,7 +90,7 @@ class InputBag extends ParameterBag
     */
     public function toJson(): bool|string
     {
-        $json = json_encode($this->params, JSON_PRETTY_PRINT);
+        $json = json_encode($this->config, JSON_PRETTY_PRINT);
 
         if (json_last_error()) {
             trigger_error(json_last_error_msg());

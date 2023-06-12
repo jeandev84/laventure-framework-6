@@ -21,7 +21,7 @@ use Laventure\Component\Http\Message\Request\Contract\UriInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request
+ * @package Laventure\Component\Http\Message\cUrlRequest
 */
 class ServerRequest implements ServerRequestInterface
 {
@@ -106,7 +106,7 @@ class ServerRequest implements ServerRequestInterface
 
 
     /**
-     * Request body
+     * cUrlRequest body
      *
      * @var StreamInterface
     */
@@ -117,7 +117,7 @@ class ServerRequest implements ServerRequestInterface
 
 
     /**
-     * Request URL
+     * cUrlRequest URL
      *
      * @var string
     */
@@ -137,7 +137,7 @@ class ServerRequest implements ServerRequestInterface
 
 
     /**
-     * Request method
+     * cUrlRequest method
      *
      * @var string
      */
@@ -145,14 +145,13 @@ class ServerRequest implements ServerRequestInterface
 
 
 
+
     /**
-     * Request uri object
+     * cUrlRequest uri object
      *
      * @var UriInterface
     */
     protected UriInterface $url;
-
-
 
 
     /**
@@ -162,7 +161,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $cookies
      * @param array $files
      * @param array $server
-     * @return void
+     * @param string|null $content
     */
     public function __construct(
         array $queries = [],
@@ -171,6 +170,7 @@ class ServerRequest implements ServerRequestInterface
         array $cookies = [],
         array $files = [],
         array $server = [],
+        string $content = null
     ) {
         $this->queries    =  new InputBag($queries);
         $this->request    =  new InputBag($request);
@@ -178,9 +178,9 @@ class ServerRequest implements ServerRequestInterface
         $this->cookies    =  new CookieBag($cookies);
         $this->files      =  new FileBag($files);
         $this->server     =  new ServerBag($server);
-        $this->url        =  new Uri($this->server->getURL());
         $this->headers    =  new RequestHeaderBag();
         $this->body       =  new RequestBody();
+        $this->url        =  new Uri($this->server->getUrl());
         $this->target     =  $this->server->getRequestUri();
         $this->protocol   =  $this->server->getProtocolVersion();
         $this->method     =  $this->server->getRequestMethod();
@@ -188,9 +188,26 @@ class ServerRequest implements ServerRequestInterface
 
 
 
+
+    /**
+     * @param array $params
+     *
+     * @return $this
+    */
+    public function withServerParams(array $params): static
+    {
+         $this->server->merge($params);
+
+         return $this;
+    }
+
+
+
+
+
     /**
      * @inheritDoc
-     */
+    */
     public function getServerParams(): array
     {
         return $this->server->all();
@@ -279,15 +296,16 @@ class ServerRequest implements ServerRequestInterface
     public function getParsedBody()
     {
         $parsedBody = new ParsedBody();
+        $method     = $this->getMethod();
 
-        if ($this->headers->formEncoded()) {
-            if (!$parsedBody->isEmpty() && $this->inAllowedFormMethods()) {
+        if ($this->headers->hasFormHeaders()) {
+            if (!$parsedBody->isEmpty() && in_array($method, ['PUT', 'DELETE', 'PATCH'])) {
                  $this->request = new InputBag($parsedBody->getData());
             }
             return $this->request;
         }
 
-        if (! $this->inAllowedResourceMethods()) {
+        if (! in_array($method, ['POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'])) {
              return new InputBag();
         }
 
@@ -388,7 +406,7 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function withProtocolVersion($version): static
     {
         $this->server->set('SERVER_PROTOCOL', $version);
@@ -403,7 +421,7 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function getHeaders(): array
     {
         return $this->headers->all();
@@ -436,7 +454,7 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function getHeaderLine($name)
     {
         // TODO implements
@@ -531,14 +549,14 @@ class ServerRequest implements ServerRequestInterface
     */
     public function url(): string
     {
-        return $this->server->getURL();
+        return $this->url;
     }
 
 
 
     /**
      * @inheritDoc
-     */
+    */
     public function withRequestTarget($requestTarget): static
     {
         $this->target = $requestTarget;
@@ -587,10 +605,44 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function getUrl(): UriInterface
     {
         return $this->url;
+    }
+
+
+
+
+
+    /**
+     * @return string
+    */
+    public function getBaseUrl(): string
+    {
+        return $this->server->getBaseUrl();
+    }
+
+
+
+
+    /**
+     * @return string|null
+    */
+    public function getRequestUri(): ?string
+    {
+        return $this->server->getRequestUri();
+    }
+
+
+
+
+    /**
+     * @return string
+    */
+    public function getPath(): string
+    {
+        return $this->server->getPathInfo();
     }
 
 
@@ -619,28 +671,48 @@ class ServerRequest implements ServerRequestInterface
     */
     public function isMethod(string $name): bool
     {
-         return $this->server->isMethod($name);
+         return $this->getMethod() === strtoupper($name);
+    }
+
+
+
+
+
+    /**
+     * @param array $queries
+     *
+     * @param array $request
+     *
+     * @param array $attributes
+     *
+     * @param array $cookies
+     *
+     * @param array $files
+     *
+     * @param array $server
+     *
+     * @return Request
+    */
+    public static function createFromFactory(
+        array $queries = [],
+        array $request = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = []
+    ): static
+    {
+        return new static($queries, $request, $attributes, $cookies, $files, $server);
     }
 
 
 
 
     /**
-     * @return bool
+     * @return static
     */
-    public function inAllowedFormMethods(): bool
+    public static function createFromGlobals(): static
     {
-        return in_array($this->getMethod(), ['PUT', 'DELETE', 'PATCH']);
-    }
-
-
-
-
-    /**
-     * @return bool
-    */
-    public function inAllowedResourceMethods(): bool
-    {
-        return in_array($this->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']);
+        return static::createFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
     }
 }

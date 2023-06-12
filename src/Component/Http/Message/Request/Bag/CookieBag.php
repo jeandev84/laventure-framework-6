@@ -12,7 +12,7 @@ use Laventure\Component\Message\Http\Storage\Cookie\Cookie;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request\Bag
+ * @package Laventure\Component\Http\Message\cUrlRequest\Bag
 */
 class CookieBag extends ParameterBag
 {

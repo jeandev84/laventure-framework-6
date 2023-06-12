@@ -14,7 +14,7 @@ use Laventure\Component\Http\Message\Request\Parser\UrlParser;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request\Uri
+ * @package Laventure\Component\Http\Message\cUrlRequest\Uri
 */
 class Uri implements UriInterface
 {
@@ -157,6 +157,10 @@ class Uri implements UriInterface
      */
     public function getHost(): ?string
     {
+        if ($this->port) {
+             $this->host .= ':'. $this->port;
+        }
+
         return $this->host;
     }
 
@@ -190,6 +194,20 @@ class Uri implements UriInterface
     public function getQuery(): ?string
     {
         return $this->queryString;
+    }
+
+
+
+    /**
+     * @return string
+    */
+    public function getQueryString(): string
+    {
+        if (! $this->queryString) {
+            return '';
+        }
+
+        return '?'. $this->queryString;
     }
 
 
@@ -303,14 +321,16 @@ class Uri implements UriInterface
     */
     public function __toString()
     {
-        if (! $this->scheme) { return ''; }
+        if (! $this->scheme) {
+             throw new \Exception("URI scheme is empty.");
+        }
 
         return sprintf('%s://%s%s%s%s%s',
             $this->getScheme(),
             $this->getAuthority(),
             $this->getHost(),
             $this->getPath(),
-            $this->getQuery(),
+            $this->getQueryString(),
             $this->getFragment()
         );
     }
@@ -325,7 +345,6 @@ class Uri implements UriInterface
     private function parseUrl(string $url): void
     {
         $parser = new UrlParser($url);
-
         $this->withScheme($parser->getScheme());
         $this->withUserInfo($parser->getUsername(), $parser->getPassword());
         $this->withHost($parser->getHost());

@@ -11,7 +11,7 @@ use Laventure\Component\Http\Message\Stream\Stream;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request\Body
+ * @package Laventure\Component\Http\Message\cUrlRequest\Body
 */
 class RequestBody extends Stream
 {

@@ -8,6 +8,17 @@ class ServerBag extends ParameterBag
 
 
      /**
+      * @param array $params
+     */
+     public function __construct(array $params = [])
+     {
+         parent::__construct($params);
+     }
+
+
+
+
+     /**
       * Returns server name
       *
       * @return mixed|null
@@ -16,6 +27,8 @@ class ServerBag extends ParameterBag
      {
           return $this->get('SERVER_NAME');
      }
+
+
 
 
      /**
@@ -111,11 +124,11 @@ class ServerBag extends ParameterBag
      /**
       * Returns request uri
       *
-      * @return string
+      * @return string|null
      */
-     public function getRequestUri(): string
+     public function getRequestUri(): ?string
      {
-          return $this->get('REQUEST_URI', '/');
+          return $this->get('REQUEST_URI');
      }
 
 
@@ -253,6 +266,18 @@ class ServerBag extends ParameterBag
 
 
 
+
+    /**
+     * @return array|false
+    */
+    public function getAllHeaders(): bool|array
+    {
+        return getallheaders();
+    }
+
+
+
+
     /**
      * Returns user
      *
@@ -310,7 +335,7 @@ class ServerBag extends ParameterBag
     /**
      * @return string
     */
-    public function getBaseURL(): string
+    public function getBaseUrl(): string
     {
         return sprintf('%s://%s%s', $this->getScheme(), $this->getAuthority(), $this->getHost());
     }
@@ -322,10 +347,12 @@ class ServerBag extends ParameterBag
     /**
      * @return string
     */
-    public function getURL(): string
+    public function getUrl(): string
     {
-         return sprintf('%s%s', $this->getBaseURL(), $this->getRequestUri());
+         return sprintf('%s%s', $this->getBaseUrl(), $this->getRequestUri());
     }
+
+
 
 
 
@@ -385,21 +412,5 @@ class ServerBag extends ParameterBag
     public function isSecure(): bool
     {
         return $this->isHttps() && $this->getPort() == 443;
-    }
-
-
-
-
-
-    /**
-     * Determine if the request method matched
-     *
-     * @param string $name
-     *
-     * @return bool
-    */
-    public function isMethod(string $name): bool
-    {
-        return $this->getRequestMethod() === strtoupper($name);
     }
 }

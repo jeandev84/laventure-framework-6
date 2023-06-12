@@ -1,6 +1,7 @@
 <?php
-namespace Laventure\Component\Http\Message\Client;
+namespace Laventure\Component\Http\Message\Client\Contract;
 
+use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
 use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
 
 /**
@@ -10,24 +11,34 @@ use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Client
+ * @package Laventure\Component\Http\Message\Client\Contract
 */
 interface HttpClientInterface extends ClientInterface
 {
 
+      /**
+       * @param RequestInterface $request
+       * @param array $options
+       * @return ResponseInterface
+      */
+      public function sendRequest(RequestInterface $request, array $options = []): ResponseInterface;
 
-     /**
-      * Send request to client and get a response by each method
-      *
-      * @param string $method
-      *
-      * @param string $url
-      *
-      * @param array $options
-      *
-      * @return mixed
-     */
-     public function send(string $method, string $url, array $options = []): ResponseInterface;
+
+
+
+      /**
+       * Send request to client and get a response by each method
+       *
+       * @param string $method
+       *
+       * @param string $url
+       *
+       * @param array $options
+       *
+       * @return mixed
+      */
+      public function request(string $method, string $url, array $options = []): ResponseInterface;
+
 
 
 

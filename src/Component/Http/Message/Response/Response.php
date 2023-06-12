@@ -9,7 +9,7 @@ use Laventure\Component\Http\Message\Response\StatusCode\ResponseStatusCode;
 
 
 /**
- * @Response
+ * @cUrlResponse
  *
  * @link https://www.php.net/manual/en/function.parse-url.php
  *
@@ -17,13 +17,13 @@ use Laventure\Component\Http\Message\Response\StatusCode\ResponseStatusCode;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Response
+ * @package Laventure\Component\Http\Message\cUrlResponse
 */
 class Response extends ResponseStatusCode implements ResponseInterface
 {
 
     /**
-     * Response body
+     * cUrlResponse body
      *
      * @var StreamInterface
     */
@@ -32,7 +32,7 @@ class Response extends ResponseStatusCode implements ResponseInterface
 
 
     /**
-     * Response content
+     * cUrlResponse content
      *
      * @var string
     */
@@ -42,7 +42,7 @@ class Response extends ResponseStatusCode implements ResponseInterface
 
 
     /**
-     * Response status code
+     * cUrlResponse status code
      *
      * @var int
     */
@@ -62,7 +62,7 @@ class Response extends ResponseStatusCode implements ResponseInterface
 
 
     /**
-     * Response headers
+     * cUrlResponse headers
      *
      * @var ResponseHeaderBag
     */
@@ -125,7 +125,7 @@ class Response extends ResponseStatusCode implements ResponseInterface
     /**
      * @inheritDoc
     */
-    public function getProtocolVersion(): string
+    public function getProtocolVersion(): ?string
     {
          return $this->version;
     }

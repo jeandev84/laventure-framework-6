@@ -9,7 +9,7 @@ namespace Laventure\Component\Http\Message\Request\File;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\Request\File
+ * @package Laventure\Component\Http\Message\cUrlRequest\File
 */
 class File
 {
