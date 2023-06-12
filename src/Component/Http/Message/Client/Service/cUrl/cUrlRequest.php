@@ -207,26 +207,20 @@ class cUrlRequest
 
 
      /**
-      * @param string $user
+      * @param string $name
       * @param array $headers
       *
       * @param string|null $cookieFilename
       *
       * @return $this
     */
-    public function userAgent(string $user, array $headers, string $cookieFilename = null): static
+    public function userAgent(string $name, array $headers = [], string $cookieFilename = null): static
     {
-        $this->option(CURLOPT_USERAGENT, $user);
+        $this->option(CURLOPT_USERAGENT, $name);
 
         $headers = array_merge($this->browserHeaders, $headers);
-
         $this->headers(array_merge($this->browserHeaders, $headers));
-
-        if (! $cookieFilename) {
-            $cookieFilename = __DIR__.'/data/cookie.txt';
-        }
-
-        $this->cookieJar($cookieFilename);
+        $this->cookieJar($cookieFilename ?: __DIR__.'/data/cookie.txt');
 
         return $this->returnHeader(true);
     }
