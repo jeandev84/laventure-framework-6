@@ -134,6 +134,7 @@ class cUrlRequest
      {
          $this->ch = curl_init($url);
          $this->options([
+             CURLOPT_RETURNTRANSFER => true,
              CURLOPT_SSL_VERIFYPEER => false,
              CURLOPT_HEADER => false
          ]);
@@ -801,10 +802,6 @@ class cUrlRequest
     */
     private function prepareOptions(): void
     {
-        $this->options([
-            CURLOPT_RETURNTRANSFER => true,
-        ]);
-
         switch ($this->method):
             case 'GET':
             case 'HEAD':
