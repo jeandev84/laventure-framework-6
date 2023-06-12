@@ -197,9 +197,19 @@ class cUrlRequest
       *
       * @return $this
      */
-     public function auth(string $login, string $password): static
+     public function auth(array $credentials): static
      {
-          return $this->option(CURLOPT_USERPWD, "$login:$password");
+          if (empty($credentials['login'])) {
+              return $this;
+          }
+
+          if (empty($credentials['password'])) {
+              return $this;
+          }
+
+          $credentials = join(":", array_values($credentials));
+
+          return $this->option(CURLOPT_USERPWD, $credentials);
      }
 
 
@@ -462,6 +472,7 @@ class cUrlRequest
           $request = new static();
           $request->method($method);
           $request->url($url, $context->getQuery());
+          $request->auth($context->getAuth());
           $request->headers($context->getHeaders());
           $request->body($context->getBody());
           $request->files($context->getFiles());

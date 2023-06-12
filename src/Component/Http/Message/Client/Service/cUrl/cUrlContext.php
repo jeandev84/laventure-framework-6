@@ -10,6 +10,10 @@ class cUrlContext implements \ArrayAccess
      protected $options = [
          'proxy'   => null,
          'body'    => null,
+         'auth'    => [
+             'login'    => '',
+             'password' => ''
+         ],
          'upload'  => null,
          'query'   => [],
          'headers' => [],
@@ -103,6 +107,16 @@ class cUrlContext implements \ArrayAccess
      public function getCookies(): array
      {
          return $this->getOption('cookies', []);
+     }
+
+
+
+     /**
+      * @return array
+     */
+     public function getAuth(): array
+     {
+         return $this->getOption('auth');
      }
 
 
