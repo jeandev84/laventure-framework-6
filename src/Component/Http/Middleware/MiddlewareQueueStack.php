@@ -3,6 +3,7 @@ namespace Laventure\Component\Http\Middleware;
 
 
 use Closure;
+use Laventure\Component\Http\Message\Request\Contract\ServerRequestInterface;
 use Laventure\Component\Http\Message\Request\Request;
 use Laventure\Component\Http\Message\Response\Response;
 
@@ -82,7 +83,7 @@ class MiddlewareQueueStack
      *
      * @return Response
     */
-    public function handle(Request $request): Response
+    public function handle(ServerRequestInterface $request): Response
     {
         return call_user_func($this->fallback, $request);
     }

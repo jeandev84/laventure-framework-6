@@ -27,7 +27,7 @@ class QueueRequestHandler implements RequestHandlerInterface
     /**
      * @var array
     */
-    protected $middleware = [];
+    protected $middlewares = [];
 
 
     /**
@@ -54,11 +54,21 @@ class QueueRequestHandler implements RequestHandlerInterface
     */
     public function add(MiddlewareInterface $middleware): static
     {
-        $this->middleware[] = $middleware;
+        $this->middlewares[] = $middleware;
 
         return $this;
     }
 
+
+
+
+    /**
+     * @return array
+    */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
 
 
 
@@ -69,11 +79,11 @@ class QueueRequestHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         // Last middleware in the queue has called on the request handler.
-        if (0 === count($this->middleware)) {
+        if (0 === count($this->middlewares)) {
             return $this->fallbackHandler->handle($request);
         }
 
-        $middleware = array_shift($this->middleware);
+        $middleware = array_shift($this->middlewares);
         return $middleware->process($request, $this);
     }
 }
