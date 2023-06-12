@@ -129,6 +129,22 @@ class cUrlRequest
 
 
 
+     /**
+      * Set user agent
+      *
+      * @param string $agent
+      *
+      * @return $this
+     */
+     public function userAgent(string $agent): static
+     {
+         $this->option(CURLOPT_USERAGENT, $agent);
+
+         return $this;
+     }
+
+
+
 
      /**
       * @param bool $return
@@ -600,8 +616,12 @@ class cUrlRequest
      *
      * @return string
     */
-    private function getResponseWithoutHeaders($response)
+    private function getResponseWithoutHeaders($response): string
     {
+        if (! is_string($response)) {
+            return "";
+        }
+
         return substr($response, $this->getHeaderSize());
     }
 
@@ -613,10 +633,7 @@ class cUrlRequest
     */
     private function getResponseHeaders(): array
     {
-         $this->options([
-             CURLOPT_HEADER => true,
-             CURLOPT_NOBODY => true
-         ]);
+         $this->options([CURLOPT_HEADER => true, CURLOPT_NOBODY => true]);
 
          $response = $this->exec();
 
