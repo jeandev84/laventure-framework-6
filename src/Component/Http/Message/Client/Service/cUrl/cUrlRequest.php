@@ -518,6 +518,7 @@ class cUrlRequest
           $request->auth($context->getAuth());
           $request->oAuth($context->getToken());
           $request->headers($context->getHeaders());
+          $request->cookies($context->getCookies());
 
           if ($context->getUploadedFile() && $method === 'PUT') {
               $request->option(CURLOPT_PUT, 1);
@@ -527,7 +528,6 @@ class cUrlRequest
 
           $request->body($context->getBody());
           $request->files($context->getFiles());
-          $request->cookies($context->getCookies());
 
           return $request->send();
      }
