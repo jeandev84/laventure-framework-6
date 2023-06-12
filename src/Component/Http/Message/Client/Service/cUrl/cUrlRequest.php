@@ -241,13 +241,14 @@ class cUrlRequest
     */
     public function userAgent(string $name, array $headers = [], string $cookieFilename = null): static
     {
-        $this->option(CURLOPT_USERAGENT, $name);
+        $this->options([
+            CURLOPT_USERAGENT => $name,
+            CURLOPT_HEADER    => true
+        ]);
 
-        $headers = array_merge($this->browserHeaders, $headers);
         $this->headers(array_merge($this->browserHeaders, $headers));
-        $this->cookieJar($cookieFilename ?: __DIR__.'/data/cookie.txt');
 
-        return $this->returnHeader(true);
+        return $this->cookieJar($cookieFilename ?: __DIR__.'/data/cookie.txt');
     }
 
 
@@ -525,7 +526,22 @@ class cUrlRequest
      */
      public function send(): cUrlResponse
      {
-         return $this->getResponse();
+         $this->prepareOptions();
+
+         $body = $this->exec();
+
+         if ($errno = curl_errno($this->ch)) {
+             return (function () use ($errno) {
+                 throw new cUrlException(curl_error($this->ch), $errno);
+             })();
+         }
+
+         $response = new cUrlResponse($body);
+         $response->setStatusCode($this->getStatusCode());
+         $response->setHeaders($this->getResponseHeaders());
+         $this->close();
+
+         return $response;
      }
 
 
@@ -817,41 +833,20 @@ class cUrlRequest
 
 
 
-    /**
-     * @return cUrlResponse
-    */
-    private function getResponse(): cUrlResponse
-    {
-        $this->prepareOptions();
-
-        $body = $this->exec();
-
-        if ($errno = curl_errno($this->ch)) {
-            return (function () use ($errno) {
-                throw new cUrlException(curl_error($this->ch), $errno);
-            })();
-        }
-
-        $response = new cUrlResponse($body);
-        $response->setStatusCode($this->getStatusCode());
-        $response->setHeaders($this->getResponseHeaders());
-        $this->close();
-
-        return $response;
-    }
-
-
 
 
     /**
      * @param bool $return
      *
      * @return $this
-     */
-    private function returnHeader(bool $return): static
+    */
+    private function returnHeader(bool $return = false): static
     {
         return $this->option(CURLOPT_HEADER, $return);
     }
+
+
+
 
 
     /**
