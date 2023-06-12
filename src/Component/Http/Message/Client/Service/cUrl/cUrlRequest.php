@@ -396,27 +396,6 @@ class cUrlRequest
 
 
 
-
-    /**
-     * @return cUrlResponse
-    */
-    public function getResponse(): cUrlResponse
-    {
-        if (in_array($this->method, ['GET', 'HEAD'])) {
-            $this->option(CURLOPT_HEADER, false);
-        }
-
-        $response = new cUrlResponse($this->exec());
-        $response->setStatusCode($this->getStatusCode());
-        $response->setHeaders($this->getResponseHeaders());
-        $this->close();
-
-        return $response;
-    }
-
-
-
-
     /**
      * @return mixed
     */
@@ -653,6 +632,26 @@ class cUrlRequest
          }
 
          return $headers;
+    }
+
+
+
+
+    /**
+     * @return cUrlResponse
+    */
+    private function getResponse(): cUrlResponse
+    {
+        if (in_array($this->method, ['GET', 'HEAD'])) {
+            $this->option(CURLOPT_HEADER, false);
+        }
+
+        $response = new cUrlResponse($this->exec());
+        $response->setStatusCode($this->getStatusCode());
+        $response->setHeaders($this->getResponseHeaders());
+        $this->close();
+
+        return $response;
     }
 
 
