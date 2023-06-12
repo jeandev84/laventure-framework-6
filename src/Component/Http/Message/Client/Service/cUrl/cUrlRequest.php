@@ -527,6 +527,7 @@ class cUrlRequest
 
 
 
+
     /**
      * @return string|null
     */
@@ -544,6 +545,7 @@ class cUrlRequest
     {
         return $this->options;
     }
+
 
 
 
