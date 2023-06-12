@@ -276,6 +276,8 @@ class cUrlRequest
      {
          if (is_array($body)) {
              return $this->data($body);
+         } elseif (is_string($body)) {
+             return $this->json($body);
          }
 
          $this->body = $body;
@@ -299,23 +301,18 @@ class cUrlRequest
      }
 
 
-
-
-
      /**
-      * @param array $data
+      * @param string $data
       *
       * @return $this
      */
-     public function json(array $data): static
+     public function json(string $data): static
      {
         $this->options([
-            CURLOPT_HTTPHEADER => ['Content-Type: application/json']
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8']
         ]);
 
-        $this->body(json_encode($data, JSON_UNESCAPED_UNICODE));
-
-        return $this;
+        return $this->body($data);
      }
 
 
