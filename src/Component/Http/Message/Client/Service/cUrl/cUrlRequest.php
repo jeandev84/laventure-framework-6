@@ -432,11 +432,7 @@ class cUrlRequest
 
          $this->uploadedFile = new Stream($resource, 'r');
 
-         return $this->options([
-             CURLOPT_UPLOAD     => true,
-             CURLOPT_INFILESIZE => $this->uploadedFile->getSize(),
-             CURLOPT_INFILE     => $this->uploadedFile->getStream()
-         ]);
+         return $this;
      }
 
 
@@ -518,17 +514,10 @@ class cUrlRequest
           $request->auth($context->getAuth());
           $request->oAuth($context->getToken());
           $request->headers($context->getHeaders());
-          $request->cookies($context->getCookies());
-
-          if ($context->getUploadedFile() && $method === 'PUT') {
-              $request->option(CURLOPT_PUT, 1);
-              $request->upload($context->getUploadedFile());
-              return $request->send();
-          }
-
           $request->body($context->getBody());
           $request->files($context->getFiles());
-
+          $request->cookies($context->getCookies());
+          $request->upload($context->getUploadedFile());
           return $request->send();
      }
 
@@ -539,7 +528,7 @@ class cUrlRequest
      */
      public function send(): cUrlResponse
      {
-         $this->setMethodOptions();
+         $this->setOptions();
 
          $body = $this->exec();
 
@@ -855,20 +844,23 @@ class cUrlRequest
     /**
      * @return void
     */
-    private function setMethodOptions(): void
+    private function setOptions(): void
     {
-        switch ($this->method):
-            case 'GET':
-            case 'HEAD':
-                $this->option(CURLOPT_HEADER, false);
-                break;
-            case 'POST':
-            case 'PUT':
-            case 'PATCH':
-            case 'DELETE':
+        if (in_array($this->method, ['GET', 'HEAD'])) {
+            $this->option(CURLOPT_HEADER, false);
+        } elseif (in_array($this->method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+            if ($this->method === 'PUT' && $this->uploadedFile) {
+                $this->options([
+                    CURLOPT_PUT => 1,
+                    CURLOPT_UPLOAD => 1,
+                    CURLOPT_INFILESIZE => $this->uploadedFile->getSize(),
+                    CURLOPT_INFILE     => $this->uploadedFile->getStream()
+                ]);
+
+            } else {
                 $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
-                break;
-        endswitch;
+            }
+        }
     }
 
 
