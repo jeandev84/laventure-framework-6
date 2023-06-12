@@ -691,7 +691,22 @@ class cUrlRequest
     */
     private function getResponse(): cUrlResponse
     {
-        return $this->createResponse();
+        $this->prepareOptions();
+
+        $body = $this->exec();
+
+        if ($errno = curl_errno($this->ch)) {
+            return (function () use ($errno) {
+                throw new cUrlException(curl_error($this->ch), $errno);
+            })();
+        }
+
+        $response = new cUrlResponse($body);
+        $response->setStatusCode($this->getStatusCode());
+        $response->setHeaders($this->getResponseHeaders());
+        $this->close();
+
+        return $response;
     }
 
 
@@ -729,29 +744,5 @@ class cUrlRequest
                 $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
                 break;
         endswitch;
-    }
-
-
-    /**
-     * @return cUrlResponse
-    */
-    private function createResponse(): cUrlResponse
-    {
-        $this->prepareOptions();
-
-        $body = $this->exec();
-
-        if ($errno = curl_errno($this->ch)) {
-            return (function () use ($errno) {
-                throw new cUrlException(curl_error($this->ch), $errno);
-            })();
-        }
-
-        $response = new cUrlResponse($body);
-        $response->setStatusCode($this->getStatusCode());
-        $response->setHeaders($this->getResponseHeaders());
-        $this->close();
-
-        return $response;
     }
 }
