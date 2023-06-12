@@ -10,15 +10,12 @@ class cUrlContext implements \ArrayAccess
      protected $options = [
          'proxy'   => null,
          'body'    => null,
-         'auth'    => [
-             'login'    => '',
-             'password' => ''
-         ],
+         'auth'    => ['login' => '', 'password' => ''],
          'upload'  => null,
          'query'   => [],
          'headers' => [],
          'files'   => [],
-         'cookies'    => []
+         'cookies' => []
      ];
 
 

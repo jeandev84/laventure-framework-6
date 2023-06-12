@@ -302,17 +302,21 @@ class cUrlRequest
 
 
      /**
-      * @param string $data
+      * @param string|array $data
       *
       * @return $this
      */
-     public function json(string $data): static
+     public function json(string|array $data): static
      {
         $this->options([
             CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8']
         ]);
 
-        return $this->body($data);
+         if (is_array($data)) {
+             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
+         }
+
+         return $this->body($data);
      }
 
 
