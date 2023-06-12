@@ -518,15 +518,20 @@ class cUrlRequest
           $request->auth($context->getAuth());
           $request->oAuth($context->getToken());
           $request->headers($context->getHeaders());
+
+          if ($context->getUploadedFile() && $method === 'PUT') {
+              $request->option(CURLOPT_PUT, 1);
+              $request->upload($context->getUploadedFile());
+              return $request->send();
+          }
+
           $request->body($context->getBody());
           $request->files($context->getFiles());
           $request->cookies($context->getCookies());
-          $request->upload($context->getUploadedFile());
+
           return $request->send();
      }
 
-
-    /**
 
 
      /**
@@ -534,7 +539,7 @@ class cUrlRequest
      */
      public function send(): cUrlResponse
      {
-         $this->setOtherOptions();
+         $this->setMethodOptions();
 
          $body = $this->exec();
 
@@ -698,10 +703,14 @@ class cUrlRequest
 
 
     /**
-     * @return array
+     * @return mixed
     */
-    public function getPostFields(): array
+    public function getPostFields(): mixed
     {
+         if (is_string($this->body)) {
+             return $this->body;
+         }
+
          return array_merge($this->data, $this->files);
     }
 
@@ -846,7 +855,7 @@ class cUrlRequest
     /**
      * @return void
     */
-    private function setOtherOptions(): void
+    private function setMethodOptions(): void
     {
         switch ($this->method):
             case 'GET':
@@ -860,10 +869,6 @@ class cUrlRequest
                 $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
                 break;
         endswitch;
-
-        if ($this->method === 'PUT' && $this->uploadedFile) {
-            $this->option(CURLOPT_PUT, 1);
-        }
     }
 
 
