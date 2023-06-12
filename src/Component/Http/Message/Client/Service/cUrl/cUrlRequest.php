@@ -46,6 +46,13 @@ class cUrlRequest
 
 
      /**
+      * @var
+     */
+     protected $uploadedFile;
+
+
+
+     /**
       * @var array
      */
      protected $data = [];
@@ -192,6 +199,26 @@ class cUrlRequest
 
 
 
+     /**
+      * @param string $proxy
+      *
+      * @return $this
+     */
+     public function proxy(string $proxy): static
+     {
+          if (stripos($proxy, ':') === false) {
+              return $this;
+          }
+
+          return $this->options([
+              CURLOPT_TIMEOUT => 400,
+              CURLOPT_PROXY   => $proxy
+          ]);
+     }
+
+
+
+
 
      /**
       * @param string $method
@@ -319,6 +346,8 @@ class cUrlRequest
      */
      public function cookies(array $cookies): static
      {
+          $this->option(CURLOPT_COOKIE, $this->buildQuery($cookies));
+
           $this->cookies = $cookies;
 
           return $this;
@@ -431,14 +460,15 @@ class cUrlRequest
           $request->headers($context->getHeaders());
           $request->body($context->getBody());
           $request->files($context->getFiles());
+          $request->cookies($context->getCookies());
           $request->upload($context->getUploadedFile());
-
+          $request->proxy($context->getProxy());
 
           return $request->send();
      }
 
 
-
+    /**
 
 
      /**
@@ -613,9 +643,10 @@ class cUrlRequest
     */
     private function createFileFromArray(array $params): \CURLFile
     {
-        $file = new cUrlFile($params);
+        $file = new cUrlFileBag($params);
         return curl_file_create($file->getPath(), $file->getMime(), $file->getName());
     }
+
 
 
 

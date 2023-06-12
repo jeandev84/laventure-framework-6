@@ -1,7 +1,7 @@
 <?php
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
-class cUrlFile
+class cUrlFileBag
 {
 
 
@@ -22,6 +22,7 @@ class cUrlFile
      * @var string|null
     */
     protected ?string $path;
+
 
 
     /**
@@ -53,6 +54,29 @@ class cUrlFile
     {
         return $this->mime;
     }
+
+
+
+
+    /**
+     * @return false|int
+    */
+    public function getSize(): bool|int
+    {
+         return filesize($this->getPath());
+    }
+
+
+
+
+    /**
+     * @return string|null
+    */
+    public function getExtension(): ?string
+    {
+         return pathinfo($this->getPath(), PATHINFO_EXTENSION);
+    }
+
 
 
 

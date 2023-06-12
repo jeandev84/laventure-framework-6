@@ -8,11 +8,13 @@ class cUrlContext implements \ArrayAccess
       * @var array
      */
      protected $options = [
+         'proxy'   => null,
+         'body'    => null,
+         'upload'  => null,
          'query'   => [],
          'headers' => [],
-         'body'    => null,
          'files'   => [],
-         'upload'  => null
+         'cookies' => []
      ];
 
 
@@ -24,6 +26,17 @@ class cUrlContext implements \ArrayAccess
      public function __construct(array $options)
      {
          $this->options = array_merge($this->options, $options);
+     }
+
+
+
+
+     /**
+      * @return string
+     */
+     public function getProxy(): string
+     {
+          return $this->getOption('proxy', '');
      }
 
 
@@ -84,15 +97,26 @@ class cUrlContext implements \ArrayAccess
 
 
 
+     /**
+      * @return array
+     */
+     public function getCookies(): array
+     {
+         return $this->getOption('cookies', []);
+     }
+
+
+
+
 
      /**
       * @param string $key
       *
       * @param $default
       *
-      * @return mixed|null
+      * @return mixed
      */
-     public function getOption(string $key, $default = null)
+     public function getOption(string $key, $default = null): mixed
      {
          return $this->options[$key] ?? $default;
      }
