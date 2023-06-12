@@ -73,7 +73,7 @@ class HttpClient implements HttpClientInterface
      */
     public function get(string $url, array $options = []): ResponseInterface
     {
-        return $this->request($url, 'GET', $options);
+        return $this->request('GET', $url, $options);
     }
 
 
@@ -84,7 +84,7 @@ class HttpClient implements HttpClientInterface
     */
     public function post(string $url, array $options = []): ResponseInterface
     {
-        return $this->request($url, 'POST', $options);
+        return $this->request( 'POST', $url, $options);
     }
 
 
@@ -95,8 +95,10 @@ class HttpClient implements HttpClientInterface
      */
     public function put(string $url, array $options = []): ResponseInterface
     {
-        return $this->request($url, 'PUT', $options);
+        return $this->request('PUT', $url, $options);
     }
+
+
 
 
     /**
@@ -106,8 +108,10 @@ class HttpClient implements HttpClientInterface
     */
     public function patch(string $url, array $options = []): ResponseInterface
     {
-        return $this->request($url, 'PATCH', $options);
+        return $this->request('PATCH', $url, $options);
     }
+
+
 
 
     /**
@@ -117,6 +121,6 @@ class HttpClient implements HttpClientInterface
      */
     public function delete(string $url, array $options = []): ResponseInterface
     {
-        return $this->request($url, 'DELETE', $options);
+        return $this->request('DELETE', $url, $options);
     }
 }
