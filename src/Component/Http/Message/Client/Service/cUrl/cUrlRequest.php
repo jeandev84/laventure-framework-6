@@ -269,9 +269,7 @@ class cUrlRequest
      */
      public function method(string $method): static
      {
-          $method = $this->resolveMethod($method);
-
-          $this->method = $method;
+          $this->method = $this->resolveMethod($method);
 
           return $this;
      }
@@ -878,6 +876,7 @@ class cUrlRequest
 
 
 
+
     /**
      * @return string
      */
@@ -902,11 +901,11 @@ class cUrlRequest
 
 
     /**
-     * @param $method
+     * @param string $method
      *
      * @return string
     */
-    private function resolveMethod($method): string
+    private function resolveMethod(string $method): string
     {
         if (! $this->isAllowedMethod($method)) {
             $this->callNotAllowedMethodException($method);
