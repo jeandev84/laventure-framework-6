@@ -45,6 +45,8 @@ class Stream extends StreamResource
 
 
 
+
+
      /**
        * @param string $path
        *

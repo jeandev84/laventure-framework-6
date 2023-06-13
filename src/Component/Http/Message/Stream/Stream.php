@@ -7,8 +7,10 @@ use Laventure\Component\Http\Message\StreamInterface;
 /**
  * @Stream
  *
- * @link https://www.php.net/manual/fr/ref.stream.php
  * @link https://www.php.net/manual/fr/class.streamwrapper.php
+ * @link https://www.php.net/manual/ru/wrappers.php.php
+ *
+ * @link https://www.php.net/manual/fr/ref.stream.php
  * @link https://www.php.net/manual/fr/function.stream-context-create.php
  * @link https://www.php.net/manual/en/function.stream-get-contents.php
  * @link https://www.php.net/manual/en/function.stream-get-meta-data.php
@@ -49,18 +51,23 @@ class Stream implements StreamInterface
     protected $offset = -1;
 
 
-
-
     /**
      * @param $resource
      *
      * @param string|null $accessMode
-    */
-    public function __construct($resource, string $accessMode = null)
+     *
+     * @param bool $includePath
+     *
+     * @param null $context
+     */
+    public function __construct($resource, string $accessMode = null, bool $includePath = false, $context = null)
     {
-          $this->open($resource, $accessMode);
-    }
+        if (is_string($resource)) {
+            $resource = fopen($resource, $accessMode, $includePath, $context);
+        }
 
+        $this->setStream($resource);
+    }
 
 
 
@@ -74,24 +81,6 @@ class Stream implements StreamInterface
         }
 
         $this->stream = $stream;
-    }
-
-
-
-    /**
-     * @param $resource
-     *
-     * @param string|null $accessMode
-     *
-     * @return void
-    */
-    public function open($resource, string $accessMode = null): void
-    {
-        if (is_string($resource)) {
-            $resource = fopen($resource, $accessMode);
-        }
-
-        $this->setStream($resource);
     }
 
 
@@ -401,6 +390,36 @@ class Stream implements StreamInterface
         return new static($filename, $accessMode);
     }
 
+
+    /**
+     * @param $resource
+     *
+     * @param string $accessMode
+     *
+     * @param $context
+     *
+     * @return static
+   */
+    public static function createFromContext($resource, string $accessMode, $context): static
+    {
+         return new static($resource, $accessMode, false, $context);
+    }
+
+
+
+
+
+    /**
+     * @param $resource
+     *
+     * @param string $accessMode
+     *
+     * @return static
+    */
+    public static function createWithIncludePath($resource, string $accessMode): static
+    {
+        return new static($resource, $accessMode, true);
+    }
 
 
 
