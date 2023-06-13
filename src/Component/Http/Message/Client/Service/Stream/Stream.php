@@ -12,6 +12,14 @@ class Stream extends StreamResource
 
 
     /**
+     * @var string
+    */
+    protected $path;
+
+
+
+
+    /**
      * @param $resource
      *
      * @param string|null $accessMode
@@ -19,18 +27,6 @@ class Stream extends StreamResource
     public function __construct($resource, string $accessMode = null)
     {
         parent::__construct($resource, $accessMode);
-        $this->resource = $resource;
-    }
-
-
-
-
-    /**
-     * @return bool
-    */
-    public function isFileResource(): bool
-    {
-        return is_file($this->resource);
     }
 
 
@@ -43,11 +39,7 @@ class Stream extends StreamResource
     */
     public function put($content): bool|int
     {
-        if (! $this->isFileResource()) {
-             return false;
-        }
-
-        return file_put_contents($this->resource, $content);
+        return file_put_contents($this->getPath(), $content);
     }
 
 
@@ -58,17 +50,14 @@ class Stream extends StreamResource
     */
     public function touch(): bool
     {
-        if (! is_string($this->resource)) {
-             return false;
-        }
-
-        $dirname = dirname($this->resource);
+        $file    = $this->getPath();
+        $dirname = dirname($file);
 
         if (! is_dir($dirname)) {
             @mkdir($dirname, 0777, true);
         }
 
-        return touch($this->resource);
+        return touch($file);
     }
 
 
@@ -79,7 +68,7 @@ class Stream extends StreamResource
     */
     public function get(): bool|string
     {
-         if (! $this->isFileResource()) {
+         if (! $this->isFromFile()) {
               return '';
          }
 
@@ -94,10 +83,41 @@ class Stream extends StreamResource
     */
     public function getSize(): int
     {
-        if ($this->isFileResource()) {
-            return filesize($this->resource);
+        if ($this->isFromFile()) {
+            return filesize($this->getPath());
         }
 
         return parent::getSize();
+    }
+
+
+
+    /**
+     * @param string $path
+     */
+    public function setPath(string $path): void
+    {
+        $this->path = $path;
+    }
+
+
+
+
+    /**
+     * @return string|null
+    */
+    public function getPath(): ?string
+    {
+        return $this->path;
+    }
+
+
+
+    /**
+     * @return bool
+    */
+    public function isFromFile(): bool
+    {
+        return is_file($this->path);
     }
 }

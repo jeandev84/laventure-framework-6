@@ -67,21 +67,19 @@ class Stream implements StreamInterface
      *
      * @param string|null $accessMode
      *
-     * @return $this
+     * @return void
     */
-    public function open($resource, string $accessMode = null): static
+    public function open($resource, string $accessMode = null): void
     {
         if (is_string($resource)) {
             $resource = fopen($resource, $accessMode);
         }
 
-        if (! $this->isStream($resource)) {
+        if (! $this->isResource($resource)) {
             throw new InvalidArgumentException('Invalid stream provided; must be a string stream identifier or stream resource');
         }
 
         $this->stream = $resource;
-
-        return $this;
     }
 
 
@@ -91,7 +89,7 @@ class Stream implements StreamInterface
      *
      * @return bool
     */
-    public function isStream($stream): bool
+    public function isResource($stream): bool
     {
          return is_resource($stream) && (get_resource_type($stream) === 'stream');
     }
@@ -344,8 +342,14 @@ class Stream implements StreamInterface
     /**
      * @return mixed
     */
-    public function getStream(): mixed
+    public function getResource(): mixed
     {
+        if (! $this->stream) {
+            (function () {
+               throw new StreamException("empty stream.");
+            })();
+        }
+
         return $this->stream;
     }
 }

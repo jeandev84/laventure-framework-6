@@ -435,17 +435,20 @@ class cUrlRequest
 
 
      /**
-      * @param $stream
+      * @param $resource
       *
       * @return $this
      */
-     public function download($stream): static
+     public function download($resource): static
      {
-          if (is_file($stream)) {
-              $stream = @fopen($stream, 'w');
+          if (is_file($resource)) {
+              $downloadFile = new Stream(@fopen($resource, 'w'));
+              $downloadFile->setPath($resource);;
+          } else {
+              $downloadFile = new Stream($resource);
           }
 
-          $this->downloadFile = new Stream($stream);
+          $this->downloadFile = $downloadFile;
 
           return $this;
      }
@@ -507,12 +510,13 @@ class cUrlRequest
           $request->url($url, $context->getQuery());
           $request->proxy($context->getProxy());
           $request->auth($context->getAuth());
-          $request->oAuth($context->getToken());
+          $request->oAuth($context->getAccessToken());
           $request->headers($context->getHeaders());
           $request->body($context->getBody());
           $request->files($context->getFiles());
           $request->cookies($context->getCookies());
           $request->upload($context->getUploadedFile());
+          $request->download($context->getDownloadedFile());
           return $request->send();
      }
 
@@ -523,7 +527,7 @@ class cUrlRequest
      */
      public function send(): cUrlResponse
      {
-         $this->prepareOptions();
+         $this->terminateOptions();
 
          $body = $this->exec();
 
@@ -754,7 +758,7 @@ class cUrlRequest
     /**
      * @return void
     */
-    private function close()
+    private function close(): void
     {
         curl_close($this->ch);
     }
@@ -843,18 +847,13 @@ class cUrlRequest
     /**
      * @return void
     */
-    private function prepareOptions(): void
+    private function terminateOptions(): void
     {
         if (in_array($this->method, ['GET', 'HEAD'])) {
             $this->option(CURLOPT_HEADER, false);
         } elseif (in_array($this->method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
             if ($this->method === 'PUT' && $this->uploadedFile) {
-                $this->options([
-                    CURLOPT_PUT => 1,
-                    CURLOPT_UPLOAD => 1,
-                    CURLOPT_INFILESIZE => $this->uploadedFile->getSize(),
-                    CURLOPT_INFILE     => $this->uploadedFile->getStream()
-                ]);
+                $this->setUploadedFileOptionsMethodPUT();
             } else {
                 $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
             }
@@ -940,5 +939,22 @@ class cUrlRequest
               $allowedMethods = $this->getAllowedMethodsAsString();
               throw new cUrlException("Method $method is not in allowed methods [$allowedMethods]");
           })();
+    }
+
+
+
+
+
+    /**
+     * @return void
+    */
+    private function setUploadedFileOptionsMethodPUT(): void
+    {
+        $this->options([
+            CURLOPT_PUT => 1,
+            CURLOPT_UPLOAD => 1,
+            CURLOPT_INFILESIZE => $this->uploadedFile->getSize(),
+            CURLOPT_INFILE     => $this->uploadedFile->getResource()
+        ]);
     }
 }
