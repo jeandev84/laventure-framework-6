@@ -52,9 +52,7 @@ class cUrlResponse
       */
       public function download(Stream $stream): static
       {
-           if ($this->body) {
-               $stream->put($this->body);
-           }
+           $stream->write($this->body);
 
            return $this;
       }

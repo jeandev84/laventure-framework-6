@@ -43,7 +43,7 @@ class File
 
 
     /**
-     * Temp path
+     * TempFile path
      *
      * @var string
     */

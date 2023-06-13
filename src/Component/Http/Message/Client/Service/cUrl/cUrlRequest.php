@@ -419,12 +419,14 @@ class cUrlRequest
 
 
      /**
+      * @param string $path
+      *
       * @return $this
      */
-     public function upload($resource): static
+     public function upload(string $path): static
      {
-         if ($resource) {
-             $this->uploadedFile = new Stream($resource, 'r');
+         if ($uploadedFile = Stream::createFromFile($path)) {
+             $this->uploadedFile = $uploadedFile;
          }
 
          return $this;
@@ -441,9 +443,7 @@ class cUrlRequest
      */
      public function download(string $path): static
      {
-          if (is_file($path)) {
-              $downloadFile = new Stream(@fopen($path, 'w'));
-              $downloadFile->setPath($path);
+          if ($downloadFile = Stream::createFromFile($path, 'w')) {
               $this->downloadFile = $downloadFile;
           }
 

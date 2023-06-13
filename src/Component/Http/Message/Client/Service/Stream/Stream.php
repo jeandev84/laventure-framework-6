@@ -7,98 +7,54 @@ use Laventure\Component\Http\Message\Stream\Stream as StreamResource;
 class Stream extends StreamResource
 {
 
-    protected $resource;
+
+
+     /**
+      * @var string|null
+     */
+     protected ?string $path;
 
 
 
-    /**
-     * @var string
-    */
-    protected $path;
-
-
-
-
-    /**
-     * @param $resource
-     *
-     * @param string|null $accessMode
-    */
-    public function __construct($resource, string $accessMode = null)
-    {
-        parent::__construct($resource, $accessMode);
-    }
+     /**
+      * @var int|null
+     */
+     protected ?int $filesize;
 
 
 
 
-    /**
-     * @param $content
-     *
-     * @return bool|int
-    */
-    public function put($content): bool|int
-    {
-        return file_put_contents($this->getPath(), $content);
-    }
-
-
-
-
-    /**
-     * @return bool
-    */
-    public function touch(): bool
-    {
-        $file    = $this->getPath();
-        $dirname = dirname($file);
-
-        if (! is_dir($dirname)) {
-            @mkdir($dirname, 0777, true);
-        }
-
-        return touch($file);
-    }
-
-
-
-
-    /**
-     * @return false|string
-    */
-    public function get(): bool|string
-    {
-         if (! $this->isFromFile()) {
-              return '';
+     /**
+      * @param string $filename
+      *
+      * @param string $accessMode
+      *
+      * @return Stream|false
+     */
+     public static function createFromFile(string $filename, string $accessMode = 'r'): static|false
+     {
+         if(! $stream = parent::createFromFile($filename, $accessMode)) {
+             return false;
          }
 
-         return file_get_contents($this->resource);
-    }
+         $stream->setPath($filename);
+
+         return $stream;
+     }
 
 
 
 
-    /**
-     * @inheritdoc
-    */
-    public function getSize(): int
-    {
-        if ($this->isFromFile()) {
-            return filesize($this->getPath());
-        }
-
-        return parent::getSize();
-    }
-
-
-
-    /**
-     * @param string $path
+     /**
+       * @param string $path
+       *
+       * @return void
      */
-    public function setPath(string $path): void
-    {
-        $this->path = $path;
-    }
+     private function setPath(string $path): void
+     {
+         $this->path     = $path;
+         $this->filesize = filesize($path);
+     }
 
 
 
@@ -114,12 +70,25 @@ class Stream extends StreamResource
 
 
 
-
     /**
      * @return bool
     */
-    public function isFromFile(): bool
+    public function hasFile(): bool
     {
         return is_file($this->path);
+    }
+
+
+
+    /**
+     * @inheritdoc
+    */
+    public function getSize(): int
+    {
+        if ($this->filesize) {
+            return $this->filesize;
+        }
+
+        return parent::getSize();
     }
 }

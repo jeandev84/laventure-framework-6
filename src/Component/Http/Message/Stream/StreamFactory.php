@@ -3,6 +3,17 @@ namespace Laventure\Component\Http\Message\Stream;
 
 class StreamFactory
 {
-    public static function createFromFile(string $filename, string $mode) {}
-    public static function createTempFile(string $filename, string $mode) {}
+
+
+    /**
+     * @param $resource
+     *
+     * @param string|null $accessMode
+     *
+     * @return Stream
+    */
+    public static function create($resource, string $accessMode = null): Stream
+    {
+        return new Stream($resource, $accessMode);
+    }
 }

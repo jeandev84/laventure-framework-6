@@ -50,6 +50,7 @@ class Stream implements StreamInterface
 
 
 
+
     /**
      * @param $resource
      *
@@ -186,6 +187,8 @@ class Stream implements StreamInterface
 
 
 
+
+
     /**
      * @see https://www.php.net/manual/ru/function.ftell.php
      *
@@ -225,7 +228,7 @@ class Stream implements StreamInterface
     /**
      * @inheritDoc
     */
-    public function seek($offset, $whence = SEEK_SET): int
+    public function seek($offset = 0, $whence = SEEK_SET): int
     {
          return fseek($this->stream, $offset, $whence);
     }
@@ -274,7 +277,7 @@ class Stream implements StreamInterface
     */
     public function write($string): bool|int
     {
-        return fwrite($this->stream, $string);
+        return $string ? fwrite($this->stream, $string) : false;
     }
 
 
@@ -362,5 +365,53 @@ class Stream implements StreamInterface
         }
 
         return $this->stream;
+    }
+
+
+    /**
+     * @param $resource
+     *
+     * @param string|null $accessMode
+     *
+     * @return Stream
+    */
+    public static function create($resource, string $accessMode = null): Stream
+    {
+        return new static($resource, $accessMode);
+    }
+
+
+
+
+
+
+    /**
+     * @param string $filename
+     *
+     * @param string $accessMode
+     *
+     * @return $this|false
+    */
+    public static function createFromFile(string $filename, string $accessMode = 'r'): static|false
+    {
+        if (! is_file($filename)) {
+            return false;
+        }
+
+        return new static($filename, $accessMode);
+    }
+
+
+
+
+
+    /**
+     * @param string $accessMode
+     *
+     * @return Stream
+    */
+    public static function createTempFile(string $accessMode = 'w'): Stream
+    {
+        return new static('php://temp', $accessMode);
     }
 }

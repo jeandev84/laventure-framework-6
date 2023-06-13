@@ -1,6 +1,7 @@
 <?php
 namespace Laventure\Component\Http\Message\Response;
 
+use Laventure\Component\Http\Message\Stream\TempFile;
 use Laventure\Component\Http\Message\StreamInterface;
 use Laventure\Component\Http\Message\Response\Bag\ResponseHeaderBag;
 use Laventure\Component\Http\Message\Response\Body\ResponseBody;
@@ -91,7 +92,7 @@ class Response extends ResponseStatusCode implements ResponseInterface
           $this->content    = $content;
           $this->statusCode = $statusCode;
           $this->headers    = new ResponseHeaderBag($headers);
-          $this->body       = new ResponseBody('php://temp');
+          $this->body       = new TempFile();
      }
 
 
