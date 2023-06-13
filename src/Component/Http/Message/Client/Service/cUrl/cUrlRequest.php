@@ -423,9 +423,9 @@ class cUrlRequest
      */
      public function upload($resource): static
      {
-         if (! $resource) { return $this; }
-
-         $this->uploadedFile = new Stream($resource, 'r');
+         if ($resource) {
+             $this->uploadedFile = new Stream($resource, 'r');
+         }
 
          return $this;
      }
@@ -435,20 +435,17 @@ class cUrlRequest
 
 
      /**
-      * @param $resource
+      * @param string $path
       *
       * @return $this
      */
-     public function download($resource): static
+     public function download(string $path): static
      {
-          if (is_file($resource)) {
-              $downloadFile = new Stream(@fopen($resource, 'w'));
-              $downloadFile->setPath($resource);;
-          } else {
-              $downloadFile = new Stream($resource);
+          if (is_file($path)) {
+              $downloadFile = new Stream(@fopen($path, 'w'));
+              $downloadFile->setPath($path);
+              $this->downloadFile = $downloadFile;
           }
-
-          $this->downloadFile = $downloadFile;
 
           return $this;
      }

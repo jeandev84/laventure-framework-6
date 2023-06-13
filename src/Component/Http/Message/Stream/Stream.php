@@ -62,6 +62,21 @@ class Stream implements StreamInterface
 
 
 
+
+    /**
+     * @param string|resource $stream
+    */
+    public function setStream(mixed $stream): void
+    {
+        if (! $this->isResource($stream)) {
+            throw new InvalidArgumentException('Invalid stream provided.');
+        }
+
+        $this->stream = $stream;
+    }
+
+
+
     /**
      * @param $resource
      *
@@ -75,11 +90,7 @@ class Stream implements StreamInterface
             $resource = fopen($resource, $accessMode);
         }
 
-        if (! $this->isResource($resource)) {
-            throw new InvalidArgumentException('Invalid stream provided; must be a string stream identifier or stream resource');
-        }
-
-        $this->stream = $resource;
+        $this->setStream($resource);
     }
 
 

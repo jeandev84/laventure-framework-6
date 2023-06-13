@@ -113,6 +113,8 @@ class Stream extends StreamResource
 
 
 
+
+
     /**
      * @return bool
     */
