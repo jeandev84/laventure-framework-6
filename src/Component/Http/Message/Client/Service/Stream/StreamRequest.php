@@ -35,6 +35,8 @@ class StreamRequest
 
 
 
+
+
     /**
      * @param StreamOptionInterface $option
      *
@@ -80,38 +82,15 @@ class StreamRequest
 
 
 
+
+
 //    /**
-//     * @param string $method
-//     * @param string $url
-//     * @param array $options
-//     * @return StreamResponse
+//     * @return Stream
 //    */
-//    public function request(string $method, string $url, array $options = []): StreamResponse
+//    public function create(): Stream
 //    {
-//         #$http = new StreamHttpOption($options['http'] ?? []);
+//        $context = stream_context_create($this->options);
 //
-//         $context = new StreamContext();
-//         $context->url($url);
-//         $context->method($method);
-//         $context->headers($options['headers'] ?? []);
-//         $context->body($options['body'] ?? []);
-//         $context->cookies($options['cookies'] ?? []);
-//         $stream  = $context->create();
-//
-//         return new StreamResponse();
+//        return Stream::createFromContext($this->url, 'r', $context);
 //    }
-
-
-
-
-
-    /**
-     * @param string $method
-     *
-     * @return Stream
-    */
-    private function createStreamByMethod(string $method): Stream
-    {
-
-    }
 }
