@@ -1,6 +1,8 @@
 <?php
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
+use Laventure\Component\Http\Message\Client\Service\Stream\Stream;
+
 class cUrlResponse
 {
 
@@ -40,6 +42,22 @@ class cUrlResponse
            $this->headers = $headers;
       }
 
+
+
+
+      /**
+       * @param Stream $stream
+       *
+       * @return $this
+      */
+      public function download(Stream $stream): static
+      {
+           if ($this->body) {
+               $stream->put($this->body);
+           }
+
+           return $this;
+      }
 
 
 

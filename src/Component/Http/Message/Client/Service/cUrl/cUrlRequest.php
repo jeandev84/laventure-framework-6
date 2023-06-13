@@ -63,6 +63,13 @@ class cUrlRequest
 
 
      /**
+      * @var string[]
+     */
+     protected $allowedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+
+
+
+     /**
       * @var array
      */
      protected $data = [];
@@ -255,7 +262,6 @@ class cUrlRequest
 
 
 
-
      /**
       * @param string $method
       *
@@ -263,16 +269,7 @@ class cUrlRequest
      */
      public function method(string $method): static
      {
-         switch ($method):
-              case 'POST':
-                  $this->option(CURLOPT_POST, 1);
-              break;
-              case 'PUT':
-              case 'PATCH':
-              case 'DELETE':
-                  $this->option(CURLOPT_CUSTOMREQUEST, $method);
-                  break;
-          endswitch;
+          $method = $this->resolveMethod($method);
 
           $this->method = $method;
 
@@ -452,7 +449,7 @@ class cUrlRequest
 
           $this->downloadFile = new Stream($stream);
 
-          return $this->option(CURLOPT_FILE, $stream);
+          return $this;
      }
 
 
@@ -528,7 +525,7 @@ class cUrlRequest
      */
      public function send(): cUrlResponse
      {
-         $this->setOptions();
+         $this->prepareOptions();
 
          $body = $this->exec();
 
@@ -542,6 +539,10 @@ class cUrlRequest
          $response->setStatusCode($this->getStatusCode());
          $response->setHeaders($this->getResponseHeaders());
          $this->close();
+
+         if ($this->downloadFile) {
+             $response = $response->download($this->downloadFile);
+         }
 
          return $response;
      }
@@ -844,7 +845,7 @@ class cUrlRequest
     /**
      * @return void
     */
-    private function setOptions(): void
+    private function prepareOptions(): void
     {
         if (in_array($this->method, ['GET', 'HEAD'])) {
             $this->option(CURLOPT_HEADER, false);
@@ -856,7 +857,6 @@ class cUrlRequest
                     CURLOPT_INFILESIZE => $this->uploadedFile->getSize(),
                     CURLOPT_INFILE     => $this->uploadedFile->getStream()
                 ]);
-
             } else {
                 $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
             }
@@ -874,5 +874,70 @@ class cUrlRequest
     private function encodingJson(array $data): string|bool
     {
         return (string)json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
+
+
+
+    /**
+     * @return string
+     */
+    private function getAllowedMethodsAsString(): string
+    {
+        return join(',', $this->allowedMethods);
+    }
+
+
+
+    /**
+     * @param string $method
+     *
+     * @return bool
+    */
+    private function isAllowedMethod(string $method): bool
+    {
+        return in_array($method, $this->allowedMethods);
+    }
+
+
+    /**
+     * @param $method
+     *
+     * @return string
+    */
+    private function resolveMethod($method): string
+    {
+        if (! $this->isAllowedMethod($method)) {
+            $this->callNotAllowedMethodException($method);
+        }
+
+        switch ($method):
+            case 'POST':
+                $this->option(CURLOPT_POST, 1);
+                break;
+            case 'PUT':
+            case 'PATCH':
+            case 'DELETE':
+                $this->option(CURLOPT_CUSTOMREQUEST, $method);
+                break;
+        endswitch;
+
+        return $method;
+    }
+
+
+
+
+
+    /**
+     * @param string $method
+     *
+     * @return void
+    */
+    private function callNotAllowedMethodException(string $method): void
+    {
+          (function () use ($method) {
+              $allowedMethods = $this->getAllowedMethodsAsString();
+              throw new cUrlException("Method $method is not in allowed methods [$allowedMethods]");
+          })();
     }
 }
