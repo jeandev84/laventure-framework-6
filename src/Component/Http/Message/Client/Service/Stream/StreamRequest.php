@@ -8,10 +8,30 @@ class StreamRequest
 
 
     /**
+     * @var string|null
+    */
+    protected ?string $url;
+
+
+
+    /**
      * @var array
     */
     protected $options = [];
 
+
+
+    /**
+     * @param string $url
+     *
+     * @return $this
+    */
+    public function url(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
 
 
 
@@ -22,7 +42,7 @@ class StreamRequest
     */
     public function addOption(StreamOptionInterface $option): static
     {
-        $this->options[] = $option->getOptions();
+        $this->options = array_merge($this->options, $option->getOptions());
 
         return $this;
     }
@@ -47,27 +67,39 @@ class StreamRequest
 
 
 
-
     /**
-     * @param string $method
-     * @param string $url
-     * @param array $options
      * @return StreamResponse
     */
-    public function request(string $method, string $url, array $options = []): StreamResponse
+    public function send(): StreamResponse
     {
-         #$http = new StreamHttpOption($options['http'] ?? []);
-
-         $context = new StreamContext();
-         $context->url($url);
-         $context->method($method);
-         $context->headers($options['headers'] ?? []);
-         $context->body($options['body'] ?? []);
-         $context->cookies($options['cookies'] ?? []);
+         $context = new StreamContext($this->url, $this->options);
          $stream  = $context->create();
 
          return new StreamResponse();
     }
+
+
+
+//    /**
+//     * @param string $method
+//     * @param string $url
+//     * @param array $options
+//     * @return StreamResponse
+//    */
+//    public function request(string $method, string $url, array $options = []): StreamResponse
+//    {
+//         #$http = new StreamHttpOption($options['http'] ?? []);
+//
+//         $context = new StreamContext();
+//         $context->url($url);
+//         $context->method($method);
+//         $context->headers($options['headers'] ?? []);
+//         $context->body($options['body'] ?? []);
+//         $context->cookies($options['cookies'] ?? []);
+//         $stream  = $context->create();
+//
+//         return new StreamResponse();
+//    }
 
 
 
