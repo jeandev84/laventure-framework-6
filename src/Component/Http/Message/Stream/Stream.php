@@ -51,6 +51,24 @@ class Stream implements StreamInterface
     protected $offset = -1;
 
 
+
+
+    /**
+     * @var string|null
+    */
+    protected ?string $path;
+
+
+
+
+    /**
+     * @var int
+    */
+    protected int $filesize;
+
+
+
+
     /**
      * @param $resource
      *
@@ -62,37 +80,49 @@ class Stream implements StreamInterface
      */
     public function __construct($resource, string $accessMode = null, bool $includePath = false, $context = null)
     {
-        if (is_string($resource)) {
-            $resource = fopen($resource, $accessMode, $includePath, $context);
-        }
-
-        $this->setStream($resource);
+          $this->open($resource, $accessMode, $includePath, $context);
     }
 
 
 
+
     /**
-     * @param string|resource $stream
+     * @param $resource
+     *
+     * @param string|null $accessMode
+     *
+     * @param bool $includePath
+     *
+     * @param null $context
+     *
+     * @return void
     */
-    public function setStream(mixed $stream): void
+    public function open($resource, string $accessMode = null, bool $includePath = false, $context = null): void
     {
-        if (! $this->isResource($stream)) {
-            throw new InvalidArgumentException('Invalid stream provided.');
+          if (is_string($resource)) {
+              $resource = fopen($resource, $accessMode, $includePath, $context);
+          }
+
+          $this->set($resource);
+    }
+
+
+
+
+    /**
+     * @param resource $stream
+     *
+     * @return $this
+    */
+    public function set($stream): static
+    {
+        if (! $this->valid($stream)) {
+            throw new InvalidArgumentException('Invalid stream provided. must be string or resource stream type provided.');
         }
 
         $this->stream = $stream;
-    }
 
-
-
-    /**
-     * @param $stream
-     *
-     * @return bool
-    */
-    public function isResource($stream): bool
-    {
-         return is_resource($stream) && (get_resource_type($stream) === 'stream');
+        return $this;
     }
 
 
@@ -170,8 +200,38 @@ class Stream implements StreamInterface
     */
     public function getSize(): int
     {
+        if ($this->filesize) {
+            return $this->filesize;
+        }
+
         return fstat($this->stream)['size'];
     }
+
+
+
+    /**
+     * @return string|null
+    */
+    public function getPath(): ?string
+    {
+        return $this->path;
+    }
+
+
+
+
+    /**
+     * @return bool
+    */
+    public function isFile(): bool
+    {
+        if (! $this->path) {
+            return false;
+        }
+
+        return is_file($this->path);
+    }
+
 
 
 
@@ -304,26 +364,13 @@ class Stream implements StreamInterface
 
 
 
-    /**
-     * @param $length
-     *
-     * @param $offset
-     *
-     * @return false|string
-    */
-    public function readStream($length, $offset): bool|string
-    {
-        return stream_get_contents($this->stream, $length, $offset);
-    }
-
-
 
     /**
      * @inheritDoc
     */
     public function getContents(): bool|string
     {
-        return stream_get_contents($this->stream);
+        return stream_get_contents($this->stream, $this->length, $this->offset);
     }
 
 
@@ -342,6 +389,7 @@ class Stream implements StreamInterface
 
 
 
+
     /**
      * @return mixed
     */
@@ -355,6 +403,71 @@ class Stream implements StreamInterface
 
         return $this->stream;
     }
+
+
+
+
+    /**
+     * @return array
+    */
+    public function getOptions(): array
+    {
+         return stream_context_get_options($this->getResource());
+    }
+
+
+
+
+
+
+    /**
+     * @param array $options
+     *
+     * @return resource
+    */
+    public function getDefault(array $options = [])
+    {
+         return stream_context_get_default($options);
+    }
+
+
+
+
+    /**
+     * @param array $params
+     *
+     * @return $this
+    */
+    public function setParams(array $params): static
+    {
+        stream_context_set_params($this->getResource(), $params);
+
+        return $this;
+    }
+
+
+
+    /**
+     * @return array
+    */
+    public function getParams(): array
+    {
+        return stream_context_get_params($this->getResource());
+    }
+
+
+
+
+
+    /**
+     * @return array
+    */
+    public function getFilters(): array
+    {
+         return stream_get_filters();
+    }
+
+
 
 
     /**
@@ -387,39 +500,13 @@ class Stream implements StreamInterface
             return false;
         }
 
-        return new static($filename, $accessMode);
+        $stream           = new static($filename, $accessMode);
+        $stream->path     = $filename;
+        $stream->filesize = filesize($filename);
+
+        return $stream;
     }
 
-
-    /**
-     * @param $resource
-     *
-     * @param string $accessMode
-     *
-     * @param $context
-     *
-     * @return static
-   */
-    public static function createFromContext($resource, string $accessMode, $context): static
-    {
-         return new static($resource, $accessMode, false, $context);
-    }
-
-
-
-
-
-    /**
-     * @param $resource
-     *
-     * @param string $accessMode
-     *
-     * @return static
-    */
-    public static function createWithIncludePath($resource, string $accessMode): static
-    {
-        return new static($resource, $accessMode, true);
-    }
 
 
 
@@ -432,5 +519,39 @@ class Stream implements StreamInterface
     public static function createTempFile(string $accessMode = 'w'): Stream
     {
         return new static('php://temp', $accessMode);
+    }
+
+
+
+
+
+    /**
+     * @param string $path
+     *
+     * @param string $accessMode
+     *
+     * @param array $options
+     *
+     * @return $this
+    */
+    public static function createFromContext(string $path, string $accessMode = 'r', array $options = []): static
+    {
+         $context = StreamContext::create($options);
+
+         return new static($path, $accessMode, false, $context);
+    }
+
+
+
+
+
+    /**
+     * @param $stream
+     *
+     * @return bool
+    */
+    private function valid($stream): bool
+    {
+        return is_resource($stream) && (get_resource_type($stream) === 'stream');
     }
 }

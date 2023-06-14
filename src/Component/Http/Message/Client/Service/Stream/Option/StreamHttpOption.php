@@ -152,7 +152,7 @@ class StreamHttpOption implements StreamOptionInterface
     /**
      * @inheritDoc
     */
-    public function getOptions(): array
+    public function getParameters(): array
     {
          return [
              'http' => [

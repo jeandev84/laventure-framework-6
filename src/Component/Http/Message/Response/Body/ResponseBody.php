@@ -18,15 +18,9 @@ use Laventure\Component\Http\Message\Stream\Stream;
 class ResponseBody extends Stream
 {
 
-
-    /**
-     * @param $resource
-     *
-     * @param string $accessMode
-    */
-    public function __construct($resource, string $accessMode = 'w')
+    public function __construct()
     {
-        parent::__construct($resource, $accessMode);
+        parent::__construct(tmpfile());
     }
 
 

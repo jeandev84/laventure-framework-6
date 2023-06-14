@@ -44,7 +44,7 @@ class StreamFtpOption implements StreamOptionInterface
      /**
       * @inheritDoc
      */
-     public function getOptions(): array
+     public function getParameters(): array
      {
          return [
             'ftp' => [

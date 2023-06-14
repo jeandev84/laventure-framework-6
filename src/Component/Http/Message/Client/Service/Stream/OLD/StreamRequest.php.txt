@@ -44,7 +44,7 @@ class StreamRequest
     */
     public function addOption(StreamOptionInterface $option): static
     {
-        $this->options = array_merge($this->options, $option->getParameters());
+        $this->options = array_merge($this->options, $option->getOptions());
 
         return $this;
     }
@@ -69,72 +69,28 @@ class StreamRequest
 
 
 
-
     /**
      * @return StreamResponse
     */
     public function send(): StreamResponse
     {
-         $stream  = $this->create();
-         $content = $stream->getContents();
+         $context = new StreamContext($this->url, $this->options);
+         $stream  = $context->create();
 
-         return new StreamResponse($content);
+         return new StreamResponse();
     }
 
 
 
 
 
-
-    /**
-     * @return Stream
-    */
-    public function create(): Stream
-    {
-        return Stream::createFromContext($this->url, 'r', $this->options);
-    }
-
-
-
-
-    /**
-     * @param string $url
-     *
-     * @param StreamOptionInterface[] $options
-     *
-     * @return StreamResponse
-    */
-    public function request(string $url, array $options = []): StreamResponse
-    {
-        $request = new static();
-        $request->url($url);
-        $request->addOptions($options);
-        return $request->send();
-    }
-
-
-
-
-
-
-    /**
-     * @return array
-    */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-
-
-
-
-
-    /**
-     * @return string|null
-    */
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
+//    /**
+//     * @return Stream
+//    */
+//    public function create(): Stream
+//    {
+//        $context = stream_context_create($this->options);
+//
+//        return Stream::createFromContext($this->url, 'r', $context);
+//    }
 }

@@ -92,7 +92,7 @@ class Response extends ResponseStatusCode implements ResponseInterface
           $this->content    = $content;
           $this->statusCode = $statusCode;
           $this->headers    = new ResponseHeaderBag($headers);
-          $this->body       = new TempFile();
+          $this->body       = new ResponseBody();
      }
 
 

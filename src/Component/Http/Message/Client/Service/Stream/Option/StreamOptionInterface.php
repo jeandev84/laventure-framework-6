@@ -6,5 +6,5 @@ interface StreamOptionInterface
     /**
      * @return array
     */
-    public function getOptions(): array;
+    public function getParameters(): array;
 }
