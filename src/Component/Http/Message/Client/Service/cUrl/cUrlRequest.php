@@ -537,11 +537,7 @@ class cUrlRequest
          $response->setStatusCode($this->getStatusCode());
          $response->setHeaders($this->getResponseHeaders());
          $this->close();
-
-         if ($this->downloadFile) {
-             $response = $response->download($this->downloadFile);
-         }
-
+         $response->downloadBody($this->downloadFile);
          return $response;
      }
 

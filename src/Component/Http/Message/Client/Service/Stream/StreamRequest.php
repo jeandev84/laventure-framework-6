@@ -75,10 +75,11 @@ class StreamRequest
     */
     public function send(): StreamResponse
     {
-         $stream  = $this->create();
-         $content = $stream->getContents();
-
-         return new StreamResponse($content);
+         $stream     = $this->create();
+         $content    = $stream->getContents();
+         $statusCode = 200;
+         $headers    = $this->getHeaders();
+         return new StreamResponse($content, $statusCode, $headers);
     }
 
 
@@ -136,5 +137,27 @@ class StreamRequest
     public function getUrl(): ?string
     {
         return $this->url;
+    }
+
+
+
+
+    /**
+     * @return array
+    */
+    public function getHeaders(): array
+    {
+         $headersRows = get_headers($this->url);
+
+         $headers = [];
+
+         foreach ($headersRows as $header) {
+             if(stripos($header, ':') !== false) {
+                  [$name, $value] = explode(':', $header, 2);
+                  $headers[$name] = $value;
+             }
+         }
+
+         return $headers;
     }
 }
