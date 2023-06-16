@@ -22,7 +22,7 @@ class ClientRequestFactory
        *
        * @return ClientRequest
       */
-      public static function create(string $name): ClientRequest
+      public static function create(string $name = ClientRequestType::CURL): ClientRequest
       {
            return [
                ClientRequestType::STREAM => new StreamRequest()

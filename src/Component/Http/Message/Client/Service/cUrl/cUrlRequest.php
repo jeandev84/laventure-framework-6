@@ -462,15 +462,9 @@ class cUrlRequest extends ClientRequest implements cUrlRequestInterface
 
 
      /**
-      * @param string $method
-      *
-      * @param string $url
-      *
-      * @param array $context
-      *
-      * @return cUrlResponse
+      * @inheritdoc
      */
-     public function request(string $method, string $url, array $context = []): cUrlResponse
+     public function request(string $method, string $url, array $context = []): ClientResponseInterface
      {
           $context = new cUrlContext($context);
           $request = new static();

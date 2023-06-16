@@ -53,7 +53,7 @@ class StreamRequest extends ClientRequest
               return new StreamResponse();
          }
 
-         $stream     = $this->create();
+         $stream     = $this->createContext();
          $content    = $stream->getContents();
          $headers    = $this->getResponseHeaders();
          [$version, $statusCode, $message] = $this->getHeadersInfo();
@@ -72,7 +72,7 @@ class StreamRequest extends ClientRequest
     /**
      * @return Stream
     */
-    public function create(): Stream
+    public function createContext(): Stream
     {
         return Stream::createFromContext($this->url, 'r', $this->options);
     }

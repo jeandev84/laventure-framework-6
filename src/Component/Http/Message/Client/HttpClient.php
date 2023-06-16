@@ -55,6 +55,21 @@ class HttpClient implements HttpClientInterface
     }
 
 
+    /**
+     * @param array $options
+     *
+     * @return $this
+    */
+    public function addOptions(array $options): static
+    {
+         $this->options = $options;
+
+         return $this;
+    }
+
+
+
+
 
     /**
      * @inheritDoc
@@ -84,11 +99,8 @@ class HttpClient implements HttpClientInterface
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-         $this->options = $options;
-
-         $request = Request::create($url, $method);
-
-         return $this->sendRequest($request);
+         return $this->addOptions($options)
+                     ->sendRequest(Request::create($url, $method));
     }
 
 

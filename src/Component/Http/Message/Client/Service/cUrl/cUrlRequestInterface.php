@@ -21,7 +21,7 @@ interface cUrlRequestInterface
       *
       * @return mixed
      */
-     public function init(string $url = null);
+     public function init(string $url = null): static;
 
 
 
@@ -33,7 +33,7 @@ interface cUrlRequestInterface
       *
       * @return mixed
      */
-     public function setOptions(array $options);
+     public function setOptions(array $options): static;
 
 
 
@@ -44,6 +44,7 @@ interface cUrlRequestInterface
       * @return mixed
      */
      public function exec();
+
 
 
 
