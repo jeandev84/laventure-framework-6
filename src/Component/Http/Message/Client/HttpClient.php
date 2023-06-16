@@ -55,6 +55,7 @@ class HttpClient implements HttpClientInterface
     }
 
 
+
     /**
      * @param array $options
      *
