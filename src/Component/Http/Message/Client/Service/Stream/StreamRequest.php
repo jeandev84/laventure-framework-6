@@ -45,9 +45,9 @@ class StreamRequest extends ClientRequest
 
 
     /**
-     * @return StreamResponse
+     * @inheritdoc
     */
-    public function send(): StreamResponse
+    public function send(): ClientResponseInterface
     {
          if (! $this->url) {
               return new StreamResponse();
@@ -64,7 +64,6 @@ class StreamRequest extends ClientRequest
 
          return $response;
     }
-
 
 
 
@@ -94,28 +93,6 @@ class StreamRequest extends ClientRequest
 
         return $request->send();
     }
-
-
-
-    /**
-     * @return array
-    */
-    public function getResponseHeaders(): array
-    {
-         $headersRows = $this->getHeaders();
-
-         $headers = [];
-
-         foreach ($headersRows as $header) {
-             if(stripos($header, ':') !== false) {
-                  [$name, $value] = explode(':', $header, 2);
-                  $headers[$name] = $value;
-             }
-         }
-
-         return $headers;
-    }
-
 
 
 

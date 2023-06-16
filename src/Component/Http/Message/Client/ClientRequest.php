@@ -1,8 +1,16 @@
 <?php
 namespace Laventure\Component\Http\Message\Client;
 
-use Laventure\Component\Http\Message\Client\Service\Stream\Option\StreamOptionInterface;
 
+/**
+ * @ClientRequest
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Http\Message\Client
+*/
 abstract class ClientRequest implements ClientRequestInterface
 {
 
@@ -45,7 +53,7 @@ abstract class ClientRequest implements ClientRequestInterface
     public function url(string $url, array $queries = []): static
     {
         if ($queries) {
-           $url .= $this->buildQuery($queries);
+           $url .= $this->buildQueryParams($queries);
         }
 
         $this->url     = $url;
@@ -73,12 +81,68 @@ abstract class ClientRequest implements ClientRequestInterface
 
 
     /**
+     * @param $key
+     *
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setOption($key, $value): static
+    {
+         $this->options[$key] = $value;
+
+         return $this;
+    }
+
+
+
+
+
+    /**
+     * @param array $options
+     *
+     * @return $this
+    */
+    public function setOptions(array $options): static
+    {
+        $this->options = array_merge($this->options, $options);
+
+        return $this;
+    }
+
+
+
+
+    /**
      * @return string|null
     */
     public function getUrl(): ?string
     {
         return $this->url;
     }
+
+
+
+
+    /**
+     * @return string|null
+    */
+    public function getMethod(): ?string
+    {
+        return $this->method;
+    }
+
+
+
+
+    /**
+     * @return array
+    */
+    public function getQueries(): array
+    {
+        return $this->queries;
+    }
+
 
 
 
@@ -100,7 +164,7 @@ abstract class ClientRequest implements ClientRequestInterface
     /**
      * @return array
     */
-    public function getHeaders(): array
+    public function getAllHeaders(): array
     {
         if(! $headers = get_headers($this->url)) {
             return [];
@@ -111,23 +175,13 @@ abstract class ClientRequest implements ClientRequestInterface
 
 
 
+
     /**
      * @return array
-     */
+    */
     public function getResponseHeaders(): array
     {
-        $headersRows = $this->getHeaders();
-
-        $headers = [];
-
-        foreach ($headersRows as $header) {
-            if(stripos($header, ':') !== false) {
-                [$name, $value] = explode(':', $header, 2);
-                $headers[$name] = $value;
-            }
-        }
-
-        return $headers;
+        return $this->filterHeaders($this->getAllHeaders());
     }
 
 
@@ -139,11 +193,11 @@ abstract class ClientRequest implements ClientRequestInterface
     */
     public function getHeadersInfo(): array
     {
-        if (empty($this->getHeaders()[0])) {
+        if (empty($this->getAllHeaders()[0])) {
             return [null, 200, []];
         }
 
-        $responseHeader = $this->getHeaders()[0];
+        $responseHeader = $this->getAllHeaders()[0];
 
         $info = explode(' ', $responseHeader, 3);
 
@@ -165,6 +219,28 @@ abstract class ClientRequest implements ClientRequestInterface
     protected function isProxy(string $proxy): bool
     {
         return stripos($proxy, ':') !== false;
+    }
+
+
+
+    /**
+     * @param array $headerRows
+     *
+     * @return array
+    */
+    protected function filterHeaders(array $headerRows): array
+    {
+        $headers = [];
+
+        foreach ($headerRows as $header) {
+            $position = stripos($header, ':');
+            if($position !== false) {
+                [$name, $value] = explode(':', $header, 2);
+                $headers[$name] = trim($value);
+            }
+        }
+
+        return $headers;
     }
 
 
@@ -196,8 +272,19 @@ abstract class ClientRequest implements ClientRequestInterface
      *
      * @return string
     */
-    protected function buildQuery(array $parameters, string $separator = null): string
+    protected function buildQueryParams(array $parameters, string $separator = null): string
     {
         return http_build_query($parameters, '', $separator ?? '&');
     }
+
+
+
+
+
+    /**
+     * Send request and return response
+     *
+     * @return ClientResponseInterface
+    */
+    abstract public function send(): ClientResponseInterface;
 }

@@ -4,7 +4,6 @@ namespace Laventure\Component\Http\Message\Client;
 
 use Laventure\Component\Http\Message\Client\Contract\HttpClientInterface;
 use Laventure\Component\Http\Message\Client\Exception\ClientExceptionInterface;
-use Laventure\Component\Http\Message\Client\Service\cUrl\cUrlRequest;
 use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
 use Laventure\Component\Http\Message\Request\Request;
 use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
@@ -23,10 +22,37 @@ class HttpClient implements HttpClientInterface
 {
 
     /**
+     * @var string|null
+    */
+    protected ?string $name;
+
+
+
+    /**
      * @var array
     */
     protected $options = [];
 
+
+
+    public function __construct()
+    {
+        $this->use(ClientRequestType::CURL);
+    }
+
+
+
+    /**
+     * @param string $name
+     *
+     * @return $this
+    */
+    public function use(string $name): static
+    {
+         $this->name = $name;
+
+         return $this;
+    }
 
 
 
@@ -37,10 +63,10 @@ class HttpClient implements HttpClientInterface
     {
         try {
 
-            $curlRequest = new cUrlRequest();
-            $curlResponse = $curlRequest->request($request->getMethod(), $request->url(), $this->options);
+            $clientRequest  = ClientRequestFactory::create($this->name);
+            $clientResponse = $clientRequest->request($request->getMethod(), $request->url(), $this->options);
 
-            return new Response($curlResponse->getBody(), $curlResponse->getStatusCode(), $curlResponse->getHeaders());
+            return new Response($clientResponse->getBody(), $clientResponse->getStatusCode(), $clientResponse->getHeaders());
 
         } catch (\Exception $e) {
 
@@ -64,6 +90,8 @@ class HttpClient implements HttpClientInterface
 
          return $this->sendRequest($request);
     }
+
+
 
 
     /**

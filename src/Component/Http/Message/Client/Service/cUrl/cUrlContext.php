@@ -45,10 +45,11 @@ class cUrlContext implements \ArrayAccess
 
 
 
+
      /**
       * @return array
      */
-     public function getQuery(): array
+     public function getQueries(): array
      {
          return $this->getOption('query', []);
      }

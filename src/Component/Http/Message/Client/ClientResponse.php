@@ -2,12 +2,21 @@
 namespace Laventure\Component\Http\Message\Client;
 
 
+/**
+ * @ClientResponse
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Http\Message\Client
+*/
 class ClientResponse implements ClientResponseInterface
 {
 
     /**
      * @var string|null
-     */
+    */
     protected ?string $body;
 
 

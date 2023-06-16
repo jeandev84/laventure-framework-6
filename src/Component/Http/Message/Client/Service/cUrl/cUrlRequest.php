@@ -3,6 +3,7 @@ namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
 
 use Laventure\Component\Http\Message\Client\ClientRequest;
+use Laventure\Component\Http\Message\Client\ClientResponseInterface;
 use Laventure\Component\Http\Message\Client\Service\Stream\Stream;
 
 
@@ -16,7 +17,7 @@ use Laventure\Component\Http\Message\Client\Service\Stream\Stream;
  *
  * @package Laventure\Component\Http\Message\Client\Service\cUrl
 */
-class cUrlRequest extends ClientRequest
+class cUrlRequest extends ClientRequest implements cUrlRequestInterface
 {
 
 
@@ -67,13 +68,6 @@ class cUrlRequest extends ClientRequest
      /**
       * @var array
      */
-     protected $queries = [];
-
-
-
-     /**
-      * @var array
-     */
      protected $headers = [];
 
 
@@ -112,13 +106,6 @@ class cUrlRequest extends ClientRequest
 
 
 
-     /**
-      * @var array
-     */
-     protected $options = [];
-
-
-
 
      /**
       * @param string|null $url
@@ -138,7 +125,7 @@ class cUrlRequest extends ClientRequest
      public function init(string $url = null): static
      {
          $this->ch = curl_init($url);
-         $this->options([
+         $this->setOptions([
              CURLOPT_RETURNTRANSFER => true,
              CURLOPT_SSL_VERIFYPEER => false,
              CURLOPT_HEADER => false
@@ -164,7 +151,7 @@ class cUrlRequest extends ClientRequest
 
           $this->proxy($url);
 
-          $this->option(CURLOPT_URL, $this->url);
+          $this->setOption(CURLOPT_URL, $this->url);
 
           return $this;
      }
@@ -183,7 +170,7 @@ class cUrlRequest extends ClientRequest
               return $this;
           }
 
-          return $this->options([
+          return $this->setOptions([
               CURLOPT_TIMEOUT => 400,
               CURLOPT_PROXY   => $proxy
           ]);
@@ -204,7 +191,7 @@ class cUrlRequest extends ClientRequest
 
           $credentials = join(":", array_values($credentials));
 
-          return $this->option(CURLOPT_USERPWD, $credentials);
+          return $this->setOption(CURLOPT_USERPWD, $credentials);
      }
 
 
@@ -236,7 +223,7 @@ class cUrlRequest extends ClientRequest
             return $this;
         }
 
-        $this->options([
+        $this->setOptions([
             CURLOPT_USERAGENT => $parameters['name'],
             CURLOPT_HEADER    => true
         ]);
@@ -348,7 +335,7 @@ class cUrlRequest extends ClientRequest
 
          $this->headers = array_merge($this->headers, $headers);
 
-         return $this->option(CURLOPT_HTTPHEADER, $this->headers);
+         return $this->setOption(CURLOPT_HTTPHEADER, $this->headers);
      }
 
 
@@ -362,7 +349,7 @@ class cUrlRequest extends ClientRequest
      */
      public function cookies(array $cookies): static
      {
-          $this->option(CURLOPT_COOKIE, $this->buildQuery($cookies));
+          $this->setOption(CURLOPT_COOKIE, $this->buildQueryParams($cookies));
 
           $this->cookies = $cookies;
 
@@ -379,7 +366,7 @@ class cUrlRequest extends ClientRequest
      */
      public function cookieJar(string $path): static
      {
-          return $this->options([
+          return $this->setOptions([
               CURLOPT_COOKIEFILE => $path,
               CURLOPT_COOKIEJAR  => $path
           ]);
@@ -448,13 +435,11 @@ class cUrlRequest extends ClientRequest
       *
       * @return $this
      */
-     public function option($key, $value): static
+     public function setOption($key, $value): static
      {
           curl_setopt($this->ch, $key, $value);
 
-          $this->options[$key] = $value;
-
-          return $this;
+          return parent::setOption($key, $value);
      }
 
 
@@ -465,14 +450,13 @@ class cUrlRequest extends ClientRequest
       *
       * @return $this
      */
-     public function options(array $options): static
+     public function setOptions(array $options): static
      {
           curl_setopt_array($this->ch, $options);
 
-          $this->options = array_merge($this->options, $options);
-
-          return $this;
+          return parent::setOptions($options);
      }
+
 
 
 
@@ -491,7 +475,7 @@ class cUrlRequest extends ClientRequest
           $context = new cUrlContext($context);
           $request = new static();
           $request->method($method);
-          $request->url($url, $context->getQuery());
+          $request->url($url, $context->getQueries());
           $request->proxy($context->getProxy());
           $request->auth($context->getAuth());
           $request->oAuth($context->getAccessToken());
@@ -506,10 +490,12 @@ class cUrlRequest extends ClientRequest
 
 
 
+
+
      /**
-      * @return cUrlResponse
+      * @inheritdoc
      */
-     public function send(): cUrlResponse
+     public function send(): ClientResponseInterface
      {
          $this->terminateOptions();
 
@@ -528,6 +514,41 @@ class cUrlRequest extends ClientRequest
          $response->downloadBody($this->downloadFile);
          return $response;
      }
+
+
+
+
+
+     /**
+      * @return bool|string
+     */
+     public function exec(): bool|string
+     {
+        return curl_exec($this->ch);
+     }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function error()
+    {
+        // TODO: Implement error() method.
+    }
+
+
+
+
+
+    /**
+     * @return void
+     */
+    public function close(): void
+    {
+        curl_close($this->ch);
+    }
 
 
 
@@ -581,7 +602,7 @@ class cUrlRequest extends ClientRequest
     /**
      * @return array
      */
-    public function getHeaders(): array
+    public function getAllHeaders(): array
     {
         return $this->headers;
     }
@@ -708,67 +729,20 @@ class cUrlRequest extends ClientRequest
 
 
 
-    /**
-     * @return bool|string
-    */
-    private function exec(): bool|string
-    {
-        return curl_exec($this->ch);
-    }
-
-
-
-
-    /**
-     * @return void
-    */
-    private function close(): void
-    {
-        curl_close($this->ch);
-    }
-
-
-
-    /**
-     * @param $response
-     *
-     * @return string
-    */
-    private function getResponseWithoutHeaders($response): string
-    {
-        if (! is_string($response)) {
-            return "";
-        }
-
-        return substr($response, $this->getHeaderSize());
-    }
-
-
-
 
     /**
      * @return array
     */
     public function getResponseHeaders(): array
     {
-         $this->options([CURLOPT_HEADER => true, CURLOPT_NOBODY => true]);
+         $this->setOptions([CURLOPT_HEADER => true, CURLOPT_NOBODY => true]);
 
          $response = $this->exec();
 
          $headersRows = explode(PHP_EOL, $response);
          $headersRows = array_filter($headersRows, 'trim');
 
-         $headers = [];
-
-         foreach ($headersRows as $headersRow) {
-              $position = stripos($headersRow, ':');
-              if ($position !== false) {
-                  list($key, $value) = explode(':', $headersRow);
-                  $headers[$key] = trim($value);
-              }
-         }
-
-         return $headers;
+         return $this->filterHeaders($headersRows);
     }
 
 
@@ -781,12 +755,12 @@ class cUrlRequest extends ClientRequest
     private function terminateOptions(): void
     {
         if (in_array($this->method, ['GET', 'HEAD'])) {
-            $this->option(CURLOPT_HEADER, false);
+            $this->setOption(CURLOPT_HEADER, false);
         } elseif (in_array($this->method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
             if ($this->method === 'PUT' && $this->uploadedFile) {
                 $this->setUploadedFileOptionsMethodPUT();
             } else {
-                $this->option(CURLOPT_POSTFIELDS, $this->getPostFields());
+                $this->setOption(CURLOPT_POSTFIELDS, $this->getPostFields());
             }
         }
     }
@@ -843,12 +817,12 @@ class cUrlRequest extends ClientRequest
 
         switch ($method):
             case 'POST':
-                $this->option(CURLOPT_POST, 1);
+                $this->setOption(CURLOPT_POST, 1);
                 break;
             case 'PUT':
             case 'PATCH':
             case 'DELETE':
-                $this->option(CURLOPT_CUSTOMREQUEST, $method);
+                $this->setOption(CURLOPT_CUSTOMREQUEST, $method);
                 break;
         endswitch;
 
@@ -881,11 +855,12 @@ class cUrlRequest extends ClientRequest
     */
     private function setUploadedFileOptionsMethodPUT(): void
     {
-        $this->options([
+        $this->setOptions([
             CURLOPT_PUT => 1,
             CURLOPT_UPLOAD => 1,
             CURLOPT_INFILESIZE => $this->uploadedFile->getSize(),
             CURLOPT_INFILE     => $this->uploadedFile->getResource()
         ]);
     }
+
 }
