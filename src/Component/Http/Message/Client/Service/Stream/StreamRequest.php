@@ -1,41 +1,15 @@
 <?php
 namespace Laventure\Component\Http\Message\Client\Service\Stream;
 
+use Laventure\Component\Http\Message\Client\ClientRequest;
+use Laventure\Component\Http\Message\Client\ClientResponseInterface;
+use Laventure\Component\Http\Message\Client\Service\Stream\Option\StreamFtpOption;
+use Laventure\Component\Http\Message\Client\Service\Stream\Option\StreamHttpOption;
 use Laventure\Component\Http\Message\Client\Service\Stream\Option\StreamOptionInterface;
 
-class StreamRequest
+
+class StreamRequest extends ClientRequest
 {
-
-
-    /**
-     * @var string|null
-    */
-    protected ?string $url;
-
-
-
-    /**
-     * @var array
-    */
-    protected $options = [];
-
-
-
-    /**
-     * @param string $url
-     *
-     * @return $this
-    */
-    public function url(string $url): static
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
-
-
-
 
     /**
      * @param StreamOptionInterface $option
@@ -75,6 +49,10 @@ class StreamRequest
     */
     public function send(): StreamResponse
     {
+         if (! $this->url) {
+              return new StreamResponse();
+         }
+
          $stream     = $this->create();
          $content    = $stream->getContents();
          $headers    = $this->getResponseHeaders();
@@ -103,47 +81,19 @@ class StreamRequest
 
 
 
+
     /**
-     * @param string $url
-     *
-     * @param StreamOptionInterface[] $options
-     *
-     * @return StreamResponse
+     * @inheritDoc
     */
-    public function request(string $url, array $options = []): StreamResponse
+    public function request(string $method, string $url, array $context = []): ClientResponseInterface
     {
         $request = new static();
         $request->url($url);
-        $request->addOptions($options);
+        $request->addHttpOptions($method, $context)
+                ->addFtpOptions($context);
+
         return $request->send();
     }
-
-
-
-
-
-
-    /**
-     * @return array
-    */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-
-
-
-
-
-    /**
-     * @return string|null
-    */
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
 
 
 
@@ -169,44 +119,6 @@ class StreamRequest
 
 
 
-
-    /**
-     * @return array
-    */
-    public function getHeaders(): array
-    {
-         if(! $headers = get_headers($this->url)) {
-             return [];
-         }
-
-         return $headers;
-    }
-
-
-
-
-
-    /**
-     * @return array
-    */
-    public function getHeadersInfo(): array
-    {
-         $responseHeader = $this->getHeaders()[0];
-
-         /*
-         $responseHeader = $this->getHeaders()[0];
-         $version      = substr($responseHeader, 0, 8);
-         $statusCode   = substr($responseHeader, 9, 3);
-         $message      = substr($responseHeader, 13);
-         return [$version, $statusCode, $message];
-         */
-
-         return explode(' ', $responseHeader, 3);
-    }
-
-
-
-
     /**
      * @param resource $context
      *
@@ -218,4 +130,41 @@ class StreamRequest
         return substr($http_response_header[0], 9, 3);
     }
 
+
+
+
+    /**
+     * @param string $method
+     * @param array $options
+     *
+     * @return $this
+     */
+    private function addHttpOptions(string $method, array $options): static
+    {
+        if (isset($options['http'])) {
+
+            $context = $options['http'];
+            $context['method'] = $method;
+
+            $this->addOption(StreamHttpOption::createFromArray($context));
+        }
+
+        return $this;
+    }
+
+
+
+    /**
+     * @param array $options
+     *
+     * @return $this
+    */
+    private function addFtpOptions(array $options): static
+    {
+         if (isset($options['ftp'])) {
+               $this->addOption(StreamFtpOption::createFromArray($options['ftp']));
+         }
+
+         return $this;
+    }
 }

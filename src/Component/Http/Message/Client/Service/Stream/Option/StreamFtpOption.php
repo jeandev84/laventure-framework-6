@@ -54,4 +54,17 @@ class StreamFtpOption implements StreamOptionInterface
             ]
          ];
      }
+
+
+
+
+     /**
+      * @param array $data
+      *
+      * @return static
+     */
+     public static function createFromArray(array $data): static
+     {
+         return new static($data['proxy'] ?? '', $data['uri'] ?? '', $data['header'] ?? []);
+     }
 }

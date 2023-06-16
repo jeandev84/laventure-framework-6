@@ -25,6 +25,7 @@ class StreamHttpOption implements StreamOptionInterface
     protected $headers = [];
 
 
+
     /**
      * @var array
     */
@@ -161,5 +162,19 @@ class StreamHttpOption implements StreamOptionInterface
                  'content' => http_build_query($this->body)
              ]
          ];
+    }
+
+
+
+    /**
+     * @param array $data
+     *
+     * @return static
+    */
+    public static function createFromArray(array $data): static
+    {
+         $option = new static($data['method'] ?? 'GET', $data['body'] ?? [], $data['headers'] ?? []);
+         $option->cookies($data['cookies'] ?? []);
+         return $option;
     }
 }

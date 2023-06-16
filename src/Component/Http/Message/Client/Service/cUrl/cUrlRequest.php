@@ -2,7 +2,10 @@
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
 
+use Laventure\Component\Http\Message\Client\ClientRequest;
 use Laventure\Component\Http\Message\Client\Service\Stream\Stream;
+
+
 
 /**
  * @cUrlRequest
@@ -13,7 +16,7 @@ use Laventure\Component\Http\Message\Client\Service\Stream\Stream;
  *
  * @package Laventure\Component\Http\Message\Client\Service\cUrl
 */
-class cUrlRequest
+class cUrlRequest extends ClientRequest
 {
 
 
@@ -21,20 +24,6 @@ class cUrlRequest
      * @var \CurlHandle|false
     */
     protected $ch;
-
-
-
-    /**
-      * @var string|null
-     */
-     protected ?string $url;
-
-
-
-     /**
-      * @var string|null
-     */
-     protected ?string $method;
 
 
 
@@ -171,12 +160,7 @@ class cUrlRequest
      */
      public function url(string $url, array $queries = []): static
      {
-          $this->url     = $url;
-          $this->queries = $queries;
-
-          if ($queries) {
-              $this->url .= '?'. $this->buildQuery($queries);
-          }
+          parent::url($url, $queries);
 
           $this->proxy($url);
 
@@ -195,7 +179,7 @@ class cUrlRequest
      */
      public function proxy(string $proxy): static
      {
-          if (stripos($proxy, ':') === false) {
+          if (! $this->isProxy($proxy)) {
               return $this;
           }
 
@@ -204,6 +188,8 @@ class cUrlRequest
               CURLOPT_PROXY   => $proxy
           ]);
      }
+
+
 
 
      /**
@@ -223,6 +209,8 @@ class cUrlRequest
 
 
 
+
+
      /**
       * @param string $token
       * @return $this
@@ -233,6 +221,8 @@ class cUrlRequest
               "Authorization: $token"
           ]);
      }
+
+
 
 
     /**
@@ -268,9 +258,7 @@ class cUrlRequest
      */
      public function method(string $method): static
      {
-          $this->method = $this->resolveMethod($method);
-
-          return $this;
+         return parent::method($this->resolveMethod($method));
      }
 
 
@@ -655,25 +643,6 @@ class cUrlRequest
 
 
 
-    /**
-     * @return string|null
-    */
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-
-
-    /**
-     * @return array
-    */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-
 
     /**
      * @return array
@@ -712,6 +681,7 @@ class cUrlRequest
 
 
 
+
     /**
      * @return Stream
     */
@@ -719,6 +689,8 @@ class cUrlRequest
     {
         return $this->downloadFile;
     }
+
+
 
 
     /**
@@ -757,39 +729,6 @@ class cUrlRequest
 
 
 
-
-    /**
-     * @param array $parameters
-     *
-     * @return string
-    */
-    private function buildQuery(array $parameters): string
-    {
-        return http_build_query($parameters, '', '&');
-    }
-
-
-
-
-    /**
-     * @param array $headers
-     *
-     * @return array
-    */
-    private function resolveHeaders(array $headers): array
-    {
-         $resolved = [];
-
-         foreach ($headers as $key => $value) {
-             $resolved[] = (is_string($key) ? "$key: $value" : $value);
-         }
-
-         return $resolved;
-    }
-
-
-
-
     /**
      * @param $response
      *
@@ -810,7 +749,7 @@ class cUrlRequest
     /**
      * @return array
     */
-    private function getResponseHeaders(): array
+    public function getResponseHeaders(): array
     {
          $this->options([CURLOPT_HEADER => true, CURLOPT_NOBODY => true]);
 

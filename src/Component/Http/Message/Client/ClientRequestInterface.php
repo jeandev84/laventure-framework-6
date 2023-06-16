@@ -3,10 +3,14 @@ namespace Laventure\Component\Http\Message\Client;
 
 interface ClientRequestInterface
 {
-     /**
-      * Returns client request url
-      *
-      * @return string|null
-     */
-     public function getUrl(): ?string;
+    /**
+     * @param string $method
+     *
+     * @param string $url
+     *
+     * @param array $context
+     *
+     * @return ClientResponseInterface
+    */
+    public function request(string $method, string $url, array $context = []): ClientResponseInterface;
 }
