@@ -77,9 +77,14 @@ class StreamRequest
     {
          $stream     = $this->create();
          $content    = $stream->getContents();
-         $statusCode = 200;
-         $headers    = $this->getHeaders();
-         return new StreamResponse($content, $statusCode, $headers);
+         $headers    = $this->getResponseHeaders();
+         [$version, $statusCode, $message] = $this->getHeadersInfo();
+
+         $response =  new StreamResponse($content, $statusCode, $headers);
+         $response->setProtocolVersion($version);
+         $response->setReasonPhrase($message);
+
+         return $response;
     }
 
 
@@ -145,9 +150,9 @@ class StreamRequest
     /**
      * @return array
     */
-    public function getHeaders(): array
+    public function getResponseHeaders(): array
     {
-         $headersRows = get_headers($this->url);
+         $headersRows = $this->getHeaders();
 
          $headers = [];
 
@@ -160,4 +165,57 @@ class StreamRequest
 
          return $headers;
     }
+
+
+
+
+
+    /**
+     * @return array
+    */
+    public function getHeaders(): array
+    {
+         if(! $headers = get_headers($this->url)) {
+             return [];
+         }
+
+         return $headers;
+    }
+
+
+
+
+
+    /**
+     * @return array
+    */
+    public function getHeadersInfo(): array
+    {
+         $responseHeader = $this->getHeaders()[0];
+
+         /*
+         $responseHeader = $this->getHeaders()[0];
+         $version      = substr($responseHeader, 0, 8);
+         $statusCode   = substr($responseHeader, 9, 3);
+         $message      = substr($responseHeader, 13);
+         return [$version, $statusCode, $message];
+         */
+
+         return explode(' ', $responseHeader, 3);
+    }
+
+
+
+
+    /**
+     * @param resource $context
+     *
+     * @return int
+    */
+    private function getResponseStatusCode($context): int
+    {
+        file_get_contents($this->url, false, $context);
+        return substr($http_response_header[0], 9, 3);
+    }
+
 }

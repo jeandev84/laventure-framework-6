@@ -61,10 +61,26 @@ class Stream implements StreamInterface
 
 
 
+
     /**
-     * @var int
+     * @var string|null
     */
-    protected int $filesize;
+    protected ?string $accessMode;
+
+
+
+    /**
+     * @var bool|null
+    */
+    protected ?bool $includePath = false;
+
+
+
+    /**
+     * @var resource|null
+    */
+    protected $context;
+
 
 
 
@@ -80,8 +96,9 @@ class Stream implements StreamInterface
      */
     public function __construct($resource, string $accessMode = null, bool $includePath = false, $context = null)
     {
-          $this->open($resource, $accessMode, $includePath, $context);
+        $this->open($resource, $accessMode, $includePath, $context);
     }
+
 
 
 
@@ -95,15 +112,21 @@ class Stream implements StreamInterface
      *
      * @param null $context
      *
-     * @return void
+     * @return $this
     */
-    public function open($resource, string $accessMode = null, bool $includePath = false, $context = null): void
+    public function open($resource, string $accessMode = null, bool $includePath = false, $context = null): static
     {
           if (is_string($resource)) {
+              $this->setPath($resource);
+              $this->setAccessMode($accessMode);
+              $this->setIncludePath($includePath);
+              $this->setContext($context);
               $resource = fopen($resource, $accessMode, $includePath, $context);
           }
 
-          $this->set($resource);
+          $this->setResource($resource);
+
+          return $this;
     }
 
 
@@ -114,7 +137,7 @@ class Stream implements StreamInterface
      *
      * @return $this
     */
-    public function set($stream): static
+    public function setResource($stream): static
     {
         if (! $this->valid($stream)) {
             throw new InvalidArgumentException('Invalid stream provided. must be string or resource stream type provided.');
@@ -124,6 +147,70 @@ class Stream implements StreamInterface
 
         return $this;
     }
+
+
+
+
+
+
+    /**
+     * @param string|null $path
+     *
+     * @return $this
+    */
+    public function setPath(?string $path): static
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @param string|null $accessMode
+     *
+     * @return $this
+    */
+    public function setAccessMode(?string $accessMode): static
+    {
+        $this->accessMode = $accessMode;
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @param bool|null $includePath
+     *
+     * @return $this
+    */
+    public function setIncludePath(?bool $includePath): static
+    {
+        $this->includePath = $includePath;
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @param resource|null $context
+     *
+     * @return $this
+    */
+    public function setContext($context): static
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+
 
 
 
@@ -193,6 +280,44 @@ class Stream implements StreamInterface
     }
 
 
+    /**
+     * @return string|null
+     */
+    public function getAccessMode(): ?string
+    {
+        return $this->accessMode;
+    }
+
+
+    /**
+     * @return resource|null
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+
+    /**
+     * @return bool|null
+     */
+    public function getIncludePath(): ?bool
+    {
+        return $this->includePath;
+    }
+
+
+
+
+    /**
+     * @return string
+    */
+    public function getLength(): string
+    {
+        return $this->length;
+    }
+
+
 
 
     /**
@@ -200,8 +325,8 @@ class Stream implements StreamInterface
     */
     public function getSize(): int
     {
-        if ($this->filesize) {
-            return $this->filesize;
+        if (is_file($this->path)) {
+            return filesize($this->path);
         }
 
         return fstat($this->stream)['size'];
@@ -220,17 +345,15 @@ class Stream implements StreamInterface
 
 
 
+
     /**
      * @return bool
     */
-    public function isFile(): bool
+    public function isFromFile(): bool
     {
-        if (! $this->path) {
-            return false;
-        }
-
         return is_file($this->path);
     }
+
 
 
 
@@ -377,6 +500,20 @@ class Stream implements StreamInterface
 
 
     /**
+     * @param string $filename
+     *
+     * @return false|string
+    */
+    public function getContent(string $filename): bool|string
+    {
+         return file_get_contents($filename, false, $this->context);
+    }
+
+
+
+
+
+    /**
      * @inheritDoc
     */
     public function getMetadata($key = null)
@@ -391,18 +528,13 @@ class Stream implements StreamInterface
 
 
     /**
-     * @return mixed
+     * @return resource
     */
     public function getResource(): mixed
     {
-        if (! $this->stream) {
-            (function () {
-               throw new StreamException("empty stream.");
-            })();
-        }
-
         return $this->stream;
     }
+
 
 
 
@@ -500,11 +632,7 @@ class Stream implements StreamInterface
             return false;
         }
 
-        $stream           = new static($filename, $accessMode);
-        $stream->path     = $filename;
-        $stream->filesize = filesize($filename);
-
-        return $stream;
+        return new static($filename, $accessMode);
     }
 
 
@@ -536,9 +664,22 @@ class Stream implements StreamInterface
     */
     public static function createFromContext(string $path, string $accessMode = 'r', array $options = []): static
     {
-         $context = StreamContext::create($options);
+         return new static($path, $accessMode, false, static::createContext($options));
+    }
 
-         return new static($path, $accessMode, false, $context);
+
+
+
+
+
+    /**
+     * @param array $options
+     *
+     * @return resource
+    */
+    public static function createContext(array $options = [])
+    {
+        return stream_context_create($options);
     }
 
 
