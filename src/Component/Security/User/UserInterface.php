@@ -17,13 +17,6 @@ interface UserInterface
      const ROLE_USER = 'ROLE_USER';
 
 
-     /**
-      * Return user id
-      *
-      * @return mixed
-     */
-     public function getId(): mixed;
-
 
 
 
