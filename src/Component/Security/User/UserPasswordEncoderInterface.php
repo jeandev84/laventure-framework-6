@@ -38,4 +38,16 @@ interface UserPasswordEncoderInterface
        * @return bool
       */
       public function isPasswordValid(UserInterface $user, string $plainPassword): bool;
+
+
+
+
+
+
+      /**
+       * @param UserInterface $user
+       *
+       * @return mixed
+      */
+      public function needsRehash(UserInterface $user);
 }

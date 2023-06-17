@@ -29,6 +29,18 @@ interface PasswordEncoderInterface
 
 
 
+
+     /**
+      * @param string $hash
+      *
+      * @return bool
+     */
+     public function needsRehash(string $hash): bool;
+
+
+
+
+
      /**
       * @return string
      */

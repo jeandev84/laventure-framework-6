@@ -23,9 +23,9 @@ interface AuthenticationInterface
       *
       * @param bool $rememberMe
       *
-      * @return mixed
+      * @return bool
      */
-     public function attempt(string $username, string $password, bool $rememberMe = false);
+     public function attempt(string $username, string $password, bool $rememberMe = false): bool;
 
 
 
@@ -35,4 +35,17 @@ interface AuthenticationInterface
       * @return UserInterface
      */
      public function getUser(): UserInterface;
+
+
+
+
+
+
+
+     /**
+      * Login out user
+      *
+      * @return bool
+     */
+     public function logout(): bool;
 }

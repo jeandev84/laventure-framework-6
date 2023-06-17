@@ -69,14 +69,25 @@ class Auth implements AuthenticationInterface
          // check if user by username
          $user = $this->provider->findByUsername($username);
 
-         // verify if user password match user password from database
-         if($user && ! $this->encoder->isPasswordValid($user, $password)) {
+         // if not user and has not valid credentials
+         if(! $user || ! $this->encoder->isPasswordValid($user, $password)) {
               return false;
          }
 
 
-         // store user token
-         $this->storage->setUser($user);
+         // rehash user password
+         if ($this->encoder->needsRehash($user)) {
+
+         }
+
+         // save user in session
+         $this->storage->setUserSession($user);
+
+
+         // save remember token if user has been remembered
+         if ($rememberMe) {
+             $this->storage->setRememberToken($user);
+         }
 
          return true;
     }
@@ -91,5 +102,17 @@ class Auth implements AuthenticationInterface
     public function getUser(): UserInterface
     {
         return $this->storage->getUser();
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function logout(): bool
+    {
+        return $this->storage->clearUserSession();
     }
 }

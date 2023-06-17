@@ -16,21 +16,37 @@ class PasswordEncoder implements PasswordEncoderInterface
 
 
     /**
+     * @var string
+    */
+    protected $name;
+
+
+
+    /**
+     * @var array
+    */
+    protected $algos = [
+        'default' => PASSWORD_DEFAULT,
+        'bcrypt'  => PASSWORD_BCRYPT
+    ];
+
+
+
+
+    /**
      * @var array
     */
     protected $options = [];
 
 
 
+
     /**
      * @param string $algo
-     *
-     * @param int $cost
     */
-    public function __construct(string $algo = 'default', int $cost = 0)
+    public function __construct(string $algo = 'default')
     {
          $this->algo($algo);
-         $this->cost($cost);
     }
 
 
@@ -38,16 +54,23 @@ class PasswordEncoder implements PasswordEncoderInterface
 
 
     /**
-     * @param string $algo
+     * @param string $name
      *
      * @return $this
     */
-    public function algo(string $algo): static
+    public function algo(string $name): static
     {
-        $this->algo = $this->resolvePasswordAlgo($algo);
+        if (! array_key_exists($name, $this->algos)) {
+            throw new InvalidPasswordAlgoException($name);
+        }
+
+        $this->algo = $this->algos[$name];
+        $this->name = $name;
 
         return $this;
     }
+
+
 
 
 
@@ -104,8 +127,13 @@ class PasswordEncoder implements PasswordEncoderInterface
     {
          $this->salt($salt ?: '');
 
-         return password_hash($plainPassword, $this->algo, $this->options);
+         if(! $hash = password_hash($plainPassword, $this->algo, $this->options)) {
+              throw new \RuntimeException(ucfirst($this->name) . " not supported.");
+         }
+
+         return $hash;
     }
+
 
 
 
@@ -113,10 +141,21 @@ class PasswordEncoder implements PasswordEncoderInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function isPasswordValid(string $plainPassword, string $hash): bool
     {
         return password_verify($plainPassword, $hash);
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function needsRehash(string $hash): bool
+    {
+        return password_needs_rehash($hash, $this->algo, $this->options);
     }
 
 
@@ -152,12 +191,15 @@ class PasswordEncoder implements PasswordEncoderInterface
     /**
      * @param string $name
      *
-     * @return void
+     * @return $this
     */
-    public function removeOption(string $name)
+    public function removeOption(string $name): static
     {
          unset($this->options[$name]);
+
+         return $this;
     }
+
 
 
 
@@ -173,6 +215,8 @@ class PasswordEncoder implements PasswordEncoderInterface
 
 
 
+
+
     /**
      * @return string
     */
@@ -184,29 +228,13 @@ class PasswordEncoder implements PasswordEncoderInterface
 
 
 
+
+
     /**
      * @return array
     */
     public function getOptions(): array
     {
         return $this->options;
-    }
-
-
-
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     *
-     * @throws InvalidPasswordAlgoException
-    */
-    private function resolvePasswordAlgo(string $name): mixed
-    {
-        return [
-           'default' => PASSWORD_DEFAULT,
-           'bcrypt'  => PASSWORD_BCRYPT
-        ][$name] ?? throw new InvalidPasswordAlgoException($name);
     }
 }
