@@ -3,8 +3,6 @@ namespace Laventure\Component\Message\Http\Storage\Cookie;
 
 
 
-use Laventure\Component\Message\Http\Storage\StorageInterface;
-
 /**
  * @CookieInterface
  *
@@ -19,61 +17,75 @@ use Laventure\Component\Message\Http\Storage\StorageInterface;
 interface CookieInterface
 {
 
-
-     /**
-      * Set cookie request path
-      *
-      * @param string $path
-      *
-      * @return $this
+    /**
+     * Set cookie request path
+     *
+     * @param string $path
+     *
+     * @return $this
      */
-     public function path(string $path): static;
+    public function path(string $path): static;
 
 
 
 
-     /**
-      * Set cookie domain
-      *
-      * @param string $domain
-      *
-      * @return $this
+    /**
+     * Set cookie domain
+     *
+     * @param string $domain
+     *
+     * @return $this
      */
-     public function domain(string $domain): static;
+    public function domain(string $domain): static;
 
 
 
 
 
-     /**
-      * @param bool $secure
-      *
-      * @return $this
+    /**
+     * @param bool $secure
+     *
+     * @return $this
      */
-     public function secure(bool $secure): static;
+    public function secure(bool $secure): static;
 
 
 
 
-     /**
-      * @param bool $httpOnly
-      *
-      * @return $this
+
+    /**
+     * @param bool $httpOnly
+     *
+     * @return $this
      */
-     public function httpOnly(bool $httpOnly): static;
+    public function httpOnly(bool $httpOnly): static;
 
 
 
-     /**
-      * Set cookie
-      *
-      * @param string $name
-      *
-      * @param $value
-      *
-      * @param int $expireAfter
-      *
-      * @return void
-     */
-     public function set(string $name, $value, int $expireAfter = 3600): void;
+
+
+    /**
+     * Set cookie
+     *
+     * @param string $name
+     *
+     * @param $value
+     *
+     * @param int $expireAfter
+     *
+     * @return void
+    */
+    public function set(string $name, $value, int $expireAfter = 3600): void;
+
+
+
+
+
+
+    /**
+     * @param string $name
+     *
+     * @return mixed
+    */
+    public function clear(string $name);
 }
