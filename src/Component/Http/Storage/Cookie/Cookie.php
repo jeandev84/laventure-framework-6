@@ -33,7 +33,7 @@ class Cookie implements CookieInterface
     /**
      * @var bool
     */
-    protected bool $secure;
+    protected ?bool $secure = false;
 
 
 
@@ -41,7 +41,7 @@ class Cookie implements CookieInterface
     /**
      * @var bool
     */
-    protected bool $httpOnly;
+    protected ?bool $httpOnly = false;
 
 
 
@@ -61,7 +61,7 @@ class Cookie implements CookieInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function domain(string $domain): static
     {
         $this->domain = $domain;
@@ -103,7 +103,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritdoc
     */
-    public function set(string $name, $value, int $expireAfter = 0): static
+    public function set(string $name, string $value, int $expireAfter = 0): static
     {
          setcookie($name, $value, $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
 

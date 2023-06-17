@@ -69,11 +69,11 @@ interface CookieInterface
      *
      * @param string $name
      *
-     * @param $value
+     * @param string $value
      *
      * @param int $expireAfter
      *
      * @return mixed
     */
-    public function set(string $name, $value, int $expireAfter = 0): mixed;
+    public function set(string $name, string $value, int $expireAfter = 0): mixed;
 }

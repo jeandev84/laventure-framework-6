@@ -22,7 +22,7 @@ class CookieJar extends Cookie implements StorageInterface
     /**
      * @var array
     */
-    protected array $cookies = [];
+    protected array $params = [];
 
 
 
@@ -31,7 +31,7 @@ class CookieJar extends Cookie implements StorageInterface
     */
     public function __construct(array $cookies = [])
     {
-         $this->cookies = $cookies ?: $_COOKIE;
+         $this->params = $cookies ?: $_COOKIE;
     }
 
 
@@ -51,7 +51,7 @@ class CookieJar extends Cookie implements StorageInterface
     {
           parent::set($name, $value, time() + $expireAfter);
 
-          $this->cookies[$name] = $value;
+          $this->params[$name] = $value;
 
           return $this;
     }
@@ -68,7 +68,7 @@ class CookieJar extends Cookie implements StorageInterface
     {
         $this->set($key, '', time() - 3600);
 
-        unset($this->cookies[$key]);
+        unset($this->params[$key]);
 
         return ! $this->has($key);
     }
@@ -81,7 +81,7 @@ class CookieJar extends Cookie implements StorageInterface
     */
     public function has($key): bool
     {
-        return isset($this->cookies[$key]);
+        return isset($this->params[$key]);
     }
 
 
@@ -93,7 +93,7 @@ class CookieJar extends Cookie implements StorageInterface
     */
     public function get($key): ?string
     {
-        return $this->cookies[$key] ?? null;
+        return $this->params[$key] ?? null;
     }
 
 
@@ -107,7 +107,7 @@ class CookieJar extends Cookie implements StorageInterface
     */
     public function all(): array
     {
-        return $this->cookies;
+        return $this->params;
     }
 
 
@@ -135,7 +135,7 @@ class CookieJar extends Cookie implements StorageInterface
             $this->remove($name);
         }
 
-        return empty($this->cookies);
+        return empty($this->params);
     }
 
 
@@ -147,6 +147,6 @@ class CookieJar extends Cookie implements StorageInterface
     */
     private function getNames()
     {
-        return array_keys($this->cookies);
+        return array_keys($this->params);
     }
 }
