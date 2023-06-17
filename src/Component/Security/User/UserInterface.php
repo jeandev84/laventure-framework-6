@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Security\Authentication\User;
+namespace Laventure\Component\Security\User;
 
 
 /**
@@ -9,12 +9,22 @@ namespace Laventure\Component\Security\Authentication\User;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\Authentication\User
+ * @package Laventure\Component\Security\User
 */
 interface UserInterface
 {
 
      const ROLE_USER = 'ROLE_USER';
+
+
+     /**
+      * Return user id
+      *
+      * @return mixed
+     */
+     public function getId(): mixed;
+
+
 
 
      /**
@@ -49,4 +59,16 @@ interface UserInterface
      * Returns user roles
     */
     public function getRoles(): array;
+
+
+
+
+    /**
+     * Returns if user has given role
+     *
+     * @param string $role
+     *
+     * @return bool
+    */
+    public function hasRole(string $role): bool;
 }

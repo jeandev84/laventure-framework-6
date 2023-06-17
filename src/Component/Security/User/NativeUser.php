@@ -1,12 +1,23 @@
 <?php
-namespace Laventure\Component\Security\Authentication\User;
+namespace Laventure\Component\Security\Authentication\Database;
 
+use Laventure\Component\Security\User\UserInterface;
 
+/**
+ * @NativeUser
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Security\Authorization\Entity
+*/
 class NativeUser implements UserInterface
 {
+
     /**
      * @var int|null
-     */
+    */
     protected ?int $id;
 
 
@@ -138,11 +149,13 @@ class NativeUser implements UserInterface
 
     /**
      * @inheritDoc
-     */
+    */
     public function getSalt(): string
     {
         return sha1(uniqid($this->getUsername()));
     }
+
+
 
 
 
@@ -171,5 +184,16 @@ class NativeUser implements UserInterface
         $this->roles = array_merge($this->roles, (array)$role);
 
         return $this;
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function getId(): mixed
+    {
+        // TODO: Implement getId() method.
     }
 }
