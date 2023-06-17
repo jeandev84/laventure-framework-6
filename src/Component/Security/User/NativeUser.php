@@ -66,7 +66,7 @@ class NativeUser implements UserInterface
 
     public function getId(): ?int
     {
-        // TODO: Implement getId() method.
+        return $this->id;
     }
 
 
@@ -159,7 +159,7 @@ class NativeUser implements UserInterface
     */
     public function getSalt(): string
     {
-        return sha1(uniqid($this->getUsername()));
+        return '';
     }
 
 
@@ -191,5 +191,17 @@ class NativeUser implements UserInterface
         $this->roles = array_merge($this->roles, (array)$role);
 
         return $this;
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function hasRole(string $role): bool
+    {
+         return in_array($role, $this->roles);
     }
 }
