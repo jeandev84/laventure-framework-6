@@ -11,6 +11,18 @@ use Laventure\Component\Http\Message\Client\Service\Stream\Option\StreamOptionIn
 class StreamRequest extends ClientRequest
 {
 
+
+    /**
+     * @inheritDoc
+    */
+    public function getName(): string
+    {
+        return 'stream';
+    }
+
+
+
+
     /**
      * @param StreamOptionInterface $option
      *

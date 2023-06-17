@@ -18,14 +18,19 @@ class ClientRequestFactory
 {
 
       /**
-       * @param string $name
+       * Returns client request
+       *
+       * @param string|null $name
        *
        * @return ClientRequest
+       *
+       * @throws ClientException
       */
-      public static function create(string $name = ClientRequestType::CURL): ClientRequest
+      public static function create(string $name = null): ClientRequest
       {
-           return [
-               ClientRequestType::STREAM => new StreamRequest()
-           ][$name] ?? new cUrlRequest();
+          $collection = new ClientRequestCollection();
+          $collection->add(new cUrlRequest());
+          $collection->add(new StreamRequest());
+          return $collection->get($name ?: ClientRequestType::CURL);
       }
 }

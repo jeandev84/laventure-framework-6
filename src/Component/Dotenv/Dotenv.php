@@ -89,26 +89,47 @@ class Dotenv
 
     /**
      * @param string $env
-     * @return void
+     *
+     * @return $this
     */
-    public function put(string $env): void
+    public function put(string $env): static
     {
         if (preg_match('#^(?=[A-Z])(.*)=(.*)$#', $env, $matches)) {
-            $parameters = str_replace(' ', '', trim($matches[0]));
-            list($key, $value) = explode("=", $parameters, 2);
+
             putenv($env);
+
+            [$key, $value] = $this->resolveParams($matches);
+
             $_SERVER[$key] = $_ENV[$key] = $value;
         }
+
+        return $this;
     }
+
 
 
 
     /**
      * @param string $filename
      * @return string
-     */
+    */
     private function locateEnvironmentFile(string $filename): string
     {
         return $this->root . DIRECTORY_SEPARATOR . trim($filename, DIRECTORY_SEPARATOR);
+    }
+
+
+
+
+    /**
+     * @param array $matches
+     *
+     * @return string[]
+    */
+    private function resolveParams(array $matches): array
+    {
+        $parameters = str_replace(' ', '', trim($matches[0]));
+
+        return explode("=", $parameters, 2);
     }
 }

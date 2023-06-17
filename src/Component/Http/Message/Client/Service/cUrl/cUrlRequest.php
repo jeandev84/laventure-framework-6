@@ -117,7 +117,6 @@ class cUrlRequest extends ClientRequest implements cUrlRequestInterface
 
 
 
-
      /**
       * @param string|null $url
       * @return $this
@@ -542,6 +541,17 @@ class cUrlRequest extends ClientRequest implements cUrlRequestInterface
     public function close(): void
     {
         curl_close($this->ch);
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function getName(): string
+    {
+        return 'curl';
     }
 
 

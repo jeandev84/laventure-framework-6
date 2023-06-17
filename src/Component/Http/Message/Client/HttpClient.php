@@ -4,6 +4,7 @@ namespace Laventure\Component\Http\Message\Client;
 
 use Laventure\Component\Http\Message\Client\Contract\HttpClientInterface;
 use Laventure\Component\Http\Message\Client\Exception\ClientExceptionInterface;
+use Laventure\Component\Http\Message\Client\Service\cUrl\cUrlRequest;
 use Laventure\Component\Http\Message\Request\Contract\RequestInterface;
 use Laventure\Component\Http\Message\Request\Request;
 use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;
@@ -22,10 +23,9 @@ class HttpClient implements HttpClientInterface
 {
 
     /**
-     * @var string|null
+     * @var string
     */
-    protected ?string $name;
-
+    protected $name;
 
 
     /**
@@ -37,7 +37,7 @@ class HttpClient implements HttpClientInterface
 
     public function __construct()
     {
-        $this->use(ClientRequestType::CURL);
+          $this->use(ClientRequestType::CURL);
     }
 
 
@@ -56,12 +56,13 @@ class HttpClient implements HttpClientInterface
 
 
 
+
     /**
      * @param array $options
      *
      * @return $this
     */
-    public function addOptions(array $options): static
+    public function options(array $options): static
     {
          $this->options = $options;
 
@@ -100,7 +101,7 @@ class HttpClient implements HttpClientInterface
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-         return $this->addOptions($options)
+         return $this->options($options)
                      ->sendRequest(Request::create($url, $method));
     }
 

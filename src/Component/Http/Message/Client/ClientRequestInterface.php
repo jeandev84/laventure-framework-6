@@ -13,6 +13,16 @@ namespace Laventure\Component\Http\Message\Client;
 */
 interface ClientRequestInterface
 {
+
+    /**
+     * Returns client name
+     *
+     * @return string
+    */
+    public function getName(): string;
+
+
+
     /**
      * @param string $method
      *
