@@ -29,6 +29,8 @@ interface UserStorageInterface
 
 
       /**
+       * Save user token in cookie
+       *
        * @param UserInterface $user
        *
        * @return $this
@@ -36,6 +38,14 @@ interface UserStorageInterface
       public function setRememberToken(UserInterface $user): static;
 
 
+
+
+      /**
+       * Determine if has user in session
+       *
+       * @return bool
+      */
+      public function hasUserInSession(): bool;
 
 
 
@@ -46,8 +56,6 @@ interface UserStorageInterface
        * @return UserInterface
       */
       public function getUser(): UserInterface;
-
-
 
 
 
