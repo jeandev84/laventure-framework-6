@@ -18,11 +18,24 @@ interface UserInterface
 
 
 
+     /**
+      * @return int|null
+     */
+     public function getId(): ?int;
+
+
 
 
      /**
-      * Return username or email
+      * The public representation of the user (e.g. a username, an email address, etc.)
       *
+      * @return string
+     */
+     public function getUserIdentifier(): string;
+
+
+
+     /**
       * @return string|null
      */
      public function getUsername(): ?string;
@@ -31,9 +44,10 @@ interface UserInterface
 
 
      /**
-      * @return string|null
+      * @return string
      */
-     public function getPassword(): ?string;
+     public function getPassword(): string;
+
 
 
 
@@ -41,9 +55,9 @@ interface UserInterface
      /**
       * Returns salt for encoding user password
       *
-      * @return string
+      * @return string|null
      */
-     public function getSalt(): string;
+     public function getSalt(): ?string;
 
 
 
@@ -52,6 +66,21 @@ interface UserInterface
      * Returns user roles
     */
     public function getRoles(): array;
+
+
+
+
+    /**
+     * @return bool
+    */
+    public function isEnabled(): bool;
+
+
+
+    /**
+     * @return void
+    */
+    public function eraseCredentials(): void;
 
 
 

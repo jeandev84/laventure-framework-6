@@ -2,10 +2,10 @@
 namespace Laventure\Component\Security\Authentication;
 
 
-use Laventure\Component\Security\Authentication\User\UserStorageInterface;
 use Laventure\Component\Security\User\UserInterface;
 use Laventure\Component\Security\User\UserPasswordEncoderInterface;
 use Laventure\Component\Security\User\UserProviderInterface;
+use Laventure\Component\Security\User\UserStorageInterface;
 
 /**
  * @AuthenticationInterface
@@ -51,7 +51,11 @@ class Auth implements AuthenticationInterface
      *
      * @param UserStorageInterface $storage
     */
-    public function __construct(UserProviderInterface $provider, UserPasswordEncoderInterface $encoder, UserStorageInterface $storage)
+    public function __construct(
+        UserProviderInterface $provider,
+        UserPasswordEncoderInterface $encoder,
+        UserStorageInterface $storage
+    )
     {
          $this->provider = $provider;
          $this->encoder  = $encoder;
@@ -76,9 +80,12 @@ class Auth implements AuthenticationInterface
 
 
          // rehash user password
-         if ($this->encoder->needsRehash($user)) {
+         $rehashPassword = $this->encoder->encodePassword($user, $password);
 
+         if ($this->encoder->needsRehash($user)) {
+             $this->provider->updateUserPasswordHash($user, $rehashPassword);
          }
+
 
          // save user in session
          $this->storage->setUserSession($user);
@@ -86,7 +93,7 @@ class Auth implements AuthenticationInterface
 
          // save remember token if user has been remembered
          if ($rememberMe) {
-             $this->storage->setRememberToken($user);
+             $this->storage->setRememberToken($this->provider);
          }
 
          return true;
@@ -113,6 +120,6 @@ class Auth implements AuthenticationInterface
     */
     public function logout(): bool
     {
-        return $this->storage->clearUserSession();
+        return $this->storage->clear($this->provider);
     }
 }

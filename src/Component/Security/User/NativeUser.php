@@ -53,12 +53,9 @@ class NativeUser implements UserInterface
 
 
     /**
-     * @param array $roles
+     * @var bool
     */
-    public function __construct(array $roles = [])
-    {
-        $this->roles = $roles;
-    }
+    protected $enabled = false;
 
 
 
@@ -202,5 +199,39 @@ class NativeUser implements UserInterface
     public function hasRole(string $role): bool
     {
          return in_array($role, $this->roles);
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function eraseCredentials(): void
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function isEnabled(): bool
+    {
+        // TODO: Implement isEnabled() method.
     }
 }

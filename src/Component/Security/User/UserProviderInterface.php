@@ -38,13 +38,13 @@ interface UserProviderInterface
 
 
      /**
-      * @param int $id
+      * @param UserInterface $user
       *
       * @param string $hash
       *
       * @return mixed
      */
-     public function updatePasswordHash(int $id, string $hash);
+     public function updateUserPasswordHash(UserInterface $user, string $hash);
 
 
 
@@ -55,6 +55,8 @@ interface UserProviderInterface
       * @return mixed
      */
      public function findByRememberIdentifier($identifier);
+
+
 
 
 
@@ -70,14 +72,12 @@ interface UserProviderInterface
 
 
 
-    /**
-     * @param $id
-     *
-     * @param string $identifier
-     *
-     * @param string $hash
-     *
-     * @return mixed
+     /**
+      * @param string $identifier
+      *
+      * @param string $hash
+      *
+      * @return mixed
      */
-     public function setUserRememberToken($id, string $identifier, string $hash);
+     public function updateRememberToken($identifier, string $hash);
 }

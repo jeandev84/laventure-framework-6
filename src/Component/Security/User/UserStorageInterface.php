@@ -16,35 +16,12 @@ interface UserStorageInterface
 {
 
       /**
-       * Save user in session
-       *
-       * @param UserInterface $user
-       *
-       * @return static
-      */
-      public function setUserSession(UserInterface $user): static;
-
-
-
-
-      /**
-       * Save user token in cookie
-       *
-       * @param UserInterface $user
-       *
-       * @return $this
-      */
-      public function setRememberToken(UserInterface $user): static;
-
-
-
-
-      /**
        * Determine if has user in session
        *
        * @return bool
       */
       public function hasUserInSession(): bool;
+
 
 
 
@@ -61,7 +38,33 @@ interface UserStorageInterface
 
 
       /**
-       * @return mixed
+       * Save user in session
+       *
+       * @param UserInterface $user
+       *
+       * @return static
       */
-      public function clearUserSession();
+      public function setUserSession(UserInterface $user): static;
+
+
+
+
+
+      /**
+       * Save user token in cookie
+       *
+       * @param UserProviderInterface $provider
+       * @return $this
+      */
+      public function setRememberToken(UserProviderInterface $provider): static;
+
+
+
+
+      /**
+       * @param UserProviderInterface $provider
+       *
+       * @return bool
+      */
+      public function clear(UserProviderInterface $provider): bool;
 }

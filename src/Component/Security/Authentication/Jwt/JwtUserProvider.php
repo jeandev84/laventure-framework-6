@@ -26,7 +26,7 @@ class JwtUserProvider implements UserProviderInterface
     /**
      * @inheritDoc
      */
-    public function updatePasswordHash(int $id, string $hash)
+    public function updateUserPasswordHash(int $id, string $hash)
     {
         // TODO: Implement updatePasswordHash() method.
     }
