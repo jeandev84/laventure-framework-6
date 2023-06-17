@@ -4,7 +4,7 @@ namespace Laventure\Component\Http\Message\Middleware;
 use Laventure\Component\Http\Message\Request\Contract\ServerRequestInterface;
 use Laventure\Component\Http\Server\RequestHandlerInterface;
 
-class QueueRequestHandlerAdapter implements MiddlewareHandlerAdapterInterface
+class QueueRequestHandlerAdapter implements MiddlewareHandlerAdapter
 {
 
     /**

@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Security\Jwt;
+namespace Laventure\Component\Security\Authentication\Jwt;
 
 class JwtToken
 {

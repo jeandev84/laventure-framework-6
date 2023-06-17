@@ -8,9 +8,9 @@ class MiddlewareQueueHandler
 {
 
      /**
-      * @param MiddlewareHandlerAdapterInterface $adapter
+      * @param MiddlewareHandlerAdapter $adapter
      */
-     public function __construct(protected MiddlewareHandlerAdapterInterface $adapter)
+     public function __construct(protected MiddlewareHandlerAdapter $adapter)
      {
      }
 

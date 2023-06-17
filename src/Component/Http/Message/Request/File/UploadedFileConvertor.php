@@ -1,14 +1,14 @@
 <?php
 namespace Laventure\Component\Http\Message\Request\File;
 
-class UploadedFileConvertor
+trait UploadedFileConvertor
 {
 
     /**
      * @param array $files
      * @return array
     */
-    public function convertToUploadedFiles(array $files): array
+    public function convertFiles(array $files): array
     {
         $resolvedFiles = $this->transformInformationFiles($files);
 

@@ -1,21 +1,20 @@
 <?php
-namespace Laventure\Component\Message\Http;
+namespace Laventure\Component\Http\Message;
 
 
-use Laventure\Component\Http\Message\Request;
-use Laventure\Component\Http\Message\Response;
-
+use Laventure\Component\Http\Message\Request\Request;
+use Laventure\Component\Http\Message\Response\Response;
 
 /**
- * @Kernel
+ * @HttpKernel
  *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Message\Http
+ * @package Laventure\Component\Http\Message
 */
-interface Kernel
+interface HttpKernel
 {
 
     /**

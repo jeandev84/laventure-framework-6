@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Message\Http\Storage;
+namespace Laventure\Component\Http\Storage;
 
 
 /**
@@ -9,7 +9,7 @@ namespace Laventure\Component\Message\Http\Storage;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Message\Http\Storage
+ * @package Laventure\Component\Http\Storage
 */
 interface StorageInterface
 {

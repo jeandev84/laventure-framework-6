@@ -1,10 +1,10 @@
 <?php
 namespace Laventure\Component\Http\Middleware;
 
-use Laventure\Component\Http\Message\Middleware\MiddlewareHandlerAdapterInterface;
+use Laventure\Component\Http\Message\Middleware\MiddlewareHandlerAdapter;
 use Laventure\Component\Http\Message\Request\Contract\ServerRequestInterface;
 
-class MiddlewareQueueStackAdapter implements MiddlewareHandlerAdapterInterface
+class MiddlewareQueueStackAdapter implements MiddlewareHandlerAdapter
 {
 
     /**

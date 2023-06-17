@@ -3,6 +3,7 @@ namespace Laventure\Component\Http\Message\Request\Bag;
 
 use Laventure\Component\Http\Bag\ParameterBag;
 use Laventure\Component\Http\Message\Request\File\UploadedFile;
+use Laventure\Component\Http\Message\Request\File\UploadedFileConvertor;
 
 
 /**
@@ -16,6 +17,9 @@ use Laventure\Component\Http\Message\Request\File\UploadedFile;
 */
 class FileBag extends ParameterBag
 {
+
+    use UploadedFileConvertor;
+
 
     /**
      * FileBag constructor.
@@ -84,79 +88,6 @@ class FileBag extends ParameterBag
     {
         return parent::get($name, $default);
     }
-
-
-
-
-
-    /**
-     * @param array $files
-     * @return array
-    */
-    private function convertFiles(array $files): array
-    {
-        $resolvedFiles = $this->transformInformationFiles($files);
-
-        $uploadedFiles = [];
-
-        foreach ($resolvedFiles as $name => $items) {
-            foreach ($items as $file) {
-                $uploadedFile = $this->createUploadedFileFromArray($file);
-                if ($uploadedFile->isUploaded()) {
-                    $uploadedFiles[$name][] = $uploadedFile;
-                }
-            }
-        }
-
-        return $uploadedFiles;
-    }
-
-
-
-
-    /**
-     * @param array $files
-     * @return array
-    */
-    private function transformInformationFiles(array $files): array
-    {
-        $resolved = [];
-
-        foreach ($files as $name => $params) {
-            if (is_array($params['name'])) {
-                foreach ($params as $attribute => $file) {
-                    foreach ($file as $index => $value) {
-                        $resolved[$name][$index][$attribute] = $value;
-                    }
-                }
-            }else{
-                $resolved[$name][] = $params;
-            }
-        }
-
-        return $resolved;
-    }
-
-
-
-
-    /**
-     * @param array $file
-     *
-     * @return UploadedFile
-    */
-    private function createUploadedFileFromArray(array $file): UploadedFile
-    {
-        return new UploadedFile(
-            $file['name'],
-            $file['full_path'],
-            $file['type'],
-            $file['tmp_name'],
-            $file['error'],
-            $file['size']
-        );
-    }
-
 
 
 

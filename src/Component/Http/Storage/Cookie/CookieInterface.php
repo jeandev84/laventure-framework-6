@@ -75,17 +75,5 @@ interface CookieInterface
      *
      * @return mixed
     */
-    public function set(string $name, $value, int $expireAfter = 3600): mixed;
-
-
-
-
-
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-    */
-    public function clear(string $name);
+    public function set(string $name, $value, int $expireAfter = 0): mixed;
 }

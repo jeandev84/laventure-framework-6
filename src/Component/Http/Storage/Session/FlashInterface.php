@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Message\Http\Storage\Session;
+namespace Laventure\Component\Http\Storage\Session;
 
 
 /**
@@ -9,7 +9,7 @@ namespace Laventure\Component\Message\Http\Storage\Session;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Message\Http\Storage
+ * @package Laventure\Component\Http\Storage
 */
 interface FlashInterface
 {

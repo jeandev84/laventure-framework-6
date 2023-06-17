@@ -3,7 +3,7 @@ namespace Laventure\Component\Http\Message\Middleware;
 
 use Laventure\Component\Http\Message\Request\Contract\ServerRequestInterface;
 
-interface MiddlewareHandlerAdapterInterface
+interface MiddlewareHandlerAdapter
 {
     /**
      * @param $middleware

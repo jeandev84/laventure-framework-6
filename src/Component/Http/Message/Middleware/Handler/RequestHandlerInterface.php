@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Http\Server;
+namespace Laventure\Component\Http\Message\Middleware\Handler;
 
 use Laventure\Component\Http\Message\Request\Contract\ServerRequestInterface;
 use Laventure\Component\Http\Message\Response\Contract\ResponseInterface;

@@ -1,8 +1,8 @@
 <?php
-namespace Laventure\Component\Message\Http\Storage\Session;
+namespace Laventure\Component\Http\Storage\Session;
 
 
-use Laventure\Component\Message\Http\Storage\Cookie\CookieInterface;
+use Laventure\Component\Http\Storage\Cookie\CookieJar;
 
 
 /**
@@ -20,22 +20,20 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
 
 
     /**
-     * @var CookieInterface
+     * @var CookieJar
     */
-    protected $cookie;
+    protected $cookieJar;
 
 
 
 
     /**
-     * @param CookieInterface $cookie
-     *
      * @param string $flashKey
     */
-    public function __construct(CookieInterface $cookie, string $flashKey = 'session.flash')
+    public function __construct(string $flashKey = 'session.flash')
     {
-         $this->cookie   = $cookie;
-         $this->flashKey = $flashKey;
+         $this->cookieJar   = new CookieJar();
+         $this->flashKey    = $flashKey;
     }
 
 
@@ -360,18 +358,35 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
 
 
 
+    /**
+     * @return bool
+    */
+    public function isEmpty()
+    {
+        return empty($_SESSION);
+    }
+
+
+
+
 
     /**
      * @inheritDoc
     */
-    public function clear()
+    public function clear(): bool
     {
-        if (session_id()) {
-            setcookie(session_name(), session_id(), time() -60*60*24);
-            session_unset();
-            session_destroy();
+        if (! $id = $this->id()) {
+             return false;
         }
+
+        $this->cookieJar->set($this->name(), $id, -60*60*24);
+
+        session_unset();
+        session_destroy();
+
+        return $this->isEmpty();
     }
+
 
 
 

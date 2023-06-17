@@ -14,7 +14,7 @@ class Cookie implements CookieInterface
      *
      * @var string
     */
-    protected $path;
+    protected $path = '';
 
 
 
@@ -24,7 +24,7 @@ class Cookie implements CookieInterface
      *
      * @var string|null
     */
-    protected ?string $domain;
+    protected ?string $domain = '';
 
 
 
@@ -43,25 +43,6 @@ class Cookie implements CookieInterface
     */
     protected bool $httpOnly;
 
-
-
-
-    /**
-     * @param string $path
-     *
-     * @param string $domain
-     *
-     * @param bool $secure
-     *
-     * @param bool $httpOnly
-    */
-    public function __construct(string $path = '/', string $domain = '', bool $secure = false, bool $httpOnly = false)
-    {
-         $this->path($path);
-         $this->domain($domain);
-         $this->secure($secure);
-         $this->httpOnly($httpOnly);
-    }
 
 
 
@@ -122,9 +103,9 @@ class Cookie implements CookieInterface
     /**
      * @inheritdoc
     */
-    public function set(string $name, $value, int $expireAfter = 3600): static
+    public function set(string $name, $value, int $expireAfter = 0): static
     {
-         setcookie($name, $value, time() + $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
+         setcookie($name, $value, $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
 
          return $this;
     }
@@ -149,15 +130,5 @@ class Cookie implements CookieInterface
     public function getPath(): string
     {
         return $this->path;
-    }
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function clear(string $name)
-    {
-        $this->set($name, '', time() - 3600);
     }
 }

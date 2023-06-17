@@ -1,7 +1,6 @@
 <?php
-namespace Laventure\Component\Security\Authentication\User;
+namespace Laventure\Component\Security\User;
 
-use Laventure\Component\Security\User\UserInterface;
 
 
 /**
@@ -11,7 +10,7 @@ use Laventure\Component\Security\User\UserInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\Authentication\User
+ * @package Laventure\Component\Security\User
 */
 interface UserStorageInterface
 {
