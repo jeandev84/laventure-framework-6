@@ -63,7 +63,7 @@ class ResponseHeaderBag extends ParameterBag
     */
     public function sendHeaders(): void
     {
-        foreach ($this->config as $name => $value) {
+        foreach ($this->params as $name => $value) {
             $this->sendHeader("$name: $value");
             $this->sendedHeaders[$name] = $value;
         }

@@ -318,7 +318,7 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
     /**
      * @inheritDoc
     */
-    public function set($key, $value)
+    public function add($key, $value)
     {
         $_SESSION[$key] = $value;
     }
@@ -417,7 +417,7 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
     public function merge(array $params)
     {
         foreach ($params as $name => $value) {
-             $this->set($name, $value);
+             $this->add($name, $value);
         }
     }
 

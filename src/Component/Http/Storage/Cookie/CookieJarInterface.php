@@ -1,5 +1,6 @@
 <?php
-namespace Laventure\Component\Message\Http\Storage\Cookie;
+namespace Laventure\Component\Http\Storage\Cookie;
+
 
 
 /**
@@ -11,7 +12,7 @@ namespace Laventure\Component\Message\Http\Storage\Cookie;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Message\Http\Storage\Cookie
+ * @package Laventure\Component\Http\Storage\Cookie
 */
 interface CookieJarInterface extends CookieInterface
 {

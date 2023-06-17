@@ -2,7 +2,7 @@
 namespace Laventure\Component\Http\Message\Request\Bag;
 
 use Laventure\Component\Http\Bag\ParameterBag;
-use Laventure\Component\Message\Http\Storage\Cookie\Cookie;
+use Laventure\Component\Http\Storage\Cookie\CookieJar;
 
 
 /**
@@ -18,49 +18,22 @@ class CookieBag extends ParameterBag
 {
 
      /**
+      * @var CookieJar
+     */
+     protected $cookieJar;
+
+
+     /**
       * @param array $params
      */
      public function __construct(array $params = [])
      {
-         parent::__construct($params ?: $_COOKIE);
+          parent::__construct($params);
+          $this->cookieJar = new CookieJar();
      }
 
 
 
-    /**
-     * Cookie path
-     *
-     * @var string
-     */
-    protected $path = '/';
-
-
-
-
-    /**
-     * Cookie domain
-     *
-     * @var string
-    */
-    protected $domain = '';
-
-
-
-
-
-
-    /**
-     * @var bool
-    */
-    protected $secure = false;
-
-
-
-
-    /**
-     * @var bool
-    */
-    protected $httpOnly = false;
 
 
 
@@ -72,7 +45,7 @@ class CookieBag extends ParameterBag
     */
     public function path(string $path): static
     {
-        $this->path = $path;
+        $this->cookieJar->path($path);
 
         return $this;
     }
@@ -88,7 +61,7 @@ class CookieBag extends ParameterBag
     */
     public function domain(string $domain): static
     {
-        $this->domain = $domain;
+        $this->cookieJar->domain($domain);
 
         return $this;
     }
@@ -104,7 +77,7 @@ class CookieBag extends ParameterBag
      */
     public function secure(bool $secure): static
     {
-        $this->secure = $secure;
+        $this->cookieJar->secure($secure);
 
         return $this;
     }
@@ -119,7 +92,7 @@ class CookieBag extends ParameterBag
     */
     public function httpOnly(bool $httpOnly)
     {
-        $this->httpOnly = $httpOnly;
+        $this->cookieJar->httpOnly($httpOnly);
 
         return $this;
     }
@@ -138,13 +111,10 @@ class CookieBag extends ParameterBag
      */
      public function set($name, $value, int $expires = 3600): static
      {
-         $cookie = new Cookie($this->path, $this->domain, $this->secure, $this->httpOnly);
+         $this->cookieJar->set($name, $value, $expires);
 
-         $cookie->set($name, $value, $expires);
-
-         return $this;
+         return parent::set($name, $value);
      }
-
 
 
 
@@ -152,9 +122,24 @@ class CookieBag extends ParameterBag
      /**
       * @inheritdoc
      */
-     public function remove($name): static
+     public function clear(): void
      {
-         $this->set($name, '', -3600);
+         foreach ($this->keys() as $name) {
+             $this->remove($name);
+         }
+     }
+
+
+
+
+     /**
+      * @inheritdoc
+     */
+     public function remove($name): mixed
+     {
+         $this->cookieJar->clear($name);
+
+         parent::remove($name);
 
          return $this;
      }

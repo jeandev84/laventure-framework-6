@@ -169,7 +169,7 @@ class FileBag extends ParameterBag
     */
     private function setUploadedFile($name, UploadedFile $file): static
     {
-        $this->config[$name] = $file;
+        $this->params[$name] = $file;
 
         return $this;
     }

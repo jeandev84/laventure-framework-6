@@ -18,7 +18,7 @@ class ClientParameterBag extends ParameterBag
     /**
      * @var array
     */
-    protected $config = [
+    protected $params = [
         "headers"    => [],
         "query"      => [],
         "files"      => [],
@@ -34,7 +34,7 @@ class ClientParameterBag extends ParameterBag
     */
     public function __construct(array $params = [])
     {
-        parent::__construct($this->config);
+        parent::__construct($this->params);
 
         $this->merge($params);
     }

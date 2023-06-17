@@ -19,7 +19,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     /**
      * @var array
     */
-    protected $config = [];
+    protected $params = [];
 
 
 
@@ -43,7 +43,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function set($name, $value): mixed
     {
-        $this->config[$name] = $value;
+        $this->params[$name] = $value;
 
         return $this;
     }
@@ -59,7 +59,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function has($name): bool
     {
-        return isset($this->config[$name]);
+        return isset($this->params[$name]);
     }
 
 
@@ -71,7 +71,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function empty(string $name): bool
     {
-        return empty($this->config[$name]);
+        return empty($this->params[$name]);
     }
 
 
@@ -90,9 +90,27 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function get(string $name, $default = null): mixed
     {
-        return $this->config[$name] ?? $default;
+        return $this->params[$name] ?? $default;
     }
 
+
+
+    /**
+     * @return int[]|string[]
+    */
+    public function keys(): array
+    {
+        return array_keys($this->params);
+    }
+
+
+    /**
+     * @return array
+    */
+    public function values(): array
+    {
+        return array_values($this->params);
+    }
 
 
 
@@ -103,7 +121,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function all(): array
     {
-        return $this->config;
+        return $this->params;
     }
 
 
@@ -120,7 +138,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function merge(array $params): self
     {
-        $this->config = array_merge($this->config, $params);
+        $this->params = array_merge($this->params, $params);
 
         return $this;
     }
@@ -134,11 +152,11 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
      *
      * @param $name
      *
-     * @return $this
+     * @return mixed
     */
     public function remove($name): mixed
     {
-        unset($this->config[$name]);
+        unset($this->params[$name]);
 
         return $this;
     }
@@ -153,7 +171,7 @@ class ParameterBag implements ParameterBagInterface, \ArrayAccess
     */
     public function clear(): void
     {
-        $this->config = [];
+        $this->params = [];
     }
 
 

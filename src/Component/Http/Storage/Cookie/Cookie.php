@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Message\Http\Storage\Cookie;
+namespace Laventure\Component\Http\Storage\Cookie;
 
 
 /**
@@ -22,9 +22,9 @@ class Cookie implements CookieInterface
     /**
      * Cookie domain
      *
-     * @var string
+     * @var string|null
     */
-    protected $domain;
+    protected ?string $domain;
 
 
 
@@ -33,7 +33,7 @@ class Cookie implements CookieInterface
     /**
      * @var bool
     */
-    protected $secure;
+    protected bool $secure;
 
 
 
@@ -41,7 +41,7 @@ class Cookie implements CookieInterface
     /**
      * @var bool
     */
-    protected $httpOnly;
+    protected bool $httpOnly;
 
 
 
@@ -122,11 +122,34 @@ class Cookie implements CookieInterface
     /**
      * @inheritdoc
     */
-    public function set(string $name, $value, int $expireAfter = 3600): void
+    public function set(string $name, $value, int $expireAfter = 3600): static
     {
          setcookie($name, $value, time() + $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
+
+         return $this;
     }
 
+
+
+
+    /**
+     * @return string|null
+    */
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
+
+
+
+    /**
+     * @return string
+    */
+    public function getPath(): string
+    {
+        return $this->path;
+    }
 
 
 
@@ -135,6 +158,6 @@ class Cookie implements CookieInterface
     */
     public function clear(string $name)
     {
-        $this->set($name, time() - 3600);
+        $this->set($name, '', time() - 3600);
     }
 }

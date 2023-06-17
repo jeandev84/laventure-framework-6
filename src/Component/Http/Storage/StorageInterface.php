@@ -15,19 +15,6 @@ interface StorageInterface
 {
 
       /**
-       * Store value given key
-       *
-       * @param $key
-       *
-       * @param $value
-       *
-       * @return mixed
-      */
-      public function set($key, $value);
-
-
-
-      /**
        * Returns value from storage given key
        *
        * @param $key
