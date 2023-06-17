@@ -616,17 +616,6 @@ class cUrlRequest extends ClientRequest implements cUrlRequestInterface
 
 
     /**
-     * @return mixed
-     */
-    public function getBody(): mixed
-    {
-        return $this->body;
-    }
-
-
-
-
-    /**
      * @return array
     */
     public function getCookies(): array
@@ -683,7 +672,7 @@ class cUrlRequest extends ClientRequest implements cUrlRequestInterface
     /**
      * @return mixed
     */
-    public function getPostFields(): mixed
+    public function getBody(): mixed
     {
          if (is_string($this->body)) {
              return $this->body;
@@ -725,7 +714,7 @@ class cUrlRequest extends ClientRequest implements cUrlRequestInterface
     */
     private function createFileFromArray(array $params): \CURLFile
     {
-        $file = new cUrlFile($params);
+        $file = new cFile($params);
 
         return curl_file_create($file->getPath(), $file->getMime(), $file->getName());
     }
@@ -764,7 +753,7 @@ class cUrlRequest extends ClientRequest implements cUrlRequestInterface
             if ($this->method === 'PUT' && $this->uploadedFile) {
                 $this->setUploadedFileOptionsMethodPUT();
             } else {
-                $this->setOption(CURLOPT_POSTFIELDS, $this->getPostFields());
+                $this->setOption(CURLOPT_POSTFIELDS, $this->getBody());
             }
         }
     }

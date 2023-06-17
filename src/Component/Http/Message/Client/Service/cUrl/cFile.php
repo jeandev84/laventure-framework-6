@@ -1,7 +1,7 @@
 <?php
 namespace Laventure\Component\Http\Message\Client\Service\cUrl;
 
-class cUrlFile
+class cFile
 {
 
 
@@ -25,6 +25,7 @@ class cUrlFile
 
 
 
+
     /**
      * @param array $params
     */
@@ -38,7 +39,7 @@ class cUrlFile
 
     /**
      * @return string
-     */
+    */
     public function getName(): string
     {
         return $this->name;
@@ -111,7 +112,9 @@ class cUrlFile
     private function bindParams(array $file): void
     {
          foreach ($file as $key => $value) {
-              $this->{$key} = $value;
+              if (property_exists($this, $key)) {
+                  $this->{$key} = $value;
+              }
          }
     }
 }

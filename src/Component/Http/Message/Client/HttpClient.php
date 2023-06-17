@@ -62,7 +62,7 @@ class HttpClient implements HttpClientInterface
      *
      * @return $this
     */
-    public function options(array $options): static
+    public function setOptions(array $options): static
     {
          $this->options = $options;
 
@@ -101,7 +101,7 @@ class HttpClient implements HttpClientInterface
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-         return $this->options($options)
+         return $this->setOptions($options)
                      ->sendRequest(Request::create($url, $method));
     }
 
