@@ -64,6 +64,13 @@ class NativeUser implements UserInterface
 
 
 
+    public function getId(): ?int
+    {
+        // TODO: Implement getId() method.
+    }
+
+
+
     /**
      * @param string|null $email
      *
@@ -184,16 +191,5 @@ class NativeUser implements UserInterface
         $this->roles = array_merge($this->roles, (array)$role);
 
         return $this;
-    }
-
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function getId(): mixed
-    {
-        // TODO: Implement getId() method.
     }
 }
