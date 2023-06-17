@@ -37,12 +37,14 @@ interface UserProviderInterface
 
 
 
-
-
      /**
+      * @param int $id
+      *
+      * @param string $hash
+      *
       * @return mixed
      */
-     public function updatePasswordHash(UserInterface $user, string $hash);
+     public function updatePasswordHash(int $id, string $hash);
 
 
 
