@@ -51,11 +51,7 @@ class Auth implements AuthenticationInterface
      *
      * @param UserStorageInterface $storage
     */
-    public function __construct(
-        UserProviderInterface $provider,
-        UserPasswordEncoderInterface $encoder,
-        UserStorageInterface $storage
-    )
+    public function __construct(UserProviderInterface $provider, UserPasswordEncoderInterface $encoder, UserStorageInterface $storage)
     {
          $this->provider = $provider;
          $this->encoder  = $encoder;
@@ -72,6 +68,7 @@ class Auth implements AuthenticationInterface
     {
          // check if user by username
          $user = $this->provider->findByUsername($username);
+
 
          // if not user and has not valid credentials
          if(! $user || ! $this->encoder->isPasswordValid($user, $password)) {
@@ -120,6 +117,6 @@ class Auth implements AuthenticationInterface
     */
     public function logout(): bool
     {
-        return $this->storage->clear($this->provider);
+        return $this->storage->removeToken($this->provider);
     }
 }
