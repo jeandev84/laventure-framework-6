@@ -108,7 +108,7 @@ class Auth implements AuthenticationInterface
     */
     public function getUser(): UserInterface
     {
-        return $this->storage->getUser();
+        return $this->storage->getToken()->getUser();
     }
 
 

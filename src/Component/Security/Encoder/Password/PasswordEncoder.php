@@ -83,6 +83,10 @@ class PasswordEncoder implements PasswordEncoderInterface
     */
     public function cost(int $cost): static
     {
+         if ($cost < 4 || $cost > 12) {
+            throw new \InvalidArgumentException('Cost must be in the range of 4-12');
+         }
+
          return $this->options(compact('cost'));
     }
 

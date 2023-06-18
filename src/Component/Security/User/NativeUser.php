@@ -232,6 +232,6 @@ class NativeUser implements UserInterface
     */
     public function isEnabled(): bool
     {
-        // TODO: Implement isEnabled() method.
+        return $this->enabled;
     }
 }

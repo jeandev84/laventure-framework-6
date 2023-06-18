@@ -29,9 +29,10 @@ interface UserStorageInterface
       /**
        * Returns user from the session
        *
-       * @return UserInterface
+       * @return UserTokenInterface
       */
-      public function getUser(): UserInterface;
+      public function getToken(): UserTokenInterface;
+
 
 
 
@@ -57,6 +58,7 @@ interface UserStorageInterface
        * @return $this
       */
       public function setRememberToken(UserProviderInterface $provider): static;
+
 
 
 

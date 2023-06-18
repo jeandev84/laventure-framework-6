@@ -62,22 +62,23 @@ interface UserProviderInterface
 
 
      /**
-      * @param $id
+      * @param int $id
       *
       * @return mixed
      */
-     public function clearRememberToken($id);
+     public function clearRememberToken(int $id);
+
 
 
 
 
 
      /**
-      * @param string $identifier
+      * @param int $id
       *
       * @param string $hash
       *
       * @return mixed
      */
-     public function updateRememberToken($identifier, string $hash);
+     public function updateRememberToken(int $id, string $hash);
 }

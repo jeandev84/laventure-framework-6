@@ -44,9 +44,9 @@ interface UserInterface
 
 
      /**
-      * @return string
+      * @return string|null
      */
-     public function getPassword(): string;
+     public function getPassword(): ?string;
 
 
 
