@@ -68,5 +68,5 @@ interface UserStorageInterface
        *
        * @return bool
       */
-      public function clear(UserProviderInterface $provider): bool;
+      public function removeToken(UserProviderInterface $provider): bool;
 }
