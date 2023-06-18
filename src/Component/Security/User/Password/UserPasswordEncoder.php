@@ -2,6 +2,7 @@
 namespace Laventure\Component\Security\User\Password;
 
 
+use Laventure\Component\Security\Encoder\Password\PasswordEncoder;
 use Laventure\Component\Security\Encoder\PasswordEncoderInterface;
 use Laventure\Component\Security\User\UserInterface;
 use Laventure\Component\Security\User\UserPasswordEncoderInterface;
@@ -26,13 +27,12 @@ class UserPasswordEncoder implements UserPasswordEncoderInterface
     protected PasswordEncoderInterface $encoder;
 
 
-
     /**
-     * @param PasswordEncoderInterface $encoder
+     * @param PasswordEncoderInterface|null $encoder
     */
-    public function __construct(PasswordEncoderInterface $encoder)
+    public function __construct(PasswordEncoderInterface $encoder = null)
     {
-         $this->encoder = $encoder;
+         $this->encoder = $encoder ?: new PasswordEncoder();
     }
 
 

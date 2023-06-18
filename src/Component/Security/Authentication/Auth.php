@@ -16,7 +16,7 @@ use Laventure\Component\Security\User\UserStorageInterface;
  *
  * @package Laventure\Component\Security\Authorization
 */
-class Auth implements AuthenticationInterface
+class Auth
 {
 
     /**
@@ -51,11 +51,7 @@ class Auth implements AuthenticationInterface
      *
      * @param UserStorageInterface $storage
     */
-    public function __construct(
-        UserProviderInterface $provider,
-        UserPasswordEncoderInterface $encoder,
-        UserStorageInterface $storage
-    )
+    public function __construct(UserProviderInterface $provider, UserPasswordEncoderInterface $encoder, UserStorageInterface $storage)
     {
          $this->provider = $provider;
          $this->encoder  = $encoder;
@@ -104,7 +100,7 @@ class Auth implements AuthenticationInterface
 
 
     /**
-     * @inheritDoc
+     * Return current authenticated user
     */
     public function getUser(): UserInterface
     {
@@ -116,10 +112,10 @@ class Auth implements AuthenticationInterface
 
 
     /**
-     * @inheritDoc
+     * Remove user session
     */
     public function logout(): bool
     {
-        return $this->storage->clear($this->provider);
+        return $this->storage->removeUserSession($this->provider);
     }
 }

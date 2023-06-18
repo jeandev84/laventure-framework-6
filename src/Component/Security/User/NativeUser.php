@@ -17,7 +17,7 @@ class NativeUser implements UserInterface
     /**
      * @var int|null
     */
-    protected ?int $id;
+    protected ?int $id = null;
 
 
 
@@ -47,7 +47,7 @@ class NativeUser implements UserInterface
     /**
      * @var array
     */
-    protected array $roles;
+    protected array $roles = [];
 
 
 

@@ -129,8 +129,6 @@ class PasswordEncoder implements PasswordEncoderInterface
     */
     public function encodePassword(string $plainPassword, string $salt = null): string
     {
-         $this->salt($salt ?: '');
-
          if(! $hash = password_hash($plainPassword, $this->algo, $this->options)) {
               throw new \RuntimeException(ucfirst($this->name) . " not supported.");
          }

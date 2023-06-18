@@ -20,7 +20,7 @@ interface UserStorageInterface
        *
        * @return bool
       */
-      public function hasUserInSession(): bool;
+      public function hasUserToken(): bool;
 
 
 
@@ -68,5 +68,5 @@ interface UserStorageInterface
        *
        * @return bool
       */
-      public function clear(UserProviderInterface $provider): bool;
+      public function removeUserSession(UserProviderInterface $provider): bool;
 }

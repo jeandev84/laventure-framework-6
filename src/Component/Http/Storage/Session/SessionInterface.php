@@ -47,6 +47,17 @@ interface SessionInterface extends StorageInterface
 
 
 
+      /**
+       * @param string $name
+       *
+       * @param $value
+       *
+       * @return mixed
+      */
+      public function set(string $name, $value);
+
+
+
 
 
       /**

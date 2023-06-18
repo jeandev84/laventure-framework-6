@@ -34,6 +34,7 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
     {
          $this->cookieJar   = new CookieJar();
          $this->flashKey    = $flashKey;
+
     }
 
 
@@ -100,8 +101,15 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
     }
 
 
+    /**
+     * @inheritdoc
+    */
+    public function set(string $name, $value): static
+    {
+        $_SESSION[$name] = $value;
 
-
+        return $this;
+    }
 
 
     /**
