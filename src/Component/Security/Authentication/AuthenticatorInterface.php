@@ -1,28 +1,42 @@
 <?php
 namespace Laventure\Component\Security\Authentication;
 
+use Laventure\Component\Security\User\UserCredentialsInterface;
 use Laventure\Component\Security\User\UserInterface;
+use Laventure\Component\Security\User\UserTokenInterface;
 
 interface AuthenticatorInterface
 {
 
     /**
-     * @return array
+     * @param UserCredentialsInterface $credentials
+     *
+     * @return bool
     */
-    public function getCredentials(): array;
+    public function authenticate(UserCredentialsInterface $credentials): bool;
+
+
+
+    /**
+     * @param UserInterface $user
+     *
+     * @return mixed
+    */
+    public function setUserToken(UserInterface $user);
+
+
+
+    /**
+     * @return UserTokenInterface
+    */
+    public function getToken(): UserTokenInterface;
+
+
 
 
 
     /**
      * @return bool
     */
-    public function authenticate(): bool;
-
-
-
-
-    /**
-     * @return UserInterface
-    */
-    public function getUser(): UserInterface;
+    public function logout(): bool;
 }

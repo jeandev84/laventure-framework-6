@@ -2,10 +2,8 @@
 namespace Laventure\Component\Security\Authentication;
 
 
+use Laventure\Component\Security\User\UserCredentials;
 use Laventure\Component\Security\User\UserInterface;
-use Laventure\Component\Security\User\UserPasswordEncoderInterface;
-use Laventure\Component\Security\User\UserProviderInterface;
-use Laventure\Component\Security\User\UserStorageInterface;
 
 /**
  * @AuthenticationInterface
@@ -16,87 +14,39 @@ use Laventure\Component\Security\User\UserStorageInterface;
  *
  * @package Laventure\Component\Security\Authorization
 */
-class Auth implements AuthenticationInterface
+class Auth
 {
 
     /**
-     * @var UserProviderInterface
+     * @var AuthenticatorInterface
     */
-    protected $provider;
-
-
+    protected AuthenticatorInterface $authenticator;
 
 
     /**
-     * @var UserPasswordEncoderInterface
+     * @param AuthenticatorInterface $authenticator
     */
-    protected $encoder;
-
-
-
-
-    /**
-     * @var UserStorageInterface
-    */
-    protected $storage;
-
-
-
-
-
-    /**
-     * @param UserProviderInterface $provider
-     *
-     * @param UserPasswordEncoderInterface $encoder
-     *
-     * @param UserStorageInterface $storage
-    */
-    public function __construct(
-        UserProviderInterface $provider,
-        UserPasswordEncoderInterface $encoder,
-        UserStorageInterface $storage
-    )
+    public function __construct(AuthenticatorInterface $authenticator)
     {
-         $this->provider = $provider;
-         $this->encoder  = $encoder;
-         $this->storage  = $storage;
+        $this->authenticator = $authenticator;
     }
 
 
 
 
+
     /**
-     * @inheritDoc
+     * @param string $username
+     *
+     * @param string $password
+     *
+     * @param bool $rememberMe
+     *
+     * @return bool
     */
     public function attempt(string $username, string $password, bool $rememberMe = false): bool
     {
-         // check if user by username
-         $user = $this->provider->findByUsername($username);
-
-         // if not user and has not valid credentials
-         if(! $user || ! $this->encoder->isPasswordValid($user, $password)) {
-              return false;
-         }
-
-
-         // rehash user password
-         $rehashPassword = $this->encoder->encodePassword($user, $password);
-
-         if ($this->encoder->needsRehash($user)) {
-             $this->provider->updateUserPasswordHash($user, $rehashPassword);
-         }
-
-
-         // save user in session
-         $this->storage->setUserSession($user);
-
-
-         // save remember token if user has been remembered
-         if ($rememberMe) {
-             $this->storage->setRememberToken($this->provider);
-         }
-
-         return true;
+         return $this->authenticator->authenticate(new UserCredentials($username, $password, $rememberMe));
     }
 
 
@@ -104,11 +54,11 @@ class Auth implements AuthenticationInterface
 
 
     /**
-     * @inheritDoc
+     * @return UserInterface
     */
     public function getUser(): UserInterface
     {
-        return $this->storage->getToken()->getUser();
+        return $this->authenticator->getToken()->getUser();
     }
 
 
@@ -116,10 +66,10 @@ class Auth implements AuthenticationInterface
 
 
     /**
-     * @inheritDoc
+     * @return bool
     */
     public function logout(): bool
     {
-        return $this->storage->clear($this->provider);
+        return $this->authenticator->logout();
     }
 }
