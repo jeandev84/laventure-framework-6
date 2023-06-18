@@ -1,121 +1,76 @@
 <?php
 namespace Laventure\Component\Security\Authentication;
 
-
 use Laventure\Component\Security\User\UserInterface;
-use Laventure\Component\Security\User\UserPasswordEncoderInterface;
-use Laventure\Component\Security\User\UserProviderInterface;
-use Laventure\Component\Security\User\UserStorageInterface;
+use Laventure\Component\Security\User\UserTokenInterface;
+
 
 /**
- * @AuthenticationInterface
+ * @Auth
  *
  * @author Jean-Claude <jeanyao@ymail.com>
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\Authorization
+ * @package Laventure\Component\Security\Authentication
 */
 class Auth
 {
 
-    /**
-     * @var UserProviderInterface
-    */
-    protected $provider;
+     /**
+      * @var AuthenticatorInterface
+     */
+     protected AuthenticatorInterface $authenticator;
+
+
+
+     /**
+      * @param AuthenticatorInterface $authenticator
+     */
+     public function __construct(AuthenticatorInterface $authenticator)
+     {
+         $this->authenticator = $authenticator;
+     }
 
 
 
 
-    /**
-     * @var UserPasswordEncoderInterface
-    */
-    protected $encoder;
-
-
-
-
-    /**
-     * @var UserStorageInterface
-    */
-    protected $storage;
-
-
-
-
-
-    /**
-     * @param UserProviderInterface $provider
-     *
-     * @param UserPasswordEncoderInterface $encoder
-     *
-     * @param UserStorageInterface $storage
-    */
-    public function __construct(UserProviderInterface $provider, UserPasswordEncoderInterface $encoder, UserStorageInterface $storage)
-    {
-         $this->provider = $provider;
-         $this->encoder  = $encoder;
-         $this->storage  = $storage;
-    }
-
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function attempt(string $username, string $password, bool $rememberMe = false): bool
-    {
-         // check if user by username
-         $user = $this->provider->findByUsername($username);
-
-         // if not user and has not valid credentials
-         if(! $user || ! $this->encoder->isPasswordValid($user, $password)) {
-              return false;
-         }
-
-
-         // rehash user password
-         $rehashPassword = $this->encoder->encodePassword($user, $password);
-
-         if ($this->encoder->needsRehash($user)) {
-             $this->provider->updateUserPasswordHash($user, $rehashPassword);
-         }
-
-
-         // save user in session
-         $this->storage->setUserSession($user);
-
-
-         // save remember token if user has been remembered
-         if ($rememberMe) {
-             $this->storage->setRememberToken($this->provider);
-         }
-
-         return true;
-    }
+     /**
+      * authenticate user
+      *
+      * @param string $username
+      *
+      * @param string $password
+      *
+      * @param bool $rememberMe
+      *
+      * @return bool
+     */
+     public function attempt(string $username, string $password, bool $rememberMe = false): bool
+     {
+          return $this->authenticator->attempt($username, $password, $rememberMe);
+     }
 
 
 
 
 
-    /**
-     * Return current authenticated user
-    */
-    public function getUser(): UserInterface
-    {
-        return $this->storage->getToken()->getUser();
-    }
+     /**
+      * @return UserInterface
+     */
+     public function getUser(): UserInterface
+     {
+          return $this->authenticator->getUser();
+     }
 
 
 
 
-
-    /**
-     * Remove user session
-    */
-    public function logout(): bool
-    {
-        return $this->storage->removeUserSession($this->provider);
-    }
+     /**
+      * @return bool
+     */
+     public function logout(): bool
+     {
+         return $this->authenticator->logout();
+     }
 }

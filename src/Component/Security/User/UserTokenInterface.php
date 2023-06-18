@@ -14,7 +14,7 @@ namespace Laventure\Component\Security\User;
 interface UserTokenInterface
 {
 
-      const TOKEN_KEY = 'security.user';
+     const TOKEN_KEY = 'security.user';
 
 
      /**

@@ -13,7 +13,6 @@ namespace Laventure\Component\Security\User;
 interface UserProviderInterface
 {
 
-
      /**
       * @param int $id
       *
@@ -49,36 +48,85 @@ interface UserProviderInterface
 
 
 
+
      /**
       * @param $identifier
       *
-      * @return mixed
+      * @return UserInterface|null
      */
-     public function findByRememberIdentifier($identifier);
-
-
+     public function findByRememberIdentifier($identifier): ?UserInterface;
 
 
 
 
      /**
-      * @param int $id
-      *
       * @return mixed
      */
-     public function clearRememberToken(int $id);
+     public function removeRememberToken(UserInterface $user);
 
-
-
-
+     
 
 
      /**
-      * @param int $id
+      * @param UserInterface $user
       *
       * @param string $hash
       *
       * @return mixed
      */
-     public function updateRememberToken(int $id, string $hash);
+     public function updateRememberToken(UserInterface $user, string $hash);
+
+
+
+
+     /**
+      * @return bool
+     */
+     public function hasRememberToken(): bool;
+
+
+
+
+    /**
+     * Returns user from the session
+     *
+     * @return UserTokenInterface
+    */
+    public function getToken(): UserTokenInterface;
+
+
+
+
+
+    /**
+     * @param UserInterface $user
+     * @return UserTokenInterface
+    */
+    public function createToken(UserInterface $user): UserTokenInterface;
+
+
+
+    
+
+
+    /**
+     * Save user token in cookie
+     *
+     * @param UserInterface $user
+     *
+     * @return $this
+    */
+    public function createRememberToken(UserInterface $user): static;
+
+
+
+
+
+
+    /**
+     * @param UserInterface $user
+     *
+     * @return bool
+    */
+    public function removeToken(UserInterface $user): bool;
 }
