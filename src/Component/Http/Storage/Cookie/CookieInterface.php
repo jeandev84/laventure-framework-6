@@ -3,6 +3,8 @@ namespace Laventure\Component\Http\Storage\Cookie;
 
 
 
+use Laventure\Component\Http\Storage\Session\SessionCookieParams;
+
 /**
  * @CookieInterface
  *
@@ -18,62 +20,9 @@ interface CookieInterface
 {
 
     /**
-     * Set cookie request path
-     *
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function path(string $path): static;
-
-
-
-
-    /**
-     * Set cookie domain
-     *
-     * @param string $domain
-     *
-     * @return $this
-     */
-    public function domain(string $domain): static;
-
-
-
-
-
-    /**
-     * @param bool $secure
-     *
-     * @return $this
-     */
-    public function secure(bool $secure): static;
-
-
-
-
-
-    /**
-     * @param bool $httpOnly
-     *
-     * @return $this
-     */
-    public function httpOnly(bool $httpOnly): static;
-
-
-
-
-
-    /**
-     * Set cookie
-     *
-     * @param string $name
-     *
-     * @param string $value
-     *
-     * @param int $expireAfter
+     * @param CookieParams $cookie
      *
      * @return mixed
     */
-    public function set(string $name, string $value, int $expireAfter = 0): mixed;
+    public function setCookie(CookieParams $cookie): mixed;
 }

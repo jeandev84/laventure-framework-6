@@ -21,7 +21,7 @@ interface UserProviderInterface
       *
       * @return UserInterface|null
      */
-     public function findById(int $id): ?UserInterface;
+     public function getById(int $id): ?UserInterface;
 
 
 
@@ -34,7 +34,7 @@ interface UserProviderInterface
       *
       * @return UserInterface|null
      */
-     public function findByUsername(string $username): ?UserInterface;
+     public function getByUsername(string $username): ?UserInterface;
 
 
 
@@ -57,7 +57,8 @@ interface UserProviderInterface
       *
       * @return UserInterface|null
      */
-     public function findByRememberIdentifier($identifier): ?UserInterface;
+     public function getByRememberIdentifier($identifier): ?UserInterface;
+
 
 
 
@@ -67,7 +68,8 @@ interface UserProviderInterface
      */
      public function removeRememberToken(UserInterface $user);
 
-     
+
+
 
 
      /**
@@ -84,19 +86,11 @@ interface UserProviderInterface
 
 
      /**
-      * @return bool
+      * Returns user from the session
+      *
+      * @return UserTokenInterface
      */
-     public function hasRememberToken(): bool;
-
-
-
-
-    /**
-     * Returns user from the session
-     *
-     * @return UserTokenInterface
-    */
-    public function getToken(): UserTokenInterface;
+     public function getToken(): UserTokenInterface;
 
 
 
@@ -133,4 +127,20 @@ interface UserProviderInterface
      * @return bool
     */
     public function removeToken(UserInterface $user): bool;
+
+
+
+
+
+    /**
+     * @return bool
+    */
+    public function hasRememberToken(): bool;
+
+
+
+    /**
+     * @return bool
+    */
+    public function hasToken(): bool;
 }

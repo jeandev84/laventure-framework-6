@@ -32,9 +32,9 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
     */
     public function __construct(string $flashKey = 'session.flash')
     {
+         $this->start();
          $this->cookieJar   = new CookieJar();
          $this->flashKey    = $flashKey;
-
     }
 
 
@@ -57,8 +57,9 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
      */
     public function started(): bool
     {
-        return $this->hasStatus(PHP_SESSION_NONE);
+        return ! empty($this->id());
     }
+
 
 
 
@@ -99,6 +100,8 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
 
         return session_start($options);
     }
+
+
 
 
     /**
@@ -157,9 +160,9 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
 
 
     /**
-     * @inheritDoc
-     */
-    public function writeClose(): bool
+     * @return bool
+    */
+    public function put(): bool
     {
         return session_write_close();
     }
@@ -183,14 +186,17 @@ class Session extends \SessionHandler implements SessionInterface, FlashInterfac
     /**
      * @inheritDoc
     */
-    public function setCookieParams(array $params)
+    public function setCookieParams(SessionCookieParams $cookie): static
     {
          session_set_cookie_params(
-             $params['lifetimeOrOptions'] ?? 0,
-             $params['path'] ?? null,
-             $params['domain'] ?? null,
-             $params['secure'] ?? null
+             $cookie->getLifetime(),
+             $cookie->getPath(),
+             $cookie->getDomain(),
+             $cookie->getSecure(),
+             $cookie->getHttpOnly()
          );
+
+         return $this;
     }
 
 

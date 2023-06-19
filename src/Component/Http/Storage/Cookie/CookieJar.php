@@ -22,7 +22,7 @@ class CookieJar extends Cookie implements StorageInterface
     /**
      * @var array
     */
-    protected array $params = [];
+    protected array $cookies = [];
 
 
 
@@ -31,7 +31,7 @@ class CookieJar extends Cookie implements StorageInterface
     */
     public function __construct(array $cookies = [])
     {
-         $this->params = $cookies ?: $_COOKIE;
+         $this->cookies = $cookies ?: $_COOKIE;
     }
 
 
@@ -39,11 +39,7 @@ class CookieJar extends Cookie implements StorageInterface
 
 
     /**
-     * @param string $name
-     *
-     * @param $value
-     *
-     * @param int $expireAfter
+     * @inheritdoc
      *
      * @return $this
     */
@@ -51,12 +47,10 @@ class CookieJar extends Cookie implements StorageInterface
     {
           parent::set($name, $value, time() + $expireAfter);
 
-          $this->params[$name] = $value;
+          $this->cookies[$name] = $value;
 
           return $this;
     }
-
-
 
 
 
@@ -68,20 +62,20 @@ class CookieJar extends Cookie implements StorageInterface
     {
         $this->set($key, '', time() - 3600);
 
-        unset($this->params[$key]);
+        unset($this->cookies[$key]);
 
         return ! $this->has($key);
     }
-    
-    
+
+
 
 
     /**
-     * @inheritDoc
+     * @inheritdoc
     */
     public function has($key): bool
     {
-        return isset($this->params[$key]);
+        return isset($this->cookies[$key]);
     }
 
 
@@ -93,7 +87,7 @@ class CookieJar extends Cookie implements StorageInterface
     */
     public function get($key): ?string
     {
-        return $this->params[$key] ?? null;
+        return $this->cookies[$key] ?? null;
     }
 
 
@@ -101,13 +95,11 @@ class CookieJar extends Cookie implements StorageInterface
 
 
     /**
-     * Returns all cookies
-     *
-     * @return array
+     * @inheritdoc
     */
     public function all(): array
     {
-        return $this->params;
+        return $this->cookies;
     }
 
 
@@ -131,11 +123,11 @@ class CookieJar extends Cookie implements StorageInterface
     */
     public function clear(): bool
     {
-        foreach ($this->getNames() as $name) {
+        foreach ($this->keys() as $name) {
             $this->remove($name);
         }
 
-        return empty($this->params);
+        return empty($this->cookies);
     }
 
 
@@ -145,8 +137,8 @@ class CookieJar extends Cookie implements StorageInterface
     /**
      * @return int[]|string[]
     */
-    private function getNames()
+    private function keys()
     {
-        return array_keys($this->params);
+        return array_keys($this->cookies);
     }
 }

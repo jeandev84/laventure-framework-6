@@ -65,7 +65,8 @@ abstract class Authenticator implements AuthenticatorInterface
        *
        * @return UserTokenInterface
       */
-      abstract public function createUserToken(UserInterface $user, bool $rememberMe = false): UserTokenInterface;
+      abstract public function createToken(UserInterface $user, bool $rememberMe = false): UserTokenInterface;
+
 
 
 
@@ -74,7 +75,7 @@ abstract class Authenticator implements AuthenticatorInterface
       /**
        * @inheritDoc
       */
-      public function isGranted(array $roles)
+      public function isGranted(array $roles): bool
       {
            return ! empty(array_intersect($roles, $this->getUser()->getRoles()));
       }

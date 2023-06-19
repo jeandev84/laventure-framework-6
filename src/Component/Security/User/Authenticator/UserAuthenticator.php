@@ -67,7 +67,7 @@ class UserAuthenticator extends Authenticator
 
 
         // save user
-        $this->createUserToken($user, $rememberMe);
+        $this->createToken($user, $rememberMe);
 
         return true;
     }
@@ -87,11 +87,16 @@ class UserAuthenticator extends Authenticator
 
 
 
+
     /**
      * @inheritDoc
     */
     public function logout(): bool
     {
+        if (! $this->provider->hasToken()) {
+            return false;
+        }
+
         return $this->provider->removeToken($this->getUser());
     }
 
@@ -133,7 +138,7 @@ class UserAuthenticator extends Authenticator
     public function checkUser(string $username): UserInterface|false
     {
         // check if user by username
-        return $this->provider->findByUsername($username);
+        return $this->provider->getByUsername($username);
     }
 
 
@@ -142,7 +147,7 @@ class UserAuthenticator extends Authenticator
     /**
      * @inheritDoc
     */
-    public function createUserToken(UserInterface $user, bool $rememberMe = false): UserTokenInterface
+    public function createToken(UserInterface $user, bool $rememberMe = false): UserTokenInterface
     {
         // save user in session
         $this->provider->createToken($user);

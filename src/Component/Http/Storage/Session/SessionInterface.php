@@ -148,15 +148,11 @@ interface SessionInterface extends StorageInterface
       *
       * @link https://www.php.net/manual/en/function.session-set-cookie-params.php
       *
-      * @param int $lifetimeOrOptions
-      * @param string|null $path
-      * @param string|null $domain
-      * @param string|null $secure
-      * @param string $httpOnly
+      * @param SessionCookieParams $cookie
       *
       * @return mixed
      */
-     public function setCookieParams(array $params);
+     public function setCookieParams(SessionCookieParams $cookie);
 
 
 
@@ -182,6 +178,7 @@ interface SessionInterface extends StorageInterface
       * @return mixed
      */
      public function setModuleName(?string $module = null);
+
 
 
 

@@ -8,104 +8,21 @@ namespace Laventure\Component\Http\Storage\Cookie;
 class Cookie implements CookieInterface
 {
 
-
-    /**
-     * Cookie path
-     *
-     * @var string
-    */
-    protected $path = '';
-
-
-
-
-    /**
-     * Cookie domain
-     *
-     * @var string|null
-    */
-    protected ?string $domain = '';
-
-
-
-
-
-    /**
-     * @var bool
-    */
-    protected ?bool $secure = false;
-
-
-
-
-    /**
-     * @var bool
-    */
-    protected ?bool $httpOnly = false;
-
-
-
-
-    /**
-     * @inheritDoc
-     */
-    public function path(string $path): static
-    {
-        $this->path = $path;
-
-        return $this;
-    }
-
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function domain(string $domain): static
-    {
-        $this->domain = $domain;
-
-        return $this;
-    }
-
-
-
-
-
-    /**
-     * @inheritDoc
-     */
-    public function secure(bool $secure): static
-    {
-        $this->secure = $secure;
-
-        return $this;
-    }
-
-
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function httpOnly(bool $httpOnly): static
-    {
-        $this->httpOnly = $httpOnly;
-
-        return $this;
-    }
-
-
-
-
     /**
      * @inheritdoc
     */
-    public function set(string $name, string $value, int $expireAfter = 0): static
+    public function setCookie(CookieParams $cookie): static
     {
-         setcookie($name, $value, $expireAfter, $this->path, $this->domain, $this->secure, $this->httpOnly);
+         setcookie(
+             $cookie->getName(),
+             $cookie->getValue(),
+             $cookie->getExpireAfter(),
+             $cookie->getPath(),
+             $cookie->getDomain(),
+             $cookie->getSecure(),
+             $cookie->getHttpOnly()
+         );
+
 
          return $this;
     }
@@ -113,22 +30,18 @@ class Cookie implements CookieInterface
 
 
 
-    /**
-     * @return string|null
-    */
-    public function getDomain(): ?string
-    {
-        return $this->domain;
-    }
-
-
-
 
     /**
-     * @return string
+     * @param string $name
+     *
+     * @param string $value
+     *
+     * @param int $expireAfter
+     *
+     * @return $this
     */
-    public function getPath(): string
+    public function set(string $name, string $value, int $expireAfter = 0): static
     {
-        return $this->path;
+        return $this->setCookie(new CookieParams($name, $value, $expireAfter));
     }
 }
