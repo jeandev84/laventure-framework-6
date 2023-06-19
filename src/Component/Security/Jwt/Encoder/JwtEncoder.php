@@ -137,7 +137,7 @@ class JwtEncoder implements JwtEncoderInterface
     */
     private function encodeSignature(string $header, string $payload): string
     {
-         return $this->encodeUrl($this->makeSignature($header, $payload));
+         return $this->encodeBase64Url($this->makeSignature($header, $payload));
     }
 
 
@@ -173,7 +173,7 @@ class JwtEncoder implements JwtEncoderInterface
     {
         $signature = $this->makeSignature($params['header'], $params['payload']);
 
-        $signature_from_token = $this->decodeUrl($params["signature"]);
+        $signature_from_token = $this->decodeBase64Url($params["signature"]);
 
         if (! hash_equals($signature, $signature_from_token)) {
             throw new InvalidSignatureException("signature doesn't match");
@@ -192,7 +192,7 @@ class JwtEncoder implements JwtEncoderInterface
     */
     private function encodeUrlAsJson(array $data): string
     {
-        return $this->encodeUrl(json_encode($data));
+        return $this->encodeBase64Url(json_encode($data));
     }
 
 
@@ -205,6 +205,6 @@ class JwtEncoder implements JwtEncoderInterface
      */
     private function decodeUrlFromJson(string $json): array
     {
-        return json_decode($this->decodeUrl($json), true);
+        return json_decode($this->decodeBase64Url($json), true);
     }
 }

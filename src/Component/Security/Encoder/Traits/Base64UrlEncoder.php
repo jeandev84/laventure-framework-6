@@ -19,7 +19,7 @@ trait Base64UrlEncoder
       *
       * @return string
      */
-     private function encodeUrl(string $string): string
+     private function encodeBase64Url(string $string): string
      {
          return str_replace(["+", "/", "="], ["-", "_", ""], base64_encode($string));
      }
@@ -32,7 +32,7 @@ trait Base64UrlEncoder
       *
       * @return string
      */
-     private function decodeUrl(string $string): string
+     private function decodeBase64Url(string $string): string
      {
          return base64_decode(str_replace(["-", '_'], ["+", "/"], $string));
      }
