@@ -1,12 +1,12 @@
 <?php
-namespace Laventure\Component\Security\Authentication;
+namespace Laventure\Component\Security\Authenticator;
 
-use Laventure\Component\Security\Authentication\Exception\UserBadCredentialsException;
-use Laventure\Component\Security\User\Password\UserPasswordEncoder;
+use Laventure\Component\Security\Authentication\Authenticator;
+use Laventure\Component\Security\User\Encoder\Password\UserPasswordEncoder;
+use Laventure\Component\Security\User\Provider\UserProviderInterface;
+use Laventure\Component\Security\User\Token\UserTokenInterface;
 use Laventure\Component\Security\User\UserInterface;
 use Laventure\Component\Security\User\UserPasswordEncoderInterface;
-use Laventure\Component\Security\User\UserProviderInterface;
-use Laventure\Component\Security\User\UserTokenInterface;
 
 
 /**
@@ -16,7 +16,7 @@ use Laventure\Component\Security\User\UserTokenInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\Authentication
+ * @package Laventure\Component\Security\User\Authenticator
 */
 class UserAuthenticator extends Authenticator
 {

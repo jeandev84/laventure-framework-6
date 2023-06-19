@@ -1,9 +1,9 @@
 <?php
 namespace Laventure\Component\Security\Authentication;
 
-
+use Laventure\Component\Security\User\Token\UserTokenInterface;
 use Laventure\Component\Security\User\UserInterface;
-use Laventure\Component\Security\User\UserTokenInterface;
+
 
 /**
  * @Authenticator
@@ -12,7 +12,7 @@ use Laventure\Component\Security\User\UserTokenInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\Authentication
+ * @package Laventure\Component\Security\Authenticator
 */
 abstract class Authenticator implements AuthenticatorInterface
 {
@@ -66,4 +66,16 @@ abstract class Authenticator implements AuthenticatorInterface
        * @return UserTokenInterface
       */
       abstract public function createUserToken(UserInterface $user, bool $rememberMe = false): UserTokenInterface;
+
+
+
+
+
+      /**
+       * @inheritDoc
+      */
+      public function isGranted(array $roles)
+      {
+           return ! empty(array_intersect($roles, $this->getUser()->getRoles()));
+      }
 }

@@ -9,7 +9,7 @@ namespace Laventure\Component\Security\User;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\User
+ * @package Laventure\Component\Security\Provider
 */
 interface UserPasswordEncoderInterface
 {

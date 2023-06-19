@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Security\User\Password;
+namespace Laventure\Component\Security\User\Encoder\Password;
 
 
 use Laventure\Component\Security\Encoder\Password\PasswordEncoder;
@@ -15,7 +15,7 @@ use Laventure\Component\Security\User\UserPasswordEncoderInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\User\Password
+ * @package  Laventure\Component\Security\User\Encoder\Password
 */
 class UserPasswordEncoder implements UserPasswordEncoderInterface
 {

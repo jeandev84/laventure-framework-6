@@ -1,22 +1,17 @@
 <?php
 namespace Laventure\Component\Security\Authorization;
 
-use Laventure\Component\Security\User\UserInterface;
 
+/**
+ * @AuthorizationInterface
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Security\Authorization
+*/
 interface AuthorizationInterface
 {
 
-     /**
-      * @return UserInterface
-     */
-     public function getUser(): UserInterface;
-
-
-
-     /**
-      * @param array $roles
-      *
-      * @return mixed
-     */
-     public function isGranted(array $roles);
 }

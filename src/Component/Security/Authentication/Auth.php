@@ -2,7 +2,6 @@
 namespace Laventure\Component\Security\Authentication;
 
 use Laventure\Component\Security\User\UserInterface;
-use Laventure\Component\Security\User\UserTokenInterface;
 
 
 /**
@@ -62,6 +61,21 @@ class Auth
      {
           return $this->authenticator->getUser();
      }
+
+
+
+
+     /**
+      * @param array $roles
+      *
+      * @return bool
+     */
+     public function isGranted(array $roles): bool
+     {
+          return $this->authenticator->isGranted($roles);
+     }
+
+
 
 
 

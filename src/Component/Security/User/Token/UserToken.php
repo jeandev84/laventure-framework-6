@@ -1,6 +1,7 @@
 <?php
-namespace Laventure\Component\Security\User;
+namespace Laventure\Component\Security\User\Token;
 
+use Laventure\Component\Security\User\UserInterface;
 
 /**
  * @UserTokenInterface
@@ -9,7 +10,7 @@ namespace Laventure\Component\Security\User;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\User
+ * @package Laventure\Component\Security\User\Token
 */
 class UserToken implements UserTokenInterface
 {

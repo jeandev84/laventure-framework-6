@@ -35,6 +35,21 @@ interface AuthenticatorInterface
 
 
       /**
+       * Authorization user
+       *
+       * Determine user permissions
+       *
+       * @param array $roles
+       *
+       * @return bool
+      */
+      public function isGranted(array $roles): bool;
+
+
+
+
+
+      /**
        * Logout user
        *
        * @return bool
