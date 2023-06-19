@@ -45,8 +45,22 @@ trait Base64UrlEncoder
       *
       * @return string
      */
-     private function encodeUrlFromArray(array $data): string
+     private function encodeUrlAsJson(array $data): string
      {
           return $this->encodeUrl(json_encode($data));
      }
+
+
+
+
+     /**
+      * @param string $json
+      *
+      * @return array
+     */
+     private function decodeUrlFromJson(string $json): array
+     {
+         return json_decode($this->decodeUrl($json), true);
+     }
+
 }
