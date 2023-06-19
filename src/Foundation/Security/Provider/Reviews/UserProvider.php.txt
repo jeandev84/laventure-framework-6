@@ -21,13 +21,54 @@ class UserProvider implements UserProviderInterface
 {
 
     /**
+     * @var SessionInterface
+    */
+    protected SessionInterface $session;
+
+
+
+    /**
+     * @var EntityManagerInterface
+    */
+    protected EntityManagerInterface $entityManager;
+
+
+    /**
+     * @var string
+    */
+    protected string $entityName;
+
+
+
+    /**
+     * @param SessionInterface $session
+     *
+     * @param EntityManagerInterface $entityManager
+     *
+     * @param string $entityName
+    */
+    public function __construct(SessionInterface  $session, EntityManagerInterface $entityManager, string $entityName)
+    {
+        $this->session    = $session;
+        $this->entityManager = $entityManager;
+        $this->entityName = $entityName;
+    }
+
+
+
+
+    /**
      * @inheritDoc
     */
     public function getById(int $id): ?UserInterface
     {
-        $user = new \App\Entity\User\User($id);
-        $user->setEmail('jeanyao@ymail.com');
-        $user->setUsername('brown');
+        $repository = $this->entityManager->getRepository($this->entityName);
+
+        $user = $repository->findOneBy(compact('id'));
+
+        if (! $user instanceof UserInterface) {
+            return null;
+        }
 
         return $user;
     }
@@ -40,18 +81,16 @@ class UserProvider implements UserProviderInterface
     */
     public function getByUsername(string $username): ?UserInterface
     {
-        $user = new \App\Entity\User\User(3);
-        $user->setEmail($username);
-        $user->setUsername($username);
-        $user->setRoles([
-            "ROLE_ADMIN",
-            "ROLE_USER"
-        ]);
+        $repository = $this->entityManager->getRepository($this->entityName);
+
+        $user = $repository->findOneBy(compact('username'));
+
+        if (! $user instanceof UserInterface) {
+            return null;
+        }
 
         return $user;
     }
-
-
 
     /**
      * @inheritDoc
