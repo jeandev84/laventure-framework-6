@@ -14,7 +14,7 @@ use Laventure\Component\Http\Message\Request\Parser\UrlParser;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Http\Message\cUrlRequest\Uri
+ * @package Laventure\Component\Http\Message\Request
 */
 class Uri implements UriInterface
 {
@@ -82,7 +82,7 @@ class Uri implements UriInterface
 
 
     /**
-     * Query string
+     * Builder string
      *
      * @var string
      */

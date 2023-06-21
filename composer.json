@@ -16,6 +16,7 @@
     "symfony/var-dumper": "^6.2",
     "friendsofphp/php-cs-fixer": "^3.16",
     "ext-http": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-pdo": "*"
   }
 }

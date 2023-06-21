@@ -21,7 +21,7 @@ interface UserProviderInterface
       *
       * @return UserInterface|null
      */
-     public function getById(int $id): ?UserInterface;
+     public function findById(int $id): ?UserInterface;
 
 
 
@@ -34,21 +34,7 @@ interface UserProviderInterface
       *
       * @return UserInterface|null
      */
-     public function getByUsername(string $username): ?UserInterface;
-
-
-
-
-     /**
-      * @param UserInterface $user
-      *
-      * @param string $hash
-      *
-      * @return mixed
-     */
-     public function updateUserPasswordHash(UserInterface $user, string $hash);
-
-
+     public function findByUsername(string $username): ?UserInterface;
 
 
 
@@ -57,22 +43,24 @@ interface UserProviderInterface
       *
       * @return UserInterface|null
      */
-     public function getByRememberIdentifier($identifier): ?UserInterface;
+     public function findByRememberIdentifier($identifier): ?UserInterface;
 
 
 
 
+    /**
+     * @param UserInterface $user
+     *
+     * @param string $hash
+     *
+     * @return mixed
+    */
+    public function updatePasswordHash(UserInterface $user, string $hash);
 
-     /**
-      * @return mixed
-     */
-     public function removeRememberToken(UserInterface $user);
 
 
 
-
-
-     /**
+    /**
       * @param UserInterface $user
       *
       * @param string $hash
@@ -104,7 +92,24 @@ interface UserProviderInterface
 
 
 
-    
+
+    /**
+     * @return bool
+    */
+    public function hasToken(): bool;
+
+
+
+    /**
+     * @param UserInterface $user
+     *
+     * @return bool
+    */
+    public function removeToken(UserInterface $user): bool;
+
+
+
+
 
 
     /**
@@ -122,25 +127,16 @@ interface UserProviderInterface
 
 
     /**
-     * @param UserInterface $user
-     *
-     * @return bool
-    */
-    public function removeToken(UserInterface $user): bool;
-
-
-
-
-
-    /**
      * @return bool
     */
     public function hasRememberToken(): bool;
 
 
 
+
+
     /**
-     * @return bool
+     * @return mixed
     */
-    public function hasToken(): bool;
+    public function removeRememberToken(UserInterface $user);
 }

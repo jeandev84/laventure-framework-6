@@ -23,7 +23,7 @@ class UserProvider implements UserProviderInterface
     /**
      * @inheritDoc
     */
-    public function getById(int $id): ?UserInterface
+    public function findById(int $id): ?UserInterface
     {
         $user = new \App\Entity\User\User($id);
         $user->setEmail('jeanyao@ymail.com');
@@ -38,7 +38,7 @@ class UserProvider implements UserProviderInterface
     /**
      * @inheritDoc
     */
-    public function getByUsername(string $username): ?UserInterface
+    public function findByUsername(string $username): ?UserInterface
     {
         $user = new \App\Entity\User\User(3);
         $user->setEmail($username);
@@ -56,50 +56,66 @@ class UserProvider implements UserProviderInterface
     /**
      * @inheritDoc
      */
-    public function updateUserPasswordHash(UserInterface $user, string $hash)
+    public function updatePasswordHash(UserInterface $user, string $hash)
     {
         // TODO: Implement updateUserPasswordHash() method.
     }
 
+
+
+
     /**
      * @inheritDoc
-     */
-    public function getByRememberIdentifier($identifier): ?UserInterface
+    */
+    public function findByRememberIdentifier($identifier): ?UserInterface
     {
         // TODO: Implement getByRememberIdentifier() method.
     }
 
+
+
+
     /**
      * @inheritDoc
-     */
+    */
     public function removeRememberToken(UserInterface $user)
     {
         // TODO: Implement removeRememberToken() method.
     }
 
+
+
+
     /**
      * @inheritDoc
-     */
+    */
     public function updateRememberToken(UserInterface $user, string $hash)
     {
         // TODO: Implement updateRememberToken() method.
     }
 
+
+
     /**
      * @inheritDoc
-     */
+    */
     public function getToken(): UserTokenInterface
     {
         // TODO: Implement getToken() method.
     }
 
+
+
+
     /**
      * @inheritDoc
-     */
+    */
     public function createToken(UserInterface $user): UserTokenInterface
     {
         // TODO: Implement createToken() method.
     }
+
+
 
 
 

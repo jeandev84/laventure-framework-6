@@ -123,7 +123,7 @@ class UserAuthenticator extends Authenticator
         $rehashPassword = $this->encoder->encodePassword($user, $plainPassword);
 
         if ($this->encoder->needsRehash($user)) {
-            $this->provider->updateUserPasswordHash($user, $rehashPassword);
+            $this->provider->updatePasswordHash($user, $rehashPassword);
         }
 
         return $user;
@@ -138,7 +138,7 @@ class UserAuthenticator extends Authenticator
     public function checkUser(string $username): UserInterface|false
     {
         // check if user by username
-        return $this->provider->getByUsername($username);
+        return $this->provider->findByUsername($username);
     }
 
 

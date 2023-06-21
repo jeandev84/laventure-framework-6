@@ -1,0 +1,104 @@
+<?php
+namespace Laventure\Component\Database\Connection\Extension\PDO;
+
+use Laventure\Component\Database\Connection\Extension\PDO\Contract\PdoConnectionInterface;
+use Laventure\Component\Database\Connection\Extension\PDO\Exception\PdoConnectionException;
+use PDO;
+
+/**
+ * @PdoConnection
+ *
+ * @author Jean-Claude <jeanyao@ymail.com>
+ *
+ * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
+ *
+ * @package Laventure\Component\Database\Connection\Extension\PDO
+*/
+class PdoConnection implements PdoConnectionInterface
+{
+
+    /**
+     * @var PDO
+    */
+    protected PDO $pdo;
+
+
+    /**
+     * @var array
+    */
+    protected $options = [
+        PDO::ATTR_PERSISTENT          => true,
+        PDO::ATTR_EMULATE_PREPARES    => 0,
+        PDO::ATTR_DEFAULT_FETCH_MODE  => PDO::FETCH_OBJ,
+        PDO::ATTR_ERRMODE             => PDO::ERRMODE_EXCEPTION
+    ];
+
+
+
+
+    /**
+     * @param array $config
+     *
+     * @throws PdoConnectionException
+    */
+    public function __construct(array $config)
+    {
+        try {
+
+            $this->pdo = new PDO($config['dsn'], $config['username'], $config['password']);
+
+            $config['options'][] = sprintf("SET NAMES '%s'", $config['charset'] ?? 'utf8');
+
+            foreach ($config['options'] as $option) {
+                $this->pdo->exec($option);
+            }
+
+            foreach ($this->options as $key => $value) {
+                $this->pdo->setAttribute($key, $value);
+            }
+
+        } catch (\PDOException $e) {
+
+             throw new PdoConnectionException($e->getMessage(), $e->getCode());
+        }
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function getPdo(): PDO
+    {
+        return $this->pdo;
+    }
+
+
+
+
+
+    private function createDsnFromParameters(array $config)
+    {
+         if (empty($config['driver'])) {
+
+         }
+    }
+
+
+
+
+
+    /**
+     * @param \Exception $e
+     *
+     * @return void
+    */
+    private function abortIf(\Exception $e): void
+    {
+        (function () use ($e) {
+            throw new PdoConnectionException($e->getMessage(), $e->getCode() ?? 500);
+        })();
+    }
+}

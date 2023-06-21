@@ -70,7 +70,7 @@ class UrlParser implements UrlParserInterface
 
 
     /**
-     * Query string
+     * Builder string
      *
      * @var string
     */
