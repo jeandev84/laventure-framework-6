@@ -32,11 +32,11 @@ interface ConnectionInterface
     /**
      * Connect to the database
      *
-     * @param ConfigurationInterface $config
+     * @param array $config
      *
      * @return mixed
     */
-    public function connect(ConfigurationInterface $config);
+    public function connect(array $config);
 
 
 
@@ -64,6 +64,15 @@ interface ConnectionInterface
     public function reconnect();
 
 
+
+
+
+    /**
+     * Determine reconnected to database
+     *
+     * @return mixed
+    */
+    public function reconnected(): bool;
 
 
 
@@ -190,15 +199,6 @@ interface ConnectionInterface
     public function createQuery(): QueryInterface;
 
 
-
-
-
-    /**
-     * Determine if database exist
-     *
-     * @return bool
-    */
-    public function hasDatabase(): bool;
 
 
 

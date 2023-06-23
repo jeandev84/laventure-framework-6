@@ -1,6 +1,7 @@
 <?php
 namespace Laventure\Component\Database\Connection\Extension\PDO;
 
+use Laventure\Component\Database\Connection\Configuration\Configuration;
 use Laventure\Component\Database\Connection\Configuration\ConfigurationInterface;
 use Laventure\Component\Database\Connection\Extension\PDO\Contract\PdoConnectionInterface;
 use Laventure\Component\Database\Connection\Extension\PDO\Exception\PdoConnectionException;
@@ -40,6 +41,13 @@ class PdoConnection implements PdoConnectionInterface
 
 
     /**
+     * @var bool
+    */
+    protected bool $reconnected = false;
+
+
+
+    /**
      * @var array
     */
     private static $options = [
@@ -53,7 +61,7 @@ class PdoConnection implements PdoConnectionInterface
 
 
     /**
-     * @var ConfigurationInterface
+     * @var PdoConfiguration
     */
     protected $config;
 
@@ -77,11 +85,11 @@ class PdoConnection implements PdoConnectionInterface
      *
      * @throws PdoConnectionException
     */
-    public function connect(ConfigurationInterface $config)
+    public function connect(array $config)
     {
-        $config['dsn'] = $this->createDsn($config);
-        $this->pdo     = $this->make($config);
-        $this->config  = $config;
+        $this->config = new PdoConfiguration($config);
+        $this->config->setDriverName($this->getName());
+        $this->pdo    = static::make($this->config);
     }
 
 
@@ -128,9 +136,12 @@ class PdoConnection implements PdoConnectionInterface
     public function reconnect()
     {
          if ($this->connected()) {
-             $this->config['dsn'] .= [];
+             $this->config->refreshDsn();
+             $this->pdo = static::make($this->config);
+             $this->reconnected = true;
          }
     }
+
 
 
 
@@ -139,8 +150,10 @@ class PdoConnection implements PdoConnectionInterface
     */
     public function reconnected(): bool
     {
-        // TODO: Implement reconnected() method.
+        return $this->reconnected;
     }
+
+
 
 
 
@@ -149,8 +162,9 @@ class PdoConnection implements PdoConnectionInterface
     */
     public function disconnect()
     {
-        // TODO: Implement disconnect() method.
+        $this->pdo = null;
     }
+
 
 
 
@@ -159,8 +173,10 @@ class PdoConnection implements PdoConnectionInterface
     */
     public function disconnected(): bool
     {
-        // TODO: Implement disconnected() method.
+         return is_null($this->pdo);
     }
+
+
 
 
 
@@ -169,32 +185,44 @@ class PdoConnection implements PdoConnectionInterface
      */
     public function statement(string $sql): QueryInterface
     {
-        // TODO: Implement statement() method.
+         $statement = $this->createQuery();
+         $statement->prepare($sql);
+         return $statement;
     }
+
+
+
 
     /**
      * @inheritDoc
-     */
+    */
     public function beginTransaction()
     {
-        // TODO: Implement beginTransaction() method.
+        return $this->pdo->beginTransaction();
     }
+
+
+
 
     /**
      * @inheritDoc
-     */
+    */
     public function commit()
     {
-        // TODO: Implement commit() method.
+        return $this->pdo->commit();
     }
+
+
+
 
     /**
      * @inheritDoc
     */
     public function rollback()
     {
-        // TODO: Implement rollback() method.
+        return $this->pdo->rollBack();
     }
+
 
 
 
@@ -203,8 +231,10 @@ class PdoConnection implements PdoConnectionInterface
     */
     public function lastInsertId($name = null): int
     {
-        // TODO: Implement lastInsertId() method.
+        return $this->pdo->lastInsertId($name);
     }
+
+
 
 
 
@@ -213,7 +243,7 @@ class PdoConnection implements PdoConnectionInterface
     */
     public function exec(string $sql): bool
     {
-        // TODO: Implement exec() method.
+        return $this->pdo->exec($sql);
     }
 
 
@@ -224,8 +254,10 @@ class PdoConnection implements PdoConnectionInterface
     */
     public function getConnection()
     {
-        // TODO: Implement getConnection() method.
+        return $this->getPdo();
     }
+
+
 
 
 
@@ -234,8 +266,9 @@ class PdoConnection implements PdoConnectionInterface
     */
     public function createQuery(): QueryInterface
     {
-        // TODO: Implement createQuery() method.
+         return new Statement($this->getPdo());
     }
+
 
 
 
@@ -261,7 +294,7 @@ class PdoConnection implements PdoConnectionInterface
     public static function make(ConfigurationInterface $config): PDO
     {
         try {
-            $pdo     = new PDO($config['dsn'], $config['username'], $config['password']);
+            $pdo = new PDO($config['dsn'], $config['username'], $config['password']);
             $pdo->exec("SET NAMES 'utf8'");
             $options = array_merge(self::$options, $config['options']);
 
@@ -275,39 +308,5 @@ class PdoConnection implements PdoConnectionInterface
 
             throw new PdoConnectionException($e->getMessage(), $e->getCode());
         }
-    }
-
-
-
-
-    /**
-     * @param ConfigurationInterface $config
-     *
-     * @return string
-     *
-     * @throws PdoConnectionException
-    */
-    private function createDsn(ConfigurationInterface $config): string
-    {
-        if ($config->has('dsn')) {
-             return $config['dsn'];
-        }
-
-        $driver = $config->get('driver', $this->getName());
-
-        if (! $driver) {
-            throw new PdoConnectionException("No driver provided from configuration.");
-        }
-
-        if (! in_array($driver, \PDO::getAvailableDrivers())) {
-            throw new PdoConnectionException("Unavailable driver '$driver'");
-        }
-
-        $params = [
-            'host' => $config->getHostname(),
-            'port' => $config->getPort()
-        ];
-
-        return sprintf('%s:%s', $driver, http_build_query($params, '', ';'));
     }
 }

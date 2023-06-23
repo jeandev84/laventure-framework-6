@@ -65,16 +65,6 @@ class Configuration implements ConfigurationInterface
     /**
      * @inheritDoc
     */
-    public function getDriverName(): string
-    {
-        // TODO: Implement getDriverName() method.
-    }
-
-
-
-    /**
-     * @inheritDoc
-    */
     public function getCollation(): ?string
     {
         // TODO: Implement getCollation() method.

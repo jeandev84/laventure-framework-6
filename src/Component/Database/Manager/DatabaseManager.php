@@ -2,7 +2,6 @@
 namespace Laventure\Component\Database\Manager;
 
 
-use Laventure\Component\Database\Connection\Configuration\Configuration;
 use Laventure\Component\Database\Connection\ConnectionInterface;
 use Laventure\Component\Database\Manager\Exception\DatabaseManagerException;
 
@@ -188,7 +187,7 @@ class DatabaseManager
           }
 
           $connection = $this->connections[$name];
-          $connection->connect(new Configuration($config));
+          $connection->connect($config);
 
           if (! $connection->connected()) {
                $this->abortIf("no connection detected for '$name'.");

@@ -15,14 +15,6 @@ interface ConfigurationInterface extends \ArrayAccess
 {
 
      /**
-      * @return string
-     */
-     public function getDriverName(): string;
-
-
-
-
-     /**
       * Returns host name
       *
       * @return string

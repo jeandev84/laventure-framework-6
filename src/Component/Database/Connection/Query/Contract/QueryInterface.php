@@ -43,6 +43,7 @@ interface QueryInterface
 
 
 
+
      /**
       * Bind query values
       *
@@ -53,6 +54,15 @@ interface QueryInterface
      public function bindValues(array $values): static;
 
 
+
+
+     /**
+      * Bind query columns
+      *
+      * @param array $columns
+      * @return $this
+     */
+     public function bindColumns(array $columns): static;
 
 
 
@@ -74,4 +84,30 @@ interface QueryInterface
       * @return QueryResultInterface
      */
      public function fetch(): QueryResultInterface;
+
+
+
+
+
+
+     /**
+      * @return array
+     */
+     public function getBindParams(): array;
+
+
+
+
+     /**
+      * @return array
+     */
+     public function getBindValues(): array;
+
+
+
+
+     /**
+      * @return array
+     */
+     public function getBindColumns(): array;
 }
