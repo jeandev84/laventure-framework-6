@@ -28,12 +28,13 @@ class UserPasswordEncoder implements UserPasswordEncoderInterface
 
 
     /**
-     * @param PasswordEncoderInterface|null $encoder
+     * @param PasswordEncoderInterface $encoder
     */
-    public function __construct(PasswordEncoderInterface $encoder = null)
+    public function __construct(PasswordEncoderInterface $encoder)
     {
-         $this->encoder = $encoder ?: new PasswordEncoder();
+         $this->encoder = $encoder;
     }
+
 
 
 
@@ -57,6 +58,8 @@ class UserPasswordEncoder implements UserPasswordEncoderInterface
     {
          return $this->encoder->isPasswordValid($plainPassword, $user->getPassword());
     }
+
+
 
 
 

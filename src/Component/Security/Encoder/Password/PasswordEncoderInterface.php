@@ -41,6 +41,7 @@ interface PasswordEncoderInterface
 
 
 
+
      /**
       * @return string
      */

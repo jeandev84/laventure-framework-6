@@ -2,7 +2,6 @@
 namespace Laventure\Component\Security\Authentication;
 
 use Laventure\Component\Security\User\UserInterface;
-use Laventure\Component\Security\User\UserTokenInterface;
 
 
 interface AuthenticatorInterface
@@ -25,10 +24,12 @@ interface AuthenticatorInterface
 
 
 
+
       /**
        * @return UserInterface
       */
       public function getUser(): UserInterface;
+
 
 
 

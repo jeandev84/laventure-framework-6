@@ -1,6 +1,7 @@
 <?php
 namespace Laventure\Component\Database\Connection\Extension\PDO\Contract;
 
+use Laventure\Component\Database\Connection\ConnectionInterface;
 use PDO;
 
 
@@ -13,7 +14,7 @@ use PDO;
  *
  * @package Laventure\Component\Database\Connection\Extension\PDO\Contract
 */
-interface PdoConnectionInterface
+interface PdoConnectionInterface extends ConnectionInterface
 {
 
      /**

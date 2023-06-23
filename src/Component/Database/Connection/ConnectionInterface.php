@@ -69,19 +69,6 @@ interface ConnectionInterface
 
 
 
-
-    /**
-     * Determine reconnection status
-     *
-     * @return bool
-    */
-    public function reconnected(): bool;
-
-
-
-
-
-
     /**
      * Disconnect to the database
      *
@@ -206,15 +193,21 @@ interface ConnectionInterface
 
 
 
+    /**
+     * Determine if database exist
+     *
+     * @return bool
+    */
+    public function hasDatabase(): bool;
+
+
+
+
 
     /**
-     * Returns value of given name
+     * Returns configuration object
      *
-     * @param string $name
-     *
-     * @param $default
-     *
-     * @return mixed
+     * @return ConfigurationInterface
     */
-    public function config(string $name, $default = null);
+    public function getConfiguration(): ConfigurationInterface;
 }

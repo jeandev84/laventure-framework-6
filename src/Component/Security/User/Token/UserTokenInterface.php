@@ -19,10 +19,23 @@ interface UserTokenInterface
      const TOKEN_KEY = 'security.user';
 
 
+
+     /**
+      * @param UserInterface $user
+      *
+      * @return $this
+     */
+     public function setUser(UserInterface $user): static;
+
+
+
+
      /**
       * @return UserInterface
      */
      public function getUser(): UserInterface;
+
+
 
 
 

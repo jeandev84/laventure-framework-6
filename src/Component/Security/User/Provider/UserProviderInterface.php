@@ -86,9 +86,11 @@ interface UserProviderInterface
 
     /**
      * @param UserInterface $user
+     *
      * @return UserTokenInterface
     */
     public function createToken(UserInterface $user): UserTokenInterface;
+
 
 
 
@@ -97,6 +99,8 @@ interface UserProviderInterface
      * @return bool
     */
     public function hasToken(): bool;
+
+
 
 
 
@@ -117,9 +121,9 @@ interface UserProviderInterface
      *
      * @param UserInterface $user
      *
-     * @return $this
+     * @return UserInterface
     */
-    public function createRememberToken(UserInterface $user): static;
+    public function createRememberToken(UserInterface $user): UserInterface;
 
 
 

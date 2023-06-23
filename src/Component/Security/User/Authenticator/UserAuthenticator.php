@@ -16,7 +16,7 @@ use Laventure\Component\Security\User\UserPasswordEncoderInterface;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Security\User\Authenticator
+ * @package Laventure\Component\Security\User\Authentication
 */
 class UserAuthenticator extends Authenticator
 {
@@ -38,12 +38,12 @@ class UserAuthenticator extends Authenticator
     /**
      * @param UserProviderInterface $provider
      *
-     * @param UserPasswordEncoderInterface|null $encoder
+     * @param UserPasswordEncoderInterface $encoder
     */
-    public function __construct(UserProviderInterface $provider, UserPasswordEncoderInterface $encoder = null)
+    public function __construct(UserProviderInterface $provider, UserPasswordEncoderInterface $encoder)
     {
         $this->provider = $provider;
-        $this->encoder  = $encoder ?: new UserPasswordEncoder();
+        $this->encoder  = $encoder;
     }
 
 
@@ -54,25 +54,32 @@ class UserAuthenticator extends Authenticator
     */
     public function attempt(string $username, string $password, bool $rememberMe = false): bool
     {
-        // check if user by username
-        $user = $this->checkUser($username);
+            // check if user by username
+            $user = $this->provider->findByUsername($username);
 
-        // if not user and has not valid credentials
-        if(! $user || ! $this->isPasswordValid($user, $password)) {
-             return false;
-        }
+            // if not user and has not valid credentials
+            if(! $user || ! $this->isPasswordValid($user, $password)) {
+                 return false;
+            }
 
-        // rehash user password
-        $user = $this->rehashUserPassword($user, $password);
+            // rehash user password
+            $user = $this->rehashUserPassword($user, $password);
 
 
-        // save user
-        $this->createToken($user, $rememberMe);
+            // save user
+            $this->createToken($user);
 
-        return true;
+
+            // set remember me cookie
+            if ($rememberMe) {
+                $this->createRememberToken($user);
+            }
+
+            return true;
     }
 
     
+
 
 
 
@@ -105,9 +112,13 @@ class UserAuthenticator extends Authenticator
 
 
     /**
-     * @inheritDoc
+     * @param UserInterface $user
+     *
+     * @param string $plainPassword
+     *
+     * @return bool
     */
-    public function isPasswordValid(UserInterface $user, string $plainPassword): bool
+    private function isPasswordValid(UserInterface $user, string $plainPassword): bool
     {
         return $this->encoder->isPasswordValid($user, $plainPassword);
     }
@@ -115,10 +126,15 @@ class UserAuthenticator extends Authenticator
 
 
 
+
     /**
-     * @inheritdoc
+     * @param UserInterface $user
+     *
+     * @param string $plainPassword
+     *
+     * @return UserInterface
     */
-    public function rehashUserPassword(UserInterface $user, string $plainPassword): UserInterface
+    private function rehashUserPassword(UserInterface $user, string $plainPassword): UserInterface
     {
         $rehashPassword = $this->encoder->encodePassword($user, $plainPassword);
 
@@ -132,31 +148,33 @@ class UserAuthenticator extends Authenticator
 
 
 
+
     /**
-     * @inheritDoc
+     * @param UserInterface $user
+     *
+     * @return UserTokenInterface
     */
-    public function checkUser(string $username): UserInterface|false
+    private function createToken(UserInterface $user): UserTokenInterface
     {
-        // check if user by username
-        return $this->provider->findByUsername($username);
+        // save user in session
+        return $this->provider->createToken($user);
     }
 
 
 
 
+
     /**
-     * @inheritDoc
+     * @param UserInterface $user
+     *
+     * @return UserInterface
     */
-    public function createToken(UserInterface $user, bool $rememberMe = false): UserTokenInterface
+    private function createRememberToken(UserInterface $user): UserInterface
     {
-        // save user in session
-        $this->provider->createToken($user);
-
-        // save remember token if user has been remembered
-        if ($rememberMe) {
-            $this->provider->createRememberToken($user);
+        if (! $this->provider->hasRememberToken()) {
+             return $user;
         }
-
-        return $this->provider->getToken();
+        
+        return $this->provider->createRememberToken($user);
     }
 }

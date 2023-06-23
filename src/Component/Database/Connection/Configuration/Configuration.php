@@ -31,48 +31,161 @@ class Configuration implements ConfigurationInterface
 
 
      /**
-      * @inheritDoc
+      * @param string $key
+      *
+      * @param $value
+      *
+      * @return $this
      */
-     public function getHost(): string
+     public function set(string $key, $value): static
      {
-        // TODO: Implement getHost() method.
-     }
+         $this->params[$key] = $value;
 
-
-
-     /**
-      * @inheritDoc
-     */
-     public function getPort(): string
-     {
-        // TODO: Implement getPort() method.
+         return $this;
      }
 
 
 
 
      /**
-      * @inheritDoc
+      * @param string $key
+      *
+      * @return $this
      */
-     public function getDatabase(): string
+     public function remove(string $key): static
      {
-        // TODO: Implement getDatabase() method.
+         unset($this->params[$key]);
+
+         return $this;
      }
 
 
 
 
     /**
-     * @param array $params
-     *
-     * @return $this
+     * @inheritDoc
     */
-    public function merge(array $params): static
+    public function getDriverName(): string
     {
-        $this->params = array_merge($this->params, $params);
-
-        return $this;
+        // TODO: Implement getDriverName() method.
     }
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function getCollation(): ?string
+    {
+        // TODO: Implement getCollation() method.
+    }
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function getEngine(): ?string
+    {
+         return $this->get('engine', '');
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function getPrefix(): ?string
+    {
+        return $this->get('prefix', '');
+    }
+
+
+
+
+
+    /**
+     * @inheritDoc
+    */
+    public function getOptions(): array
+    {
+        return $this->get('options', []);
+    }
+
+
+
+     /**
+      * @inheritDoc
+     */
+     public function getHostname(): string
+     {
+        return $this->get('host', '');
+     }
+
+
+
+
+     /**
+      * @inheritDoc
+     */
+     public function getPort(): ?string
+     {
+        return $this->get('port');
+     }
+
+
+
+
+     /**
+      * @inheritDoc
+     */
+     public function getDatabase(): ?string
+     {
+         return $this->get('database');
+     }
+
+
+
+     /**
+      * @inheritDoc
+     */
+     public function getUsername(): ?string
+     {
+         return $this->get('username');
+     }
+
+
+
+
+     /**
+      * @inheritDoc
+     */
+     public function getPassword(): ?string
+     {
+        return $this->get('password');
+     }
+
+
+
+
+
+
+     /**
+      * @param array $params
+      *
+      * @return $this
+     */
+     public function merge(array $params): static
+     {
+         $this->params = array_merge($this->params, $params);
+
+         return $this;
+     }
+
+
 
 
      /**
@@ -80,7 +193,7 @@ class Configuration implements ConfigurationInterface
      */
      public function get(string $name, $default = null)
      {
-        // TODO: Implement get() method.
+          return $this->params[$name] ?? $default;
      }
 
 
@@ -103,38 +216,51 @@ class Configuration implements ConfigurationInterface
      */
     public function all(): array
     {
-        // TODO: Implement all() method.
+        return $this->params;
     }
+
+
+
 
     /**
      * @inheritDoc
-     */
+    */
     public function offsetExists(mixed $offset): bool
     {
-        // TODO: Implement offsetExists() method.
+        return $this->has($offset);
     }
+
+
+
+
 
     /**
      * @inheritDoc
      */
     public function offsetGet(mixed $offset): mixed
     {
-        // TODO: Implement offsetGet() method.
+         return $this->get($offset);
     }
+
+
+
 
     /**
      * @inheritDoc
-     */
+    */
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        // TODO: Implement offsetSet() method.
+         $this->merge([$offset => $value]);
     }
+
+
+
 
     /**
      * @inheritDoc
-     */
+    */
     public function offsetUnset(mixed $offset): void
     {
-        // TODO: Implement offsetUnset() method.
+        $this->remove($offset);
     }
 }

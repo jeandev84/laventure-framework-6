@@ -1,8 +1,6 @@
 <?php
 namespace Laventure\Foundation\Security\Provider;
 
-use Laventure\Component\Database\ORM\Entity\Manager\EntityManagerInterface;
-use Laventure\Component\Http\Storage\Session\SessionInterface;
 use Laventure\Component\Security\User\Provider\UserProviderInterface;
 use Laventure\Component\Security\User\Token\UserTokenInterface;
 use Laventure\Component\Security\User\UserInterface;

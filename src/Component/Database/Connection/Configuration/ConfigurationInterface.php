@@ -15,11 +15,20 @@ interface ConfigurationInterface extends \ArrayAccess
 {
 
      /**
+      * @return string
+     */
+     public function getDriverName(): string;
+
+
+
+
+     /**
       * Returns host name
       *
       * @return string
      */
-     public function getHost(): string;
+     public function getHostname(): string;
+
 
 
 
@@ -27,9 +36,9 @@ interface ConfigurationInterface extends \ArrayAccess
      /**
       * Returns port
       *
-      * @return string
+      * @return string|null
      */
-     public function getPort(): string;
+     public function getPort(): ?string;
 
 
 
@@ -38,21 +47,61 @@ interface ConfigurationInterface extends \ArrayAccess
      /**
       * Returns name of database
       *
-      * @return string
+      * @return string|null
      */
-     public function getDatabase(): string;
+     public function getDatabase(): ?string;
 
 
 
 
 
      /**
-      * @param array $params
-      *
-      * @return $this
+      * @return string|null
      */
-     public function merge(array $params): static;
+     public function getUsername(): ?string;
 
+
+
+
+     /**
+      * @return string|null
+     */
+     public function getPassword(): ?string;
+
+
+
+
+     /**
+      * @return string|null
+     */
+     public function getCollation(): ?string;
+
+
+
+
+
+     /**
+      * @return string|null
+     */
+     public function getEngine(): ?string;
+
+
+
+
+
+     /**
+      * @return string|null
+     */
+     public function getPrefix(): ?string;
+
+
+
+
+
+     /**
+      * @return array
+     */
+     public function getOptions(): array;
 
 
 
@@ -67,6 +116,7 @@ interface ConfigurationInterface extends \ArrayAccess
       * @return mixed
      */
      public function get(string $name, $default = null);
+
 
 
 
@@ -92,4 +142,17 @@ interface ConfigurationInterface extends \ArrayAccess
       * @return array
      */
      public function all(): array;
+
+
+
+
+
+
+    /**
+     * @param array $params
+     *
+     * @return $this
+    */
+    public function merge(array $params): static;
+
 }
