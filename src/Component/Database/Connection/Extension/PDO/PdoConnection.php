@@ -266,7 +266,7 @@ class PdoConnection implements PdoConnectionInterface
     */
     public function createQuery(): QueryInterface
     {
-         return new Statement($this->getPdo());
+         return new Query($this->getPdo());
     }
 
 

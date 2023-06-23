@@ -8,15 +8,8 @@ use Laventure\Component\Database\Connection\Query\QueryLogger;
 use PDO;
 use PDOStatement;
 
-class Statement implements QueryInterface
+class Query implements QueryInterface
 {
-
-
-    /**
-     * @var string|null
-    */
-    protected ?string $sql;
-
 
     /**
      * @var PDO
@@ -175,7 +168,7 @@ class Statement implements QueryInterface
      */
     public function fetch(): QueryResultInterface
     {
-        // TODO: Implement fetch() method.
+         return new QueryResult($this);
     }
 
 
